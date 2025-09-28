@@ -12,10 +12,27 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          {{$t('appTitle')}}
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div class="q-mr-md">Quasar v{{ $q.version }}</div>
+
+        <q-btn-dropdown dense flat :label="currentLocale.toUpperCase()" aria-label="Change language">
+          <q-list>
+            <q-item v-for="loc in locales" :key="loc" clickable v-close-popup @click="changeLocale(loc)">
+              <q-item-section>{{ loc.toUpperCase() }}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+
+        <q-btn
+          flat
+          dense
+          round
+          :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'"
+          :aria-label="$q.dark.isActive ? 'Switch to light theme' : 'Switch to dark theme'"
+          @click="toggleDark"
+        />
       </q-toolbar>
     </q-header>
 
@@ -25,17 +42,36 @@
       bordered
     >
       <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
+        <q-item-label header>
+          Menu
         </q-item-label>
 
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
+        <q-item clickable to="/favorites" v-ripple>
+          <q-item-section avatar>
+            <q-icon name="favorite" />
+          </q-item-section>
+          <q-item-section>
+            {{$t('menu.favorites')}}
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/radistions" v-ripple>
+          <q-item-section avatar>
+            <q-icon name="radio" />
+          </q-item-section>
+          <q-item-section>
+            {{$t('menu.radistions')}}
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/login" v-ripple>
+          <q-item-section avatar>
+            <q-icon name="login" />
+          </q-item-section>
+          <q-item-section>
+            {{$t('menu.login')}}
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -46,57 +82,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
-
-const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
+import { ref, onMounted } from 'vue';
+import { useQuasar } from 'quasar';
+import { i18n, setLocale } from 'boot/i18n';
+import type { Locale } from 'boot/i18n';
 
 const leftDrawerOpen = ref(false);
+const $q = useQuasar();
+
+const THEME_KEY = 'app:prefers-dark';
+
+function toggleDark () {
+  $q.dark.set(!$q.dark.isActive);
+  try {
+    localStorage.setItem(THEME_KEY, $q.dark.isActive ? '1' : '0');
+  } catch (err) {
+    // ignore persistence errors
+    void err
+  }
+}
+
+onMounted(() => {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved !== null) {
+      $q.dark.set(saved === '1');
+    }
+  } catch (err) {
+    // ignore read errors
+    void err
+  }
+});
 
 function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+// i18n language switcher state
+const locales: readonly Locale[] = ['en', 'fr'] as const;
+const currentLocale = ref<Locale>(i18n.global.locale.value as Locale);
+
+function changeLocale (loc: Locale) {
+  if (locales.includes(loc)) {
+    setLocale(loc);
+    currentLocale.value = i18n.global.locale.value as Locale;
+  }
 }
 </script>
