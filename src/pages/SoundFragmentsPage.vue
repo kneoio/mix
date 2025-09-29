@@ -2,7 +2,7 @@
   <q-page class="q-pa-md">
     <div class="text-h5 q-mb-md">Sound Fragments</div>
 
-    <q-card flat bordered>
+    <q-card flat>
       <q-card-section>
         <div class="row q-col-gutter-sm q-mb-md">
           <div class="col-12 col-md-6">
@@ -20,10 +20,12 @@
           </div>
         </div>
 
-        <div v-if="loading" class="text-caption text-grey-7">Loading...</div>
+        <div v-if="loading" class="q-mb-sm">
+          <q-linear-progress indeterminate rounded color="primary" />
+        </div>
         <div v-else>
           <div v-if="items.length === 0" class="text-caption text-grey-7">No fragments</div>
-          <q-list v-else bordered separator>
+          <q-list v-else separator>
             <q-item v-for="f in items" :key="f.slugName">
               <q-item-section>
                 <div class="text-body1">{{ f.title || f.slugName }}</div>

@@ -2,7 +2,7 @@
   <q-page class="q-pa-md">
     <div class="text-h5 q-mb-md">Radiostations</div>
 
-    <q-card flat bordered>
+    <q-card flat>
       <q-card-section>
         <div class="row q-col-gutter-sm q-mb-md">
           <div class="col-12 col-md-6">
@@ -15,10 +15,12 @@
           <div class="col-auto text-subtitle2">{{ displayedTotal }}</div>
         </div>
 
-        <div v-if="radioStationsStore.loading" class="text-caption text-grey-7">Loading...</div>
+        <div v-if="radioStationsStore.loading" class="q-mb-sm">
+          <q-linear-progress indeterminate rounded color="primary" />
+        </div>
         <div v-else>
           <div v-if="filteredStations.length === 0" class="text-caption text-grey-7">No stations</div>
-          <q-list v-else bordered separator>
+          <q-list v-else separator>
             <q-item v-for="s in filteredStations" :key="s.slugName">
               <q-item-section>
                 <div class="text-body1">{{ s.name }}</div>

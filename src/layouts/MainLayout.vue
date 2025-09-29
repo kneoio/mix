@@ -38,7 +38,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/radistions" v-ripple>
+        <q-item clickable to="/radiostations" v-ripple>
           <q-item-section avatar>
             <q-icon name="radio" />
           </q-item-section>
