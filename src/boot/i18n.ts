@@ -1,16 +1,29 @@
 import { boot } from 'quasar/wrappers'
 import { createI18n } from 'vue-i18n'
 
-export type Locale = 'en' | 'fr'
+export type Locale = 'pt' | 'en'
 
 const LOCALE_KEY = 'app:locale'
 
 const messages = {
+  pt: {
+    appTitle: 'Mix',
+    menu: {
+      favorites: 'Favoritos',
+      radistions: 'Estações de rádio',
+      login: 'Entrar',
+      account: 'Conta'
+    },
+    theme: {
+      switchToLight: 'Mudar para o tema claro',
+      switchToDark: 'Mudar para o tema escuro'
+    }
+  },
   en: {
     appTitle: 'Mix',
     menu: {
       favorites: 'Favorites',
-      radistions: 'Radistions',
+      radistions: 'Radiostations',
       login: 'Login',
       account: 'Account'
     },
@@ -18,30 +31,17 @@ const messages = {
       switchToLight: 'Switch to light theme',
       switchToDark: 'Switch to dark theme'
     }
-  },
-  fr: {
-    appTitle: 'Mix',
-    menu: {
-      favorites: 'Favoris',
-      radistions: 'Radistions',
-      login: 'Connexion',
-      account: 'Compte'
-    },
-    theme: {
-      switchToLight: 'Passer au thème clair',
-      switchToDark: 'Passer au thème sombre'
-    }
   }
 } as const
 
-const rawSaved = (typeof localStorage !== 'undefined' && localStorage.getItem(LOCALE_KEY)) || 'en'
-const savedLocale: Locale = rawSaved === 'fr' ? 'fr' : 'en'
+const rawSaved = (typeof localStorage !== 'undefined' && localStorage.getItem(LOCALE_KEY)) || 'pt'
+const savedLocale: Locale = rawSaved === 'en' ? 'en' : 'pt'
 
 export const i18n = createI18n({
   legacy: false,
   globalInjection: true,
   locale: savedLocale,
-  fallbackLocale: 'en',
+  fallbackLocale: 'pt',
   messages
 })
 

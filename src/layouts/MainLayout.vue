@@ -119,7 +119,7 @@ function toggleLeftDrawer () {
 }
 
 // i18n language switcher state
-const locales: readonly Locale[] = ['en', 'fr'] as const;
+const locales: readonly Locale[] = ['pt', 'en'] as const;
 const currentLocale = ref<Locale>(i18n.global.locale.value as Locale);
 
 function changeLocale (loc: Locale) {

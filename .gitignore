@@ -33,3 +33,7 @@ yarn-error.log*
 .env.local*
 
 .npmrc
+.env
+.env.development
+.env.production
+

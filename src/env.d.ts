@@ -5,3 +5,13 @@ declare namespace NodeJS {
     VUE_ROUTER_BASE: string | undefined;
   }
 }
+
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_API_SERVER?: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
