@@ -16,23 +16,6 @@
         </q-toolbar-title>
 
         <div class="q-mr-md">Quasar v{{ $q.version }}</div>
-
-        <q-btn-dropdown dense flat :label="currentLocale.toUpperCase()" aria-label="Change language">
-          <q-list>
-            <q-item v-for="loc in locales" :key="loc" clickable v-close-popup @click="changeLocale(loc)">
-              <q-item-section>{{ loc.toUpperCase() }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-
-        <q-btn
-          flat
-          dense
-          round
-          :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'"
-          :aria-label="$q.dark.isActive ? 'Switch to light theme' : 'Switch to dark theme'"
-          @click="toggleDark"
-        />
       </q-toolbar>
     </q-header>
 
@@ -46,7 +29,7 @@
           Menu
         </q-item-label>
 
-        <q-item clickable to="/favorites" v-ripple>
+        <q-item v-if="isAuthenticated" clickable to="/favorites" v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
           </q-item-section>
@@ -64,7 +47,25 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/login" v-ripple>
+        <q-item clickable to="/fragments" v-ripple>
+          <q-item-section avatar>
+            <q-icon name="library_music" />
+          </q-item-section>
+          <q-item-section>
+            Sound Fragments
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable to="/profile" v-ripple>
+          <q-item-section avatar>
+            <q-icon name="person" />
+          </q-item-section>
+          <q-item-section>
+            User Profile
+          </q-item-section>
+        </q-item>
+
+        <q-item v-if="!isAuthenticated" clickable to="/login" v-ripple>
           <q-item-section avatar>
             <q-icon name="login" />
           </q-item-section>
@@ -72,6 +73,8 @@
             {{$t('menu.login')}}
           </q-item-section>
         </q-item>
+
+        
       </q-list>
     </q-drawer>
 
@@ -84,23 +87,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-import { i18n, setLocale } from 'boot/i18n';
-import type { Locale } from 'boot/i18n';
+import { keycloak } from 'src/boot/keycloak'
 
 const leftDrawerOpen = ref(false);
 const $q = useQuasar();
 
 const THEME_KEY = 'app:prefers-dark';
-
-function toggleDark () {
-  $q.dark.set(!$q.dark.isActive);
-  try {
-    localStorage.setItem(THEME_KEY, $q.dark.isActive ? '1' : '0');
-  } catch (err) {
-    // ignore persistence errors
-    void err
-  }
-}
 
 onMounted(() => {
   try {
@@ -112,6 +104,13 @@ onMounted(() => {
     // ignore read errors
     void err
   }
+  // set initial auth state
+  isAuthenticated.value = keycloak.authenticated === true
+  // keep auth state in sync with keycloak callbacks
+  keycloak.onAuthSuccess = () => { isAuthenticated.value = true }
+  keycloak.onAuthLogout = () => { isAuthenticated.value = false }
+  keycloak.onAuthRefreshSuccess = () => { isAuthenticated.value = true }
+  keycloak.onTokenExpired = () => { isAuthenticated.value = !!keycloak.authenticated }
 });
 
 function toggleLeftDrawer () {
@@ -119,13 +118,8 @@ function toggleLeftDrawer () {
 }
 
 // i18n language switcher state
-const locales: readonly Locale[] = ['pt', 'en'] as const;
-const currentLocale = ref<Locale>(i18n.global.locale.value as Locale);
+// moved to Profile page
 
-function changeLocale (loc: Locale) {
-  if (locales.includes(loc)) {
-    setLocale(loc);
-    currentLocale.value = i18n.global.locale.value as Locale;
-  }
-}
+// auth state
+const isAuthenticated = ref(false)
 </script>

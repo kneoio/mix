@@ -8,8 +8,8 @@ const routes: RouteRecordRaw[] = [
       { path: '', redirect: '/radistions' },
       { path: 'favorites', component: () => import('pages/FavoritesPage.vue'), meta: { requiresAuth: true } },
       { path: 'radistions', component: () => import('pages/RadistionsPage.vue'), meta: { public: true } },
-      { path: 'profile', component: () => import('pages/ProfilePage.vue'), meta: { requiresAuth: true } },
-      { path: 'login', component: () => import('pages/LoginPage.vue'), meta: { public: true } }
+      { path: 'fragments', component: () => import('pages/SoundFragmentsPage.vue'), meta: { public: true } },
+      { path: 'profile', component: () => import('pages/ProfilePage.vue'), meta: { public: true } }
     ],
   },
 

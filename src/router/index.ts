@@ -36,9 +36,17 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   Router.beforeEach(async (to) => {
     // ensure Keycloak init (check-sso) completed so authenticated flag is correct
     await keycloakReady
-    // Handle root entry: decide landing page dynamically
+    // Handle root entry: if unauthenticated, go straight to hosted Keycloak login
     if (to.path === '/') {
-      return keycloak.authenticated ? '/favorites' : '/login'
+      if (keycloak.authenticated) return '/favorites'
+      await keycloak.login({ redirectUri: window.location.origin + '/' })
+      return false
+    }
+
+    // If someone navigates to '/login', trigger hosted login instead of rendering a page
+    if (to.path === '/login') {
+      await keycloak.login({ redirectUri: window.location.origin + '/' })
+      return false
     }
     const tail = to.matched[to.matched.length - 1]
     const isPublic = tail?.meta.public === true

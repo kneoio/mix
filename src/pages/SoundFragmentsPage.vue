@@ -1,0 +1,77 @@
+<template>
+  <q-page class="q-pa-md">
+    <div class="text-h5 q-mb-md">Sound Fragments</div>
+
+    <q-card flat bordered>
+      <q-card-section>
+        <div class="row q-col-gutter-sm q-mb-md">
+          <div class="col-12 col-md-6">
+            <q-input v-model="search" dense clearable debounce="300" placeholder="Search fragments" @update:model-value="onSearch" />
+          </div>
+        </div>
+
+        <div class="row items-center q-col-gutter-sm q-mb-sm">
+          <div class="col-auto text-subtitle2">Total:</div>
+          <div class="col-auto text-subtitle2">{{ totalDisplay }}</div>
+          <div class="col q-gutter-sm flex justify-end">
+            <q-btn dense flat icon="chevron_left" :disable="page <= 1 || loading" @click="prevPage" />
+            <div class="text-caption">Page {{ page }}</div>
+            <q-btn dense flat icon="chevron_right" :disable="loading || items.length < pageSize" @click="nextPage" />
+          </div>
+        </div>
+
+        <div v-if="loading" class="text-caption text-grey-7">Loading...</div>
+        <div v-else>
+          <div v-if="items.length === 0" class="text-caption text-grey-7">No fragments</div>
+          <q-list v-else bordered separator>
+            <q-item v-for="f in items" :key="f.slugName">
+              <q-item-section>
+                <div class="text-body1">{{ f.title || f.slugName }}</div>
+                <div class="text-caption text-grey-7">{{ f.artist || '—' }} · {{ f.type }} · {{ f.genres?.join(', ') }}</div>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </q-card-section>
+    </q-card>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
+
+const store = useSoundFragmentsStore()
+const page = ref(1)
+const pageSize = ref(10)
+const search = ref('')
+
+const items = computed(() => store.items)
+const loading = computed(() => store.loading)
+const totalDisplay = computed(() => (store.total ?? items.value.length))
+
+async function load () {
+  await store.fetchSoundFragments(page.value, pageSize.value, search.value)
+}
+
+function onSearch () {
+  page.value = 1
+  void load()
+}
+
+function nextPage () {
+  page.value += 1
+  void load()
+}
+
+function prevPage () {
+  if (page.value > 1) {
+    page.value -= 1
+    void load()
+  }
+}
+
+onMounted(() => {
+  void load()
+})
+</script>

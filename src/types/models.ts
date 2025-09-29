@@ -87,6 +87,46 @@ export interface SubmissionPayload {
   agreementVersion?: string;
 }
 
+
+export interface SoundFragment {
+  slugName: string;
+  id: string | null;
+  author: string;
+  regDate: string;
+  lastModifier: string;
+  lastModifiedDate: string;
+  type: FragmentType;
+  title?: string;
+  artist?: string;
+  genres: string[];
+  album?: string;
+  url: string;
+  description: string;
+  actionUrl: string;
+  defaultBrandId: string;
+  representedInBrands: string[];
+  //uploadedFiles: UploadFileInfo[];
+}
+
+export interface SoundFragmentSave {
+  type: FragmentType;
+  title?: string;
+  artist?: string;
+  genres: string[];
+  album?: string;
+  description: string;
+  representedInBrands: string[];
+  newlyUploaded: string[];
+  tempFileIds?: string[];
+}
+
+// Minimal filter dto for listing/search
+export interface SoundFragmentFilterDTO {
+  type?: FragmentType
+  genre?: string
+  brandId?: string
+}
+
 export enum SubmissionPolicy {
   NOT_ALLOWED = "NOT_ALLOWED",
   REVIEW_REQUIRED = "REVIEW_REQUIRED",
@@ -108,6 +148,11 @@ export enum ManagedBy {
   ITSELF = "ITSELF",
   AI_AGENT = "AI_AGENT",
   MIX = "MIX"
+}
+
+export enum FragmentType {
+  SONG = "SONG",
+  ADVERTISEMENT = "ADVERTISEMENT"
 }
 
 export interface PageParams {
