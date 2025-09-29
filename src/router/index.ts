@@ -6,6 +6,7 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
+import { keycloak, keycloakReady } from 'src/boot/keycloak';
 
 /*
  * If not building with SSR mode, you can
@@ -30,6 +31,29 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
+
+  // Global auth guard
+  Router.beforeEach(async (to) => {
+    // ensure Keycloak init (check-sso) completed so authenticated flag is correct
+    await keycloakReady
+    // Handle root entry: decide landing page dynamically
+    if (to.path === '/') {
+      return keycloak.authenticated ? '/favorites' : '/login'
+    }
+    const tail = to.matched[to.matched.length - 1]
+    const isPublic = tail?.meta.public === true
+    const requiresAuth = tail?.meta.requiresAuth === true
+
+    if (isPublic || !requiresAuth) return true
+
+    // If not authenticated, redirect to hosted Keycloak login
+    if (!keycloak.authenticated) {
+      await keycloak.login({ redirectUri: window.location.origin + '/' })
+      return false
+    }
+
+    return true
+  })
 
   return Router;
 });
