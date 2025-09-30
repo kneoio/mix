@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { absoluteApi, unsecuredClient } from 'src/api/apiClient'
+import { absoluteApi, unsecuredClient, apiClient } from 'src/api/apiClient'
 import type { RadioStationStatus } from 'src/types/models'
 
 export const useRadioStationsStore = defineStore('radioStations', () => {
@@ -20,9 +20,14 @@ export const useRadioStationsStore = defineStore('radioStations', () => {
     entries.value = response.data
   }
 
+  const deleteRadioStation = async (slugName: string) => {
+    await apiClient.delete(`/radiostations/${slugName}`)
+  }
+
   return {
     getPagination,
     getEntries,
-    fetchRadioStations
+    fetchRadioStations,
+    deleteRadioStation
   }
 })
