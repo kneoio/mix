@@ -120,11 +120,28 @@ export interface SoundFragmentSave {
   tempFileIds?: string[];
 }
 
-// Minimal filter dto for listing/search
 export interface SoundFragmentFilterDTO {
   type?: FragmentType
   genre?: string
   brandId?: string
+}
+
+export interface ApiFormResponse<T = any> {
+  docData: T;
+  actions: any[];
+}
+
+export interface ApiViewPageResponse<T = any> {
+  actions: { caption: string }[];
+  viewData: ViewData<T>;
+}
+
+export interface ViewData<T = any> {
+  count: number;
+  pageNum: number;
+  maxPage: number;
+  pageSize: number;
+  entries: T[];
 }
 
 export enum SubmissionPolicy {

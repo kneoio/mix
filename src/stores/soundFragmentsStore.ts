@@ -1,13 +1,31 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import {defineStore} from 'pinia'
+import {computed, ref} from 'vue'
 import apiClient from 'src/api/apiClient'
-import type { SoundFragment, SoundFragmentFilterDTO } from 'src/types/models'
+import type {ApiFormResponse, ApiViewPageResponse, SoundFragment, SoundFragmentFilterDTO} from 'src/types/models'
 
 export const useSoundFragmentsStore = defineStore('soundFragments', () => {
-  const items = ref<SoundFragment[]>([])
-  const total = ref<number | null>(null)
-  const loading = ref(false)
-  const current = ref<SoundFragment | null>(null)
+  const apiViewResponse = ref<ApiViewPageResponse<SoundFragment> | null>(null);
+  const apiFormResponse = ref<ApiFormResponse<SoundFragment> | null>(null);
+
+  const getPagination = computed(() => {
+    if (!apiViewResponse.value) return {
+      page: 1,
+      pageSize: 10,
+      itemCount: 0,
+      pageCount: 1,
+      showSizePicker: true,
+      pageSizes: [10, 20, 30, 40]
+    };
+
+    return {
+      page: apiViewResponse.value.viewData.pageNum,
+      pageSize: apiViewResponse.value.viewData.pageSize,
+      itemCount: apiViewResponse.value.viewData.count,
+      pageCount: apiViewResponse.value.viewData.maxPage,
+      showSizePicker: true,
+      pageSizes: [10, 20, 30, 40]
+    };
+  });
 
   const fetchSoundFragments = async (
     page = 1,
@@ -15,57 +33,22 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
     searchQuery = '',
     filters: SoundFragmentFilterDTO = {}
   ) => {
-    loading.value = true
-    try {
-      const params: Record<string, unknown> = {
-        page,
-        size: pageSize,
-      }
-      if (searchQuery) params.q = searchQuery
-      Object.assign(params, filters)
-
-      const { data } = await apiClient.get('/soundfragments', { params })
-
-      const list: SoundFragment[] = Array.isArray(data)
-        ? data
-        : (data?.payload?.viewData?.entries || data?.items || [])
-
-      items.value = list
-      total.value = (typeof data?.payload?.viewData?.total === 'number')
-        ? data.payload.viewData.total
-        : (Array.isArray(data) ? data.length : (data?.total ?? list.length))
-
-    } finally {
-      loading.value = false
+    const params: Record<string, unknown> = {
+      page,
+      size: pageSize,
     }
+    if (searchQuery) params.q = searchQuery
+    Object.assign(params, filters)
+    const response = await apiClient.get('/soundfragments', {params})
+    if (!response?.data?.payload) throw new Error('Invalid API response for sound fragments');
+    apiViewResponse.value = response.data.payload;
   }
 
   const fetchSoundFragment = async (id: string) => {
-    loading.value = true
-    try {
-      const { data } = await apiClient.get(`/soundfragments/${encodeURIComponent(id)}`)
-      const entity: SoundFragment = (data?.payload?.viewData?.current) || data?.item || data
-      current.value = entity as SoundFragment
-      return current.value
-    } finally {
-      loading.value = false
-    }
+    const response = await apiClient.get(`/soundfragments/${encodeURIComponent(id)}`)
+    if (!response?.data?.payload) throw new Error('Invalid API response');
+    apiFormResponse.value = response.data.payload;
+
   }
 
-  function reset () {
-    items.value = []
-    total.value = null
-    loading.value = false
-    current.value = null
-  }
-
-  return {
-    items,
-    total,
-    loading,
-    current,
-    fetchSoundFragments,
-    fetchSoundFragment,
-    reset
-  }
 })
