@@ -9,6 +9,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'favorites', component: () => import('pages/FavoritesPage.vue'), meta: { requiresAuth: true } },
       { path: 'radiostations', component: () => import('pages/RadioStationsPage.vue'), meta: { public: true } },
       { path: 'fragments', component: () => import('pages/SoundFragmentsPage.vue'), meta: { requiresAuth: true } },
+      { path: 'fragments/:id', component: () => import('pages/SoundFragmentFormPage.vue'), meta: { requiresAuth: true } },
       { path: 'profile', component: () => import('pages/ProfilePage.vue'), meta: { public: true } }
     ],
   },

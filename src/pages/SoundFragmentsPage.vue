@@ -36,11 +36,12 @@
         <div v-else>
           <div v-if="items.length === 0" class="text-caption text-grey-7">No fragments</div>
           <q-list v-else separator>
-            <q-item v-for="f in items" :key="f.slugName">
+            <q-item v-for="f in items" :key="f.slugName" clickable @click="openFragment(f)">
               <q-item-section side>
                 <q-checkbox
                   :model-value="isSelected(f)"
                   @update:model-value="(v) => toggle(f, v as boolean)"
+                  @click.stop
                   dense
                 />
               </q-item-section>
@@ -58,17 +59,23 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
 import { useSelection } from 'src/composables/useSelection'
 
 const store = useSoundFragmentsStore()
+const router = useRouter()
 const page = ref(1)
 const pageSize = ref(10)
 const search = ref('')
 
-const items = computed(() => store.items)
+const items = store.items
 const loading = computed(() => store.loading)
-const totalDisplay = computed(() => (store.total ?? items.value.length))
+const totalDisplay = computed(() => {
+  if (typeof store.total === 'number') return store.total
+  const list = items.value
+  return Array.isArray(list) ? list.length : 0
+})
 
 // selection
 const itemsArray = computed(() => items.value)
@@ -94,6 +101,12 @@ function prevPage () {
     page.value -= 1
     void load()
   }
+}
+
+function openFragment (f: any) {
+  const id = f?.slugName || f?.id
+  if (!id) return
+  void router.push(`/fragments/${encodeURIComponent(String(id))}`)
 }
 
 onMounted(() => {

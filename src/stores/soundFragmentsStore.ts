@@ -7,6 +7,7 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
   const items = ref<SoundFragment[]>([])
   const total = ref<number | null>(null)
   const loading = ref(false)
+  const current = ref<SoundFragment | null>(null)
 
   const fetchSoundFragments = async (
     page = 1,
@@ -39,17 +40,32 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
     }
   }
 
+  const fetchSoundFragment = async (id: string) => {
+    loading.value = true
+    try {
+      const { data } = await apiClient.get(`/soundfragments/${encodeURIComponent(id)}`)
+      const entity: SoundFragment = (data?.payload?.viewData?.current) || data?.item || data
+      current.value = entity as SoundFragment
+      return current.value
+    } finally {
+      loading.value = false
+    }
+  }
+
   function reset () {
     items.value = []
     total.value = null
     loading.value = false
+    current.value = null
   }
 
   return {
     items,
     total,
     loading,
+    current,
     fetchSoundFragments,
+    fetchSoundFragment,
     reset
   }
 })
