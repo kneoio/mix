@@ -11,9 +11,9 @@
     </div>
 
     <q-card flat bordered>
-      <q-linear-progress v-if="loading" indeterminate color="primary" />
+      <q-linear-progress v-if=" loading " indeterminate color="primary" />
       <q-card-section v-else>
-        <div v-if="!fragment" class="text-caption text-grey-7">Not found</div>
+        <div v-if=" !fragment " class="text-caption text-grey-7">Not found</div>
         <div v-else class="column q-col-gutter-sm">
           <div class="row">
             <div class="col-12 col-md-6">
@@ -32,7 +32,7 @@
             </div>
             <div class="col-12 col-md-6">
               <div class="text-subtitle2">Genres</div>
-              <div class="text-body1">{{ (fragment.genres || []).join(', ') || '—' }}</div>
+              <div class="text-body1">{{ ( fragment.genres || [] ).join( ', ' ) || '—' }}</div>
             </div>
           </div>
           <div class="row">
@@ -48,25 +48,31 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
+import type { SoundFragment } from 'src/types/models'
 
 const route = useRoute()
 const router = useRouter()
-const store = useSoundFragmentsStore()
+const soundFragmentsStore = useSoundFragmentsStore()
 
-const id = computed(() => String(route.params.id || ''))
-const loading = computed(() => store.loading)
-const fragment = computed(() => store.current)
+const id = computed( () => String( route.params.id || '' ) )
+const loading = ref( false )
+const fragment = ref<SoundFragment | null>( null )
 
-function goBack () {
+function goBack() {
   router.back()
 }
 
-onMounted(async () => {
-  if (id.value) {
-    await store.fetchSoundFragment(id.value)
+onMounted( async () => {
+  if ( !id.value ) return
+  loading.value = true
+  try {
+    await soundFragmentsStore.fetchSoundFragment( id.value )
+    fragment.value = soundFragmentsStore.apiFormResponse.docData
+  } finally {
+    loading.value = false
   }
-})
+} )
 </script>

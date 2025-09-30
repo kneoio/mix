@@ -25,8 +25,8 @@
           <div class="col-auto text-caption" v-if="hasAnySelected">Selected: {{ selectedCount }}</div>
           <div class="col q-gutter-sm flex justify-end">
             <q-btn dense flat icon="chevron_left" :disable="page <= 1 || loading" @click="prevPage" />
-            <div class="text-caption">Page {{ page }}</div>
-            <q-btn dense flat icon="chevron_right" :disable="loading || items.length < pageSize" @click="nextPage" />
+            <div class="text-caption">Page {{ page }} / {{ maxPage }}</div>
+            <q-btn dense flat icon="chevron_right" :disable="loading || page >= maxPage" @click="nextPage" />
           </div>
         </div>
 
@@ -69,13 +69,10 @@ const page = ref(1)
 const pageSize = ref(10)
 const search = ref('')
 
-const items = store.items
-const loading = computed(() => store.loading)
-const totalDisplay = computed(() => {
-  if (typeof store.total === 'number') return store.total
-  const list = items.value
-  return Array.isArray(list) ? list.length : 0
-})
+const items = computed(() => store.getEntries)
+const loading = ref(false)
+const totalDisplay = computed(() => store.getPagination.itemCount)
+const maxPage = computed(() => store.getPagination.pageCount || 1)
 
 // selection
 const itemsArray = computed(() => items.value)
@@ -83,7 +80,12 @@ const { isSelected, toggle, clear, selectAll, selectedCount, hasAnySelected, all
   useSelection(itemsArray, (f) => f.slugName)
 
 async function load () {
-  await store.fetchSoundFragments(page.value, pageSize.value, search.value)
+  loading.value = true
+  try {
+    await store.fetchSoundFragments(page.value, pageSize.value, search.value)
+  } finally {
+    loading.value = false
+  }
 }
 
 function onSearch () {
@@ -92,8 +94,10 @@ function onSearch () {
 }
 
 function nextPage () {
-  page.value += 1
-  void load()
+  if (page.value < maxPage.value) {
+    page.value += 1
+    void load()
+  }
 }
 
 function prevPage () {

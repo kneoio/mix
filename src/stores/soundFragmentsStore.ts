@@ -7,6 +7,8 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
   const apiViewResponse = ref<ApiViewPageResponse<SoundFragment> | null>(null);
   const apiFormResponse = ref<ApiFormResponse<SoundFragment> | null>(null);
 
+  const getEntries = computed(() => apiViewResponse.value?.viewData?.entries || []);
+
   const getPagination = computed(() => {
     if (!apiViewResponse.value) return {
       page: 1,
@@ -40,15 +42,19 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
     if (searchQuery) params.q = searchQuery
     Object.assign(params, filters)
     const response = await apiClient.get('/soundfragments', {params})
-    if (!response?.data?.payload) throw new Error('Invalid API response for sound fragments');
     apiViewResponse.value = response.data.payload;
   }
 
   const fetchSoundFragment = async (id: string) => {
     const response = await apiClient.get(`/soundfragments/${encodeURIComponent(id)}`)
-    if (!response?.data?.payload) throw new Error('Invalid API response');
     apiFormResponse.value = response.data.payload;
-
   }
 
+  return {
+    apiFormResponse,
+    getPagination,
+    getEntries,
+    fetchSoundFragments,
+    fetchSoundFragment,
+  }
 })
