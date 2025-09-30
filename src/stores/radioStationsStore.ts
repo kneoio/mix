@@ -1,41 +1,25 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { absoluteApi, unsecuredClient } from 'src/api/apiClient'
-import type { RadioStationStatus, PageParams } from 'src/types/models'
+import { usePagination } from 'src/composables/usePagination'
+import type { ApiViewPageResponse, RadioStationStatus } from 'src/types/models'
 
 export const useRadioStationsStore = defineStore('radioStations', () => {
-  const stations = ref<RadioStationStatus[]>([])
-  const total = ref<number | null>(null)
-  const loading = ref(false)
+  const apiViewResponse = ref<ApiViewPageResponse<RadioStationStatus> | null>(null)
 
-  const fetchRadioStations = async (params: PageParams = {}) => {
-    loading.value = true
-    try {
-      const { page, size } = params
-      const response = await unsecuredClient.get(absoluteApi.radioAllStations, {
-        params: { page, size }
-      })
-      const data = response.data
+  const getEntries = computed(() => apiViewResponse.value?.viewData?.entries || [])
 
-      const items: RadioStationStatus[] = Array.isArray(data)
-        ? data
-        : (data?.payload?.viewData?.entries || data?.stations || [])
+  const { getPagination } = usePagination(apiViewResponse)
 
-      stations.value = items
-      total.value = (typeof data?.payload?.viewData?.total === 'number')
-        ? data.payload.viewData.total
-        : (Array.isArray(data) ? data.length : (data?.total ?? items.length))
-
-      return items
-    } finally {
-      loading.value = false
-    }
+  const fetchRadioStations = async (page = 1, pageSize = 10) => {
+    const params = { page, size: pageSize }
+    const response = await unsecuredClient.get(absoluteApi.radioAllStations, { params })
+    apiViewResponse.value = response.data.payload
   }
 
   return {
-    stations,
-    total,
-    loading,
+    getPagination,
+    getEntries,
     fetchRadioStations
   }
 })

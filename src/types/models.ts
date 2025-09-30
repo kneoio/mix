@@ -90,7 +90,7 @@ export interface SubmissionPayload {
 
 export interface SoundFragment {
   slugName: string;
-  id: string | null;
+  id: string;
   author: string;
   regDate: string;
   lastModifier: string;
@@ -126,17 +126,17 @@ export interface SoundFragmentFilterDTO {
   brandId?: string
 }
 
-export interface ApiFormResponse<T = any> {
+export interface ApiFormResponse<T = unknown> {
   docData: T;
-  actions: any[];
+  actions: unknown[];
 }
 
-export interface ApiViewPageResponse<T = any> {
+export interface ApiViewPageResponse<T = unknown> {
   actions: { caption: string }[];
   viewData: ViewData<T>;
 }
 
-export interface ViewData<T = any> {
+export interface ViewData<T = unknown> {
   count: number;
   pageNum: number;
   maxPage: number;

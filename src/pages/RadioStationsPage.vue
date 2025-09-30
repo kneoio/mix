@@ -15,10 +15,7 @@
           <div class="col-auto text-subtitle2">{{ displayedTotal }}</div>
         </div>
 
-        <div v-if="radioStationsStore.loading" class="q-mb-sm">
-          <q-linear-progress indeterminate rounded color="primary" />
-        </div>
-        <div v-else>
+        <div>
           <div v-if="filteredStations.length === 0" class="text-caption text-grey-7">No stations</div>
           <q-list v-else separator>
             <q-item v-for="s in filteredStations" :key="s.slugName">
@@ -49,16 +46,15 @@ onMounted(() => {
 const searchTerm = ref('')
 const filteredStations = computed(() => {
   const q = searchTerm.value.trim().toLowerCase()
-  if (!q) return radioStationsStore.stations
-  return radioStationsStore.stations.filter(s => {
-    const name = (s.name || '').toLowerCase()
-    const country = (s.countryCode || '').toLowerCase()
-    const status = (s.currentStatus || '').toLowerCase()
+  if (!q) return radioStationsStore.getEntries
+  return radioStationsStore.getEntries.filter(s => {
+    const name = s.name.toLowerCase()
+    const country = s.countryCode.toLowerCase()
+    const status = s.currentStatus.toLowerCase()
     return name.includes(q) || country.includes(q) || status.includes(q)
   })
 })
 const displayedTotal = computed(() => {
-  const base = radioStationsStore.total ?? radioStationsStore.stations.length
-  return searchTerm.value.trim() ? filteredStations.value.length : base
+  return searchTerm.value.trim() ? filteredStations.value.length : radioStationsStore.getPagination.itemCount
 })
 </script>

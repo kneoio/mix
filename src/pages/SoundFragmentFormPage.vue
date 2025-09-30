@@ -51,7 +51,6 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
-import type { SoundFragment } from 'src/types/models'
 
 const route = useRoute()
 const router = useRouter()
@@ -59,7 +58,8 @@ const soundFragmentsStore = useSoundFragmentsStore()
 
 const id = computed( () => String( route.params.id || '' ) )
 const loading = ref( false )
-const fragment = ref<SoundFragment | null>( null )
+
+const fragment = computed(() => soundFragmentsStore.apiFormResponse?.docData)
 
 function goBack() {
   router.back()
@@ -70,7 +70,6 @@ onMounted( async () => {
   loading.value = true
   try {
     await soundFragmentsStore.fetchSoundFragment( id.value )
-    fragment.value = soundFragmentsStore.apiFormResponse.docData
   } finally {
     loading.value = false
   }

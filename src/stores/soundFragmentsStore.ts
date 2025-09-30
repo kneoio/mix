@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import {computed, ref} from 'vue'
 import apiClient from 'src/api/apiClient'
+import {usePagination} from 'src/composables/usePagination'
 import type {ApiFormResponse, ApiViewPageResponse, SoundFragment, SoundFragmentFilterDTO} from 'src/types/models'
 
 export const useSoundFragmentsStore = defineStore('soundFragments', () => {
@@ -9,25 +10,7 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
 
   const getEntries = computed(() => apiViewResponse.value?.viewData?.entries || []);
 
-  const getPagination = computed(() => {
-    if (!apiViewResponse.value) return {
-      page: 1,
-      pageSize: 10,
-      itemCount: 0,
-      pageCount: 1,
-      showSizePicker: true,
-      pageSizes: [10, 20, 30, 40]
-    };
-
-    return {
-      page: apiViewResponse.value.viewData.pageNum,
-      pageSize: apiViewResponse.value.viewData.pageSize,
-      itemCount: apiViewResponse.value.viewData.count,
-      pageCount: apiViewResponse.value.viewData.maxPage,
-      showSizePicker: true,
-      pageSizes: [10, 20, 30, 40]
-    };
-  });
+  const { getPagination } = usePagination(apiViewResponse);
 
   const fetchSoundFragments = async (
     page = 1,

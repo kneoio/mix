@@ -73,12 +73,6 @@ apiClient.interceptors.response.use(
     const status = error?.response?.status
     if (status === 401 || status === 403) {
       try {
-        // clear private stores before redirecting to public view
-        try {
-          const mod = await import('src/stores/soundFragmentsStore')
-          const store = mod.useSoundFragmentsStore()
-          store.reset()
-        } catch { /* ignore store cleanup errors */ }
         if (window?.location?.pathname !== '/radiostations') {
           window.location.assign('/radiostations')
         }

@@ -36,7 +36,7 @@
         <div v-else>
           <div v-if="items.length === 0" class="text-caption text-grey-7">No fragments</div>
           <q-list v-else separator>
-            <q-item v-for="f in items" :key="f.slugName" clickable @click="openFragment(f)">
+            <q-item v-for="f in items" :key="f.id" clickable @click="openFragment(f.id)">
               <q-item-section side>
                 <q-checkbox
                   :model-value="isSelected(f)"
@@ -77,7 +77,7 @@ const maxPage = computed(() => store.getPagination.pageCount || 1)
 // selection
 const itemsArray = computed(() => items.value)
 const { isSelected, toggle, clear, selectAll, selectedCount, hasAnySelected, allSelectedOnPage } =
-  useSelection(itemsArray, (f) => f.slugName)
+  useSelection(itemsArray, (f) => f.id)
 
 async function load () {
   loading.value = true
@@ -107,10 +107,8 @@ function prevPage () {
   }
 }
 
-function openFragment (f: any) {
-  const id = f?.slugName || f?.id
-  if (!id) return
-  void router.push(`/fragments/${encodeURIComponent(String(id))}`)
+function openFragment (id: string) {
+  void router.push(`/fragments/${encodeURIComponent(id)}`)
 }
 
 onMounted(() => {
