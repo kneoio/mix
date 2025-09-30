@@ -2,59 +2,88 @@
   <q-page class="q-pa-md">
     <div class="text-h5 q-mb-md">Radiostations</div>
 
-    <q-card flat>
-      <q-card-section>
-        <div class="row q-col-gutter-sm q-mb-md">
-          <div class="col-12 col-md-6">
-            <q-input v-model="searchTerm" dense clearable debounce="200" placeholder="Search stations" />
-          </div>
-        </div>
-
-        <div class="row items-center q-col-gutter-sm q-mb-sm">
-          <div class="col-auto text-subtitle2">Total:</div>
-          <div class="col-auto text-subtitle2">{{ displayedTotal }}</div>
-        </div>
-
-        <div>
-          <div v-if="filteredStations.length === 0" class="text-caption text-grey-7">No stations</div>
-          <q-list v-else separator>
-            <q-item v-for="s in filteredStations" :key="s.slugName">
-              <q-item-section>
-                <div class="text-body1">{{ s.name }}</div>
-                <div class="text-caption text-grey-7">{{ s.countryCode }} · {{ s.currentStatus }}</div>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </div>
-      </q-card-section>
-    </q-card>
+    <q-linear-progress v-if="loading" indeterminate color="primary" />
+    <q-table
+      v-else
+      :rows="filteredStations"
+      :columns="columns"
+      row-key="slugName"
+      flat
+      :filter="searchTerm"
+      :selected="selectedRows"
+      @update:selected="updateSelected"
+      selection="multiple"
+      :visible-columns="visibleColumns"
+      class="sticky-header-table"
+      @row-click="(evt, row) => openStation(row.slugName)"
+    >
+      <template v-slot:top>
+        <q-input v-model="searchTerm" dense clearable debounce="200" placeholder="Search stations" class="col-6" />
+      </template>
+      <template v-slot:body-cell-description="props">
+        <q-td :props="props">
+          <div class="ellipsis" style="max-width: 300px">{{ props.value }}</div>
+        </q-td>
+      </template>
+    </q-table>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
+import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
+import type { RadioStationStatus } from 'src/types/models'
 
 const radioStationsStore = useRadioStationsStore()
+const $q = useQuasar()
+const router = useRouter()
+const loading = ref(false)
 
-onMounted(() => {
-  // trigger initial load so network request is initiated
-  void radioStationsStore.fetchRadioStations()
+onMounted(async () => {
+  loading.value = true
+  try {
+    await radioStationsStore.fetchRadioStations()
+  } finally {
+    loading.value = false
+  }
 })
 
-// search state
 const searchTerm = ref('')
-const filteredStations = computed(() => {
-  const q = searchTerm.value.trim().toLowerCase()
-  if (!q) return radioStationsStore.getEntries
-  return radioStationsStore.getEntries.filter(s => {
-    const name = s.name.toLowerCase()
-    const country = s.countryCode.toLowerCase()
-    const status = s.currentStatus.toLowerCase()
-    return name.includes(q) || country.includes(q) || status.includes(q)
-  })
+const selectedRows = ref<RadioStationStatus[]>([])
+
+const filteredStations = computed(() => radioStationsStore.getEntries)
+
+const columns = [
+  { name: 'name', label: 'Name', field: 'name', align: 'left' as const },
+  { name: 'countryCode', label: 'Country', field: 'countryCode', align: 'left' as const },
+  { name: 'currentStatus', label: 'Status', field: 'currentStatus', align: 'left' as const },
+  { name: 'description', label: 'Description', field: 'description', align: 'left' as const }
+]
+
+const visibleColumns = computed(() => {
+  if ($q.screen.lt.sm) {
+    return ['name', 'currentStatus']
+  }
+  if ($q.screen.lt.md) {
+    return ['name', 'countryCode', 'currentStatus']
+  }
+  return ['name', 'countryCode', 'currentStatus', 'description']
 })
-const displayedTotal = computed(() => {
-  return searchTerm.value.trim() ? filteredStations.value.length : radioStationsStore.getPagination.itemCount
-})
+
+function updateSelected(rows: readonly RadioStationStatus[]) {
+  selectedRows.value = [...rows]
+}
+
+function openStation(slugName: string) {
+  void router.push(`/radiostations/${encodeURIComponent(slugName)}`)
+}
 </script>
+
+<style scoped>
+.sticky-header-table :deep(thead tr th) {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+</style>

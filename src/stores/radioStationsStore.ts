@@ -1,20 +1,23 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { absoluteApi, unsecuredClient } from 'src/api/apiClient'
-import { usePagination } from 'src/composables/usePagination'
-import type { ApiViewPageResponse, RadioStationStatus } from 'src/types/models'
+import type { RadioStationStatus } from 'src/types/models'
 
 export const useRadioStationsStore = defineStore('radioStations', () => {
-  const apiViewResponse = ref<ApiViewPageResponse<RadioStationStatus> | null>(null)
+  const entries = ref<RadioStationStatus[]>([])
 
-  const getEntries = computed(() => apiViewResponse.value?.viewData?.entries || [])
+  const getEntries = computed(() => entries.value)
 
-  const { getPagination } = usePagination(apiViewResponse)
+  const getPagination = computed(() => ({
+    itemCount: entries.value.length,
+    pageNum: 1,
+    maxPage: 1,
+    pageSize: entries.value.length
+  }))
 
-  const fetchRadioStations = async (page = 1, pageSize = 10) => {
-    const params = { page, size: pageSize }
-    const response = await unsecuredClient.get(absoluteApi.radioAllStations, { params })
-    apiViewResponse.value = response.data.payload
+  const fetchRadioStations = async () => {
+    const response = await unsecuredClient.get(absoluteApi.radioAllStations)
+    entries.value = response.data
   }
 
   return {

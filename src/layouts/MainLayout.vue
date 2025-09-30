@@ -14,8 +14,6 @@
         <q-toolbar-title>
           {{$t('appTitle')}}
         </q-toolbar-title>
-
-        <div class="q-mr-md">Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -86,27 +84,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useQuasar } from 'quasar';
 import { keycloak } from 'src/boot/keycloak'
 
 const leftDrawerOpen = ref(false);
-const $q = useQuasar();
-
-const THEME_KEY = 'app:prefers-dark';
+const isAuthenticated = ref(false)
 
 onMounted(() => {
-  try {
-    const saved = localStorage.getItem(THEME_KEY);
-    if (saved !== null) {
-      $q.dark.set(saved === '1');
-    }
-  } catch (err) {
-    // ignore read errors
-    void err
-  }
-  // set initial auth state
   isAuthenticated.value = keycloak.authenticated === true
-  // keep auth state in sync with keycloak callbacks
   keycloak.onAuthSuccess = () => { isAuthenticated.value = true }
   keycloak.onAuthLogout = () => { isAuthenticated.value = false }
   keycloak.onAuthRefreshSuccess = () => { isAuthenticated.value = true }
@@ -116,10 +100,4 @@ onMounted(() => {
 function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
-
-// i18n language switcher state
-// moved to Profile page
-
-// auth state
-const isAuthenticated = ref(false)
 </script>
