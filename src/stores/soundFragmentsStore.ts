@@ -34,16 +34,22 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
         ? data.payload.viewData.total
         : (Array.isArray(data) ? data.length : (data?.total ?? list.length))
 
-      return list
     } finally {
       loading.value = false
     }
+  }
+
+  function reset () {
+    items.value = []
+    total.value = null
+    loading.value = false
   }
 
   return {
     items,
     total,
     loading,
-    fetchSoundFragments
+    fetchSoundFragments,
+    reset
   }
 })

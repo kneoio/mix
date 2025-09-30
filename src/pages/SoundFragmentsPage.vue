@@ -13,6 +13,16 @@
         <div class="row items-center q-col-gutter-sm q-mb-sm">
           <div class="col-auto text-subtitle2">Total:</div>
           <div class="col-auto text-subtitle2">{{ totalDisplay }}</div>
+          <div class="col-auto">
+            <q-checkbox
+              :model-value="allSelectedOnPage"
+              :indeterminate="hasAnySelected && !allSelectedOnPage"
+              dense
+              @update:model-value="(v) => (v ? selectAll() : clear())"
+              label="Select page"
+            />
+          </div>
+          <div class="col-auto text-caption" v-if="hasAnySelected">Selected: {{ selectedCount }}</div>
           <div class="col q-gutter-sm flex justify-end">
             <q-btn dense flat icon="chevron_left" :disable="page <= 1 || loading" @click="prevPage" />
             <div class="text-caption">Page {{ page }}</div>
@@ -27,6 +37,13 @@
           <div v-if="items.length === 0" class="text-caption text-grey-7">No fragments</div>
           <q-list v-else separator>
             <q-item v-for="f in items" :key="f.slugName">
+              <q-item-section side>
+                <q-checkbox
+                  :model-value="isSelected(f)"
+                  @update:model-value="(v) => toggle(f, v as boolean)"
+                  dense
+                />
+              </q-item-section>
               <q-item-section>
                 <div class="text-body1">{{ f.title || f.slugName }}</div>
                 <div class="text-caption text-grey-7">{{ f.artist || '—' }} · {{ f.type }} · {{ f.genres?.join(', ') }}</div>
@@ -42,6 +59,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
+import { useSelection } from 'src/composables/useSelection'
 
 const store = useSoundFragmentsStore()
 const page = ref(1)
@@ -51,6 +69,11 @@ const search = ref('')
 const items = computed(() => store.items)
 const loading = computed(() => store.loading)
 const totalDisplay = computed(() => (store.total ?? items.value.length))
+
+// selection
+const itemsArray = computed(() => items.value)
+const { isSelected, toggle, clear, selectAll, selectedCount, hasAnySelected, allSelectedOnPage } =
+  useSelection(itemsArray, (f) => f.slugName)
 
 async function load () {
   await store.fetchSoundFragments(page.value, pageSize.value, search.value)

@@ -47,7 +47,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/fragments" v-ripple>
+        <q-item v-if="isAuthenticated" clickable to="/fragments" v-ripple>
           <q-item-section avatar>
             <q-icon name="library_music" />
           </q-item-section>
