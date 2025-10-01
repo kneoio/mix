@@ -14,52 +14,104 @@
       <q-linear-progress v-if=" loading " indeterminate color="primary" />
       <q-card-section v-else>
         <div v-if=" !fragment " class="text-caption text-grey-7">Not found</div>
-        <div v-else class="column q-col-gutter-sm">
-          <div class="row">
+        <q-form v-else class="column q-col-gutter-md">
+          <div class="row q-col-gutter-md">
             <div class="col-12 col-md-6">
-              <div class="text-subtitle2">Title</div>
-              <div class="text-body1">{{ fragment.title || '—' }}</div>
+              <q-input
+                v-model="formData.title"
+                label="Title"
+                outlined
+                dense
+              />
             </div>
             <div class="col-12 col-md-6">
-              <div class="text-subtitle2">Artist</div>
-              <div class="text-body1">{{ fragment.artist || '—' }}</div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 col-md-6">
-              <div class="text-subtitle2">Type</div>
-              <div class="text-body1">{{ fragment.type }}</div>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="text-subtitle2">Genres</div>
-              <div class="text-body1">{{ ( fragment.genres || [] ).join( ', ' ) || '—' }}</div>
+              <q-input
+                v-model="formData.artist"
+                label="Artist"
+                outlined
+                dense
+              />
             </div>
           </div>
-          <div class="row">
+          <div class="row q-col-gutter-md">
             <div class="col-12 col-md-6">
-              <div class="text-subtitle2">Album</div>
-              <div class="text-body1">{{ fragment.album || '—' }}</div>
+              <q-select
+                v-model="formData.type"
+                :options="typeOptions"
+                label="Type"
+                outlined
+                dense
+              />
+            </div>
+            <div class="col-12 col-md-6">
+              <q-select
+                v-model="formData.genres"
+                :options="referencesStore.genreOptions"
+                option-label="label"
+                option-value="value"
+                emit-value
+                map-options
+                label="Genres"
+                outlined
+                dense
+                multiple
+                use-chips
+              />
             </div>
           </div>
-        </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-6">
+              <q-input
+                v-model="formData.album"
+                label="Album"
+                outlined
+                dense
+              />
+            </div>
+          </div>
+        </q-form>
       </q-card-section>
     </q-card>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
+import { useReferencesStore } from 'src/stores/referencesStore'
+import type { SoundFragment } from 'src/types/models'
+import { FragmentType } from 'src/types/models'
 
 const route = useRoute()
 const router = useRouter()
 const soundFragmentsStore = useSoundFragmentsStore()
+const referencesStore = useReferencesStore()
 
 const id = computed( () => String( route.params.id || '' ) )
 const loading = ref( false )
 
 const fragment = computed(() => soundFragmentsStore.apiFormResponse?.docData)
+
+const typeOptions = Object.values(FragmentType)
+
+const formData = reactive<Partial<SoundFragment>>({
+  title: '',
+  artist: '',
+  type: FragmentType.SONG,
+  genres: [],
+  album: ''
+})
+
+watch(fragment, (newFragment) => {
+  if (newFragment) {
+    formData.title = newFragment.title || ''
+    formData.artist = newFragment.artist || ''
+    formData.type = newFragment.type
+    formData.genres = newFragment.genres || []
+    formData.album = newFragment.album || ''
+  }
+}, { immediate: true })
 
 function goBack() {
   router.back()
@@ -69,7 +121,10 @@ onMounted( async () => {
   if ( !id.value ) return
   loading.value = true
   try {
-    await soundFragmentsStore.fetchSoundFragment( id.value )
+    await Promise.all([
+      soundFragmentsStore.fetchSoundFragment( id.value ),
+      referencesStore.fetchGenres()
+    ])
   } finally {
     loading.value = false
   }
