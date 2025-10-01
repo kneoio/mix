@@ -86,7 +86,7 @@
           <div class="bg-grey-6" style="width: 40px; height: 4px; border-radius: 2px;"></div>
         </div>
         <q-toolbar>
-          <div class="text-caption q-mr-sm">{{ nowPlaying }}</div>
+          <div class="text-caption footer-text">{{ nowPlayingParts.title }}</div>
           <q-btn 
             flat 
             round 
@@ -94,9 +94,10 @@
             :icon="isPlaying ? 'pause' : 'play_arrow'" 
             color="white" 
             @click="togglePlay"
+            class="footer-play-btn"
           />
-          <q-space />
-          <q-btn flat round dense icon="expand_less" @click="showFullscreen = true" />
+          <div class="text-caption footer-text">{{ nowPlayingParts.artist }}</div>
+          <q-btn flat round dense icon="expand_less" @click="showFullscreen = true" class="gt-xs" />
         </q-toolbar>
       </div>
     </q-footer>
@@ -108,7 +109,8 @@
         <q-bar class="bg-grey-8 text-white">
           <div class="text-h6 mixpla-title">Mixpla</div>
           <q-space />
-          <q-btn flat dense round icon="close" v-close-popup />
+          <q-btn flat dense round icon="expand_less" v-close-popup class="lt-sm" />
+          <q-btn flat dense round icon="close" v-close-popup class="gt-xs" />
         </q-bar>
         <q-card-section class="q-pa-md player-content">
           <div class="station-info">
@@ -139,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { storeToRefs } from 'pinia'
 import { useQuasar } from 'quasar'
 import { keycloak } from 'src/boot/keycloak'
@@ -154,6 +156,20 @@ const showFullscreen = ref( false )
 const audioPlayer = ref<HTMLAudioElement | null>(null)
 
 const { stationName, nowPlaying, displayStatusText, isPlaying } = storeToRefs(playerStore)
+
+const nowPlayingParts = computed(() => {
+  if (nowPlaying.value.includes('|')) {
+    const parts = nowPlaying.value.split('|')
+    return {
+      title: (parts[0] || '').trim(),
+      artist: (parts[1] || '').trim()
+    }
+  }
+  return {
+    title: nowPlaying.value,
+    artist: ''
+  }
+})
 
 onMounted( () => {
   isAuthenticated.value = keycloak.authenticated === true
@@ -225,5 +241,22 @@ function togglePlay() {
 .station-status {
   font-size: 0.75rem;
   color: #aaa;
+}
+
+.footer-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(50% - 24px);
+}
+
+.footer-text:last-of-type {
+  text-align: right;
+}
+
+.footer-play-btn {
+  flex-shrink: 0;
+  margin: 0 8px;
 }
 </style>
