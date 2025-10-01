@@ -39,11 +39,11 @@ export interface RadioStation {
 export interface RadioStationStatus {
   name: string;
   slugName: string;
-  managedBy?: ManagedBy;
+  managedBy?: string;
   djName?: string;
   djPreferredLang?: string;
   djStatus?: string;
-  currentStatus: BrandStatus;
+  currentStatus: string;
   countryCode: string;
   color: string;
   description: string;
