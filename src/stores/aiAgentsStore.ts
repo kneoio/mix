@@ -2,34 +2,45 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { apiClient } from 'src/api/apiClient'
 import type { ApiViewPageResponse, ApiFormResponse } from 'src/types/api'
-import type { RadioStation } from 'src/types/models'
-import { BrandStatus } from 'src/types/models'
 
-export const useRadioStationsStore = defineStore('radioStations', () => {
-  const apiViewResponse = ref<ApiViewPageResponse<RadioStation> | null>(null)
-  const apiFormResponse = ref<ApiFormResponse<RadioStation> | null>(null)
+export interface AiAgent {
+  id: string
+  author: string
+  regDate: string
+  lastModifier: string
+  lastModifiedDate: string
+  name: string
+  prompt: string
+  talkativity: number
+  preferredVoice: string
+}
+
+export const useAiAgentsStore = defineStore('aiAgents', () => {
+  const apiViewResponse = ref<ApiViewPageResponse<AiAgent> | null>(null)
+  const apiFormResponse = ref<ApiFormResponse<AiAgent> | null>(null)
 
   const getEntries = computed(() => {
     return apiViewResponse.value?.viewData.entries || []
   })
 
+  const agentOptions = computed(() => {
+    return getEntries.value.map(agent => ({
+      label: agent.name,
+      value: agent.id
+    }))
+  })
+
   const getCurrent = computed(() => {
-    const defaultData: Partial<RadioStation> = {
+    const defaultData = {
       id: '',
       author: '',
       regDate: '',
       lastModifier: '',
       lastModifiedDate: '',
-      slugName: '',
-      country: '',
-      status: BrandStatus.OFF_LINE,
-      title: '',
-      localizedName: {},
-      description: '',
-      color: '',
-      url: '',
-      hlsUrl: '',
-      actionUrl: ''
+      name: '',
+      prompt: '',
+      talkativity: 50,
+      preferredVoice: ''
     }
 
     return apiFormResponse.value?.docData || defaultData
@@ -58,8 +69,8 @@ export const useRadioStationsStore = defineStore('radioStations', () => {
     }
   })
 
-  const fetchRadioStations = async (page = 1, pageSize = 10) => {
-    const response = await apiClient.get(`/radiostations?page=${page}&size=${pageSize}`)
+  const fetchAiAgents = async (page = 1, pageSize = 10) => {
+    const response = await apiClient.get(`/aiagents?page=${page}&size=${pageSize}`)
     if (response?.data?.payload) {
       apiViewResponse.value = response.data.payload
     } else {
@@ -67,8 +78,8 @@ export const useRadioStationsStore = defineStore('radioStations', () => {
     }
   }
 
-  const fetchRadioStation = async (id: string) => {
-    const response = await apiClient.get(`/radiostations/${id}`)
+  const fetchAiAgent = async (id: string) => {
+    const response = await apiClient.get(`/aiagents/${id}`)
     if (response?.data?.payload) {
       apiFormResponse.value = response.data.payload
     } else {
@@ -76,16 +87,17 @@ export const useRadioStationsStore = defineStore('radioStations', () => {
     }
   }
 
-  const deleteRadioStation = async (id: string) => {
-    await apiClient.delete(`/radiostations/${id}`)
+  const deleteAiAgent = async (id: string) => {
+    await apiClient.delete(`/aiagents/${id}`)
   }
 
   return {
     getEntries,
+    agentOptions,
     getCurrent,
     getPagination,
-    fetchRadioStations,
-    fetchRadioStation,
-    deleteRadioStation
+    fetchAiAgents,
+    fetchAiAgent,
+    deleteAiAgent
   }
 })
