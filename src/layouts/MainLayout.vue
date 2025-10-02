@@ -24,12 +24,12 @@
           Menu
         </q-item-label>
 
-        <q-item v-if=" isAuthenticated " clickable to="/favorites" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/space" v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
           </q-item-section>
           <q-item-section>
-            {{ $t( 'menu.favorites' ) }}
+            {{ $t( 'menu.space' ) }}
           </q-item-section>
         </q-item>
 
@@ -104,39 +104,7 @@
 
     <audio ref="audioPlayer" style="display: none;"></audio>
 
-    <q-dialog v-model="showFullscreen" maximized transition-show="slide-up" transition-hide="slide-down">
-      <q-card>
-        <q-bar class="bg-grey-8 text-white">
-          <div class="text-h6 mixpla-title">Mixpla</div>
-          <q-space />
-          <q-btn flat dense round icon="expand_less" v-close-popup class="lt-sm" />
-          <q-btn flat dense round icon="close" v-close-popup class="gt-xs" />
-        </q-bar>
-        <q-card-section class="q-pa-md player-content">
-          <div class="station-info">
-            <h1 class="station-name">{{ stationName }}</h1>
-          </div>
-
-          <div class="now-playing-info">
-            <AnimatedText :text="nowPlaying" />
-          </div>
-
-          <div class="controls">
-            <q-btn 
-              round 
-              size="xl" 
-              color="primary" 
-              :icon="isPlaying ? 'pause' : 'play_arrow'"
-              @click="togglePlay"
-            />
-          </div>
-
-          <div class="station-status">
-            <span>{{ displayStatusText }}</span>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
+    <PlayerPage v-model:showFullscreen="showFullscreen" />
   </q-layout>
 </template>
 
@@ -145,7 +113,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { storeToRefs } from 'pinia'
 import { useQuasar } from 'quasar'
 import { keycloak } from 'src/boot/keycloak'
-import AnimatedText from 'src/components/AnimatedText.vue'
+import PlayerPage from 'src/pages/PlayerPage.vue'
 import { usePlayerStore } from 'src/stores/playerStore'
 
 const $q = useQuasar()
@@ -155,7 +123,7 @@ const isAuthenticated = ref( false )
 const showFullscreen = ref( false )
 const audioPlayer = ref<HTMLAudioElement | null>(null)
 
-const { stationName, nowPlaying, displayStatusText, isPlaying } = storeToRefs(playerStore)
+const { nowPlaying, isPlaying } = storeToRefs(playerStore)
 
 const nowPlayingParts = computed(() => {
   if (nowPlaying.value.includes('|')) {
@@ -206,43 +174,6 @@ function togglePlay() {
 </script>
 
 <style scoped>
-.player-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  width: 100%;
-  padding-top: 2rem;
-}
-
-.station-info {
-  text-align: center;
-}
-
-.station-name {
-  font-weight: bold;
-  font-size: 1.5rem;
-  margin: 0;
-}
-
-.now-playing-info {
-  text-align: center;
-  font-size: 1.2rem;
-  min-height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.controls {
-  margin: 1rem 0;
-}
-
-.station-status {
-  font-size: 0.75rem;
-  color: #aaa;
-}
-
 .footer-text {
   flex: 1;
   overflow: hidden;

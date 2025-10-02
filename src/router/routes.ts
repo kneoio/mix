@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', redirect: '/radiostations' },
-      { path: 'favorites', component: () => import('pages/FavoritesPage.vue'), meta: { requiresAuth: true } },
+      { path: 'space', component: () => import('pages/SpacePage.vue'), meta: { public: true } },
       { path: 'radiostations', component: () => import('pages/RadioStationsPage.vue'), meta: { public: true } },
       { path: 'radiostations/:slugName', component: () => import('pages/RadioStationFormPage.vue'), meta: { requiresAuth: true } },
       { path: 'fragments', component: () => import('pages/SoundFragmentsPage.vue'), meta: { requiresAuth: true } },

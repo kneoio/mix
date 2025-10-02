@@ -120,7 +120,7 @@ export const usePlayerStore = defineStore('player', () => {
       nowPlaying.value = ''
       statusText.value = 'Loading station information...'
       
-      startPolling()
+      void fetchStationInfo()
     }
   }
 
@@ -209,7 +209,6 @@ export const usePlayerStore = defineStore('player', () => {
 
   const setAudioElement = (element: HTMLAudioElement) => {
     audioElement.value = element
-    initializeHls('lumisonic')
   }
 
   const togglePlay = () => {
@@ -217,13 +216,19 @@ export const usePlayerStore = defineStore('player', () => {
 
     if (audioElement.value.paused) {
       if (!hls) {
-        initializeHls('lumisonic')
+        initializeHls(radioSlug.value)
       }
       audioElement.value.play().catch(e => console.error('Play error:', e))
       isPlaying.value = true
+      startPolling()
     } else {
       audioElement.value.pause()
       isPlaying.value = false
+      stopPolling()
+      if (hls) {
+        hls.destroy()
+        hls = null
+      }
     }
   }
 

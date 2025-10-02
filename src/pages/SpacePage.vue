@@ -1,16 +1,103 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="text-h5 q-mb-md">Favorites</div>
+    <div class="text-h5 q-mb-md">Space</div>
 
-    <q-card flat bordered>
-      <q-card-section>
-        <div class="text-body1">No favorites yet.</div>
-        <div class="text-caption text-grey-7">Add items to your favorites to see them here.</div>
-      </q-card-section>
-    </q-card>
+    <q-linear-progress v-if="loading" indeterminate color="primary" />
+    
+    <div v-else class="row q-col-gutter-md">
+      <div 
+        v-for="station in radioStations" 
+        :key="station.slugName"
+        class="col-12 col-sm-6 col-md-4 col-lg-3"
+      >
+        <q-card 
+          flat 
+          bordered 
+          class="station-card cursor-pointer"
+          @click="openStation(station.slugName)"
+        >
+          <div class="color-bar" :style="{ backgroundColor: station.color }"></div>
+          
+          <q-card-section>
+            <div class="row items-center q-gutter-sm">
+              <div class="text-h6 col">{{ station.name }}</div>
+              <div class="text-caption" :class="getStatusClass(station.currentStatus)">
+                {{ statusText(station.currentStatus) }}
+              </div>
+            </div>
+            <div class="text-caption text-grey-7">{{ station.countryCode }}</div>
+          </q-card-section>
+          
+          <q-separator />
+          
+          <q-card-section>
+            <div class="text-body2 ellipsis-2-lines">{{ station.description }}</div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-// Placeholder page for Favorites
+import { onMounted, ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useRadioStationsStore } from 'src/stores/radioStationsStore'
+
+const radioStationsStore = useRadioStationsStore()
+const router = useRouter()
+const loading = ref(false)
+
+const radioStations = computed(() => radioStationsStore.getEntries)
+
+onMounted(async () => {
+  loading.value = true
+  try {
+    await radioStationsStore.fetchRadioStations()
+  } finally {
+    loading.value = false
+  }
+})
+
+function openStation(slugName: string) {
+  void router.push(`/radiostations/${encodeURIComponent(slugName)}`)
+}
+
+function statusText(s?: string) {
+  if (s === 'ON_LINE') return 'Online'
+  if (s === 'WARMING_UP') return 'Online'
+  if (s === 'OFF_LINE') return 'Offline'
+  return 'Unknown'
+}
+
+function getStatusClass(status?: string): string {
+  if (status === 'ON_LINE' || status === 'WARMING_UP') return 'text-positive'
+  return 'text-grey-7'
+}
 </script>
+
+<style scoped>
+.station-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+
+.station-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.color-bar {
+  height: 4px;
+  width: 100%;
+}
+
+.ellipsis-2-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.4em;
+}
+</style>

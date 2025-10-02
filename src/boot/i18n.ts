@@ -3,13 +3,13 @@ import { createI18n } from 'vue-i18n'
 
 export type Locale = 'pt' | 'en'
 
-const LOCALE_KEY = 'app:locale'
+const LOCALE_KEY = 'mix-locale'
 
 const messages = {
   pt: {
     appTitle: 'Mix',
     menu: {
-      favorites: 'Favoritos',
+      space: 'Espaço',
       radistions: 'Estações de rádio',
       login: 'Entrar',
       account: 'Conta'
@@ -22,7 +22,7 @@ const messages = {
   en: {
     appTitle: 'Mix',
     menu: {
-      favorites: 'Favorites',
+      space: 'Space',
       radistions: 'Radiostations',
       login: 'Login',
       account: 'Account'
@@ -33,7 +33,6 @@ const messages = {
     }
   }
 } as const
-
 const rawSaved = (typeof localStorage !== 'undefined' && localStorage.getItem(LOCALE_KEY)) || 'pt'
 const savedLocale: Locale = rawSaved === 'en' ? 'en' : 'pt'
 
