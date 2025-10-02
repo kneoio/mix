@@ -1,5 +1,5 @@
 import { computed, type Ref } from 'vue'
-import type { ApiViewPageResponse } from 'src/types/models'
+import type { ApiViewPageResponse } from 'src/types/api'
 
 export function usePagination<T>(apiViewResponse: Ref<ApiViewPageResponse<T> | null>) {
   const getPagination = computed(() => {

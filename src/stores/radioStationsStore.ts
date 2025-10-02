@@ -1,33 +1,91 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { absoluteApi, unsecuredClient, apiClient } from 'src/api/apiClient'
-import type { RadioStationStatus } from 'src/types/models'
+import { apiClient } from 'src/api/apiClient'
+import type { ApiViewPageResponse, ApiFormResponse } from 'src/types/api'
+import type { RadioStation } from 'src/types/models'
+import { BrandStatus } from 'src/types/models'
 
 export const useRadioStationsStore = defineStore('radioStations', () => {
-  const entries = ref<RadioStationStatus[]>([])
+  const apiViewResponse = ref<ApiViewPageResponse<RadioStation> | null>(null)
+  const apiFormResponse = ref<ApiFormResponse<RadioStation> | null>(null)
 
-  const getEntries = computed(() => entries.value)
+  const getEntries = computed(() => {
+    return apiViewResponse.value?.viewData.entries || []
+  })
 
-  const getPagination = computed(() => ({
-    itemCount: entries.value.length,
-    pageNum: 1,
-    maxPage: 1,
-    pageSize: entries.value.length
-  }))
+  const getCurrent = computed(() => {
+    const defaultData = {
+      id: '',
+      author: '',
+      regDate: '',
+      lastModifier: '',
+      lastModifiedDate: '',
+      slugName: '',
+      country: '',
+      status: BrandStatus.OFF_LINE,
+      title: '',
+      localizedName: {},
+      description: '',
+      color: '',
+      url: '',
+      hlsUrl: '',
+      actionUrl: ''
+    }
 
-  const fetchRadioStations = async () => {
-    const response = await unsecuredClient.get(absoluteApi.radioAllStations)
-    entries.value = response.data
+    return apiFormResponse.value?.docData || defaultData
+  })
+
+  const getPagination = computed(() => {
+    if (!apiViewResponse.value) {
+      return {
+        page: 1,
+        pageSize: 10,
+        itemCount: 0,
+        pageCount: 1,
+        showSizePicker: true,
+        pageSizes: [10, 20, 30, 40]
+      }
+    }
+
+    const { viewData } = apiViewResponse.value
+    return {
+      page: viewData.pageNum,
+      pageSize: viewData.pageSize,
+      itemCount: viewData.count,
+      pageCount: viewData.maxPage,
+      showSizePicker: true,
+      pageSizes: [10, 20, 30, 40]
+    }
+  })
+
+  const fetchRadioStations = async (page = 1, pageSize = 10) => {
+    const response = await apiClient.get(`/radiostations?page=${page}&size=${pageSize}`)
+    if (response?.data?.payload) {
+      apiViewResponse.value = response.data.payload
+    } else {
+      throw new Error('Invalid API response structure')
+    }
   }
 
-  const deleteRadioStation = async (slugName: string) => {
-    await apiClient.delete(`/radiostations/${slugName}`)
+  const fetchRadioStation = async (id: string) => {
+    const response = await apiClient.get(`/radiostations/${id}`)
+    if (response?.data?.payload) {
+      apiFormResponse.value = response.data.payload
+    } else {
+      throw new Error('Invalid API response structure')
+    }
+  }
+
+  const deleteRadioStation = async (id: string) => {
+    await apiClient.delete(`/radiostations/${id}`)
   }
 
   return {
-    getPagination,
     getEntries,
+    getCurrent,
+    getPagination,
     fetchRadioStations,
+    fetchRadioStation,
     deleteRadioStation
   }
 })

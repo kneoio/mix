@@ -3,9 +3,9 @@
     <div class="text-h5 q-mb-md">Radiostations</div>
 
     <q-linear-progress v-if=" loading " indeterminate color="primary" />
-    <q-table v-else :rows="filteredStations" :columns="columns" row-key="slugName" flat :filter="searchTerm"
+    <q-table v-else :rows="filteredStations" :columns="columns" row-key="id" flat :filter="searchTerm"
       :selected="selectedRows" @update:selected="updateSelected" selection="multiple" :visible-columns="visibleColumns"
-      class="sticky-header-table" @row-click="( evt, row ) => openStation( row.slugName )">
+      class="sticky-header-table" @row-click="( evt, row ) => openStation( row.id )">
       <template v-slot:top>
         <q-btn-group>
           <q-btn color="primary" label="New" size="md" @click="handleNew" />
@@ -29,7 +29,7 @@ import { onMounted, ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
-import type { RadioStationStatus } from 'src/types/models'
+import type { RadioStation } from 'src/types/models'
 
 const radioStationsStore = useRadioStationsStore()
 const $q = useQuasar()
@@ -46,33 +46,33 @@ onMounted( async () => {
 } )
 
 const searchTerm = ref( '' )
-const selectedRows = ref<RadioStationStatus[]>( [] )
+const selectedRows = ref<RadioStation[]>( [] )
 
 const filteredStations = computed( () => radioStationsStore.getEntries )
 
 const columns = [
-  { name: 'name', label: 'Name', field: 'name', align: 'left' as const },
-  { name: 'countryCode', label: 'Country', field: 'countryCode', align: 'left' as const },
-  { name: 'currentStatus', label: 'Status', field: 'currentStatus', align: 'left' as const },
+  { name: 'title', label: 'Title', field: 'slugName', align: 'left' as const },
+  { name: 'country', label: 'Country', field: 'country', align: 'left' as const },
+  { name: 'status', label: 'Status', field: 'status', align: 'left' as const },
   { name: 'description', label: 'Description', field: 'description', align: 'left' as const }
 ]
 
 const visibleColumns = computed( () => {
   if ( $q.screen.lt.sm ) {
-    return ['name', 'currentStatus']
+    return ['title', 'status']
   }
   if ( $q.screen.lt.md ) {
-    return ['name', 'countryCode', 'currentStatus']
+    return ['title', 'country', 'status']
   }
-  return ['name', 'countryCode', 'currentStatus', 'description']
+  return ['title', 'country', 'status', 'description']
 } )
 
-function updateSelected( rows: readonly RadioStationStatus[] ) {
+function updateSelected( rows: readonly RadioStation[] ) {
   selectedRows.value = [...rows]
 }
 
-function openStation( slugName: string ) {
-  void router.push( `/radiostations/${encodeURIComponent( slugName )}` )
+function openStation( id: string ) {
+  void router.push( `/radiostations/${id}` )
 }
 
 function handleNew() {
@@ -88,7 +88,7 @@ async function handleDelete() {
   try {
     loading.value = true
     await Promise.all( selectedRows.value.map( s =>
-      radioStationsStore.deleteRadioStation( s.slugName )
+      radioStationsStore.deleteRadioStation( s.id )
     ) )
     selectedRows.value = []
     await radioStationsStore.fetchRadioStations()

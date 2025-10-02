@@ -1,35 +1,31 @@
 <template>
   <q-page class="q-pa-md">
     <div class="row items-center q-mb-md">
-      <div class="col">
-        <div class="text-h5">Radio Station</div>
-        <div class="text-caption text-grey-7">{{ slugName }}</div>
-      </div>
       <div class="col-auto">
         <q-btn flat icon="arrow_back" label="Back" @click="goBack" />
+      </div>
+      <div class="col">
+        <div class="text-h5">{{ station.slugName }}</div>
+        <div class="text-caption" :class="getStatusClass(station.status)">{{ statusText(station.status) }}</div>
       </div>
     </div>
 
     <q-card flat bordered>
       <q-linear-progress v-if="loading" indeterminate color="primary" />
       <q-card-section v-else>
-        <div v-if="!station" class="text-caption text-grey-7">Not found</div>
+        <div v-if="!station.id" class="text-caption text-grey-7">Not found</div>
         <div v-else class="column q-col-gutter-sm">
           <div class="row">
             <div class="col-12 col-md-6">
-              <div class="text-subtitle2">Name</div>
-              <div class="text-body1">{{ station.name }}</div>
+              <div class="text-subtitle2">Title</div>
+              <div class="text-body1">{{ station.title }}</div>
             </div>
             <div class="col-12 col-md-6">
               <div class="text-subtitle2">Country</div>
-              <div class="text-body1">{{ station.countryCode }}</div>
+              <div class="text-body1">{{ station.country }}</div>
             </div>
           </div>
           <div class="row">
-            <div class="col-12 col-md-6">
-              <div class="text-subtitle2">Status</div>
-              <div class="text-body1">{{ station.currentStatus }}</div>
-            </div>
             <div class="col-12 col-md-6">
               <div class="text-subtitle2">Color</div>
               <div class="text-body1">{{ station.color }}</div>
@@ -43,8 +39,12 @@
           </div>
           <div class="row">
             <div class="col-12 col-md-6">
-              <div class="text-subtitle2">Available Songs</div>
-              <div class="text-body1">{{ station.availableSongs }}</div>
+              <div class="text-subtitle2">URL</div>
+              <div class="text-body1">{{ station.url || '—' }}</div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="text-subtitle2">HLS URL</div>
+              <div class="text-body1">{{ station.hlsUrl || '—' }}</div>
             </div>
           </div>
         </div>
@@ -62,25 +62,33 @@ const route = useRoute()
 const router = useRouter()
 const radioStationsStore = useRadioStationsStore()
 
-const slugName = computed(() => String(route.params.slugName || ''))
+const stationId = computed(() => String(route.params.id || ''))
 const loading = ref(false)
 
-const station = computed(() => 
-  radioStationsStore.getEntries.find(s => s.slugName === slugName.value)
-)
+const station = computed(() => radioStationsStore.getCurrent)
 
 function goBack() {
   router.back()
 }
 
+function statusText(s?: string) {
+  if (s === 'ON_LINE') return 'Online'
+  if (s === 'WARMING_UP') return 'Online'
+  if (s === 'OFF_LINE') return 'Offline'
+  return 'Unknown'
+}
+
+function getStatusClass(status?: string): string {
+  if (status === 'ON_LINE' || status === 'WARMING_UP') return 'text-positive'
+  return 'text-grey-7'
+}
+
 onMounted(async () => {
-  if (radioStationsStore.getEntries.length === 0) {
-    loading.value = true
-    try {
-      await radioStationsStore.fetchRadioStations()
-    } finally {
-      loading.value = false
-    }
+  loading.value = true
+  try {
+    await radioStationsStore.fetchRadioStation(stationId.value)
+  } finally {
+    loading.value = false
   }
 })
 </script>

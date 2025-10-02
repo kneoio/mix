@@ -2,7 +2,8 @@ import {defineStore} from 'pinia'
 import {computed, ref} from 'vue'
 import apiClient from 'src/api/apiClient'
 import {usePagination} from 'src/composables/usePagination'
-import type {ApiFormResponse, ApiViewPageResponse, SoundFragment, SoundFragmentFilterDTO} from 'src/types/models'
+import type {ApiFormResponse, ApiViewPageResponse} from 'src/types/api'
+import type {SoundFragment, SoundFragmentFilterDTO} from 'src/types/models'
 
 export const useSoundFragmentsStore = defineStore('soundFragments', () => {
   const apiViewResponse = ref<ApiViewPageResponse<SoundFragment> | null>(null);

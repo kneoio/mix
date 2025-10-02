@@ -1,11 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { apiClient } from 'src/api/apiClient'
+import { unsecuredClient, absoluteApi } from 'src/api/apiClient'
 import Hls from 'hls.js'
 import type { RadioStationStatus } from 'src/types/models'
 
 export const usePlayerStore = defineStore('player', () => {
-  // State
   const stations = ref<RadioStationStatus[]>([])
   const radioName = ref('lumisonic')
   const radioSlug = ref('lumisonic')
@@ -21,12 +20,11 @@ export const usePlayerStore = defineStore('player', () => {
   const bufferStatus = ref('ok')
   const isPlaying = ref(false)
   const audioElement = ref<HTMLAudioElement | null>(null)
-  
+
   let statusPollingInterval: NodeJS.Timeout | null = null
   let listPollingInterval: NodeJS.Timeout | null = null
   let hls: Hls | null = null
 
-  // Getters
   const displayStatusText = computed(() => {
     if (isAsleep.value) {
       return 'Station is offline'
@@ -34,38 +32,25 @@ export const usePlayerStore = defineStore('player', () => {
     return statusText.value
   })
 
-  // Actions
-  const fetchStations = async () => {
-    try {
-      const response = await apiClient.get('/radiostations')
-      stations.value = response.data
-      
-      // Auto-select first online station if none selected
-      if (!radioName.value && stations.value.length > 0) {
-        const onlineStation = stations.value.find(s => s.currentStatus === 'ONLINE')
-        if (onlineStation) {
-          setStation(onlineStation.slugName)
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch stations:', error)
-    }
+  const fetchRadioStations = async () => {
+    const response = await unsecuredClient.get(absoluteApi.radioAllStations)
+    stations.value = response.data
   }
 
   const fetchStationInfo = async () => {
     if (!radioSlug.value) return
-    
+
     try {
-      const response = await apiClient.get(`/radiostations/${radioSlug.value}/status`)
+      const response = await unsecuredClient.get(`/radiostations/${radioSlug.value}/status`)
       const data = response.data
-      
+
       stationName.value = data.name || stationName.value
       djName.value = data.djName
       djStatus.value = data.djStatus
-      
+
       const isOnline = data.currentStatus === 'ONLINE' || data.currentStatus === 'BROADCASTING'
-      
-      if (isOnline && data.currentSong === 'Waiting for curator to start the broadcast...') {
+
+      if (isOnline) {
         statusText.value = 'Station is online, waiting for curator...'
         isAsleep.value = false
         isBroadcasting.value = false
@@ -74,17 +59,17 @@ export const usePlayerStore = defineStore('player', () => {
         isAsleep.value = false
         isBroadcasting.value = isOnline
         isWaitingForCurator.value = false
-        
+
         if (data.currentSong && data.currentSong.trim() !== '') {
           nowPlaying.value = data.currentSong
         }
-        
+
         const displayParts = []
         if (data.countryCode) displayParts.push(`Country: ${data.countryCode}`)
         if (data.djName) displayParts.push(`DJ: ${data.djName}`)
         statusText.value = displayParts.join(', ') || 'Broadcasting'
       }
-      
+
       if (data.color && data.color.match(/^#[0-9a-fA-F]{6,8}$/)) {
         stationColor.value = data.color.length === 9 ? data.color.substring(0, 7) : data.color
       }
@@ -102,26 +87,17 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  const setStation = (stationSlugOrName: string) => {
-    const station = stations.value.find(s => 
-      s.slugName === stationSlugOrName || s.name === stationSlugOrName
-    )
-    
-    if (station) {
-      radioName.value = station.name
-      radioSlug.value = station.slugName
-      stationName.value = station.name
-      stationColor.value = station.color || null
-      isAsleep.value = false
-      isBroadcasting.value = false
-      isWaitingForCurator.value = false
-      djName.value = null
-      djStatus.value = null
-      nowPlaying.value = ''
-      statusText.value = 'Loading station information...'
-      
-      void fetchStationInfo()
-    }
+  const setStation = (slugName: string) => {
+    radioSlug.value = slugName
+    isAsleep.value = false
+    isBroadcasting.value = false
+    isWaitingForCurator.value = false
+    djName.value = null
+    djStatus.value = null
+    nowPlaying.value = ''
+    statusText.value = 'Loading station information...'
+
+    void fetchStationInfo()
   }
 
   const setBufferStatus = (status: string) => {
@@ -143,12 +119,6 @@ export const usePlayerStore = defineStore('player', () => {
       clearInterval(statusPollingInterval)
       statusPollingInterval = null
     }
-  }
-
-  const startListPolling = () => {
-    listPollingInterval = setInterval(() => {
-      void fetchStations()
-    }, 60000)
   }
 
   const stopListPolling = () => {
@@ -258,18 +228,17 @@ export const usePlayerStore = defineStore('player', () => {
     bufferStatus,
     isPlaying,
     audioElement,
-    
+
     // Getters
     displayStatusText,
-    
+
     // Actions
-    fetchStations,
+    fetchRadioStations,
     fetchStationInfo,
     setStation,
     setBufferStatus,
     startPolling,
     stopPolling,
-    startListPolling,
     stopListPolling,
     setAudioElement,
     togglePlay,

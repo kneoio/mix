@@ -1,7 +1,5 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="text-h5 q-mb-md">Space</div>
-
     <q-linear-progress v-if="loading" indeterminate color="primary" />
     
     <div v-else class="row q-col-gutter-md">
@@ -12,7 +10,6 @@
       >
         <q-card 
           flat 
-          bordered 
           class="station-card cursor-pointer"
           @click="openStation(station.slugName)"
         >
@@ -20,12 +17,13 @@
           
           <q-card-section>
             <div class="row items-center q-gutter-sm">
-              <div class="text-h6 col">{{ station.name }}</div>
+              <div class="text-h6">{{ station.name }}</div>
+              <div class="text-caption text-grey-7">{{ station.countryCode }}</div>
+              <q-space />
               <div class="text-caption" :class="getStatusClass(station.currentStatus)">
                 {{ statusText(station.currentStatus) }}
               </div>
             </div>
-            <div class="text-caption text-grey-7">{{ station.countryCode }}</div>
           </q-card-section>
           
           <q-separator />
@@ -42,18 +40,18 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useRadioStationsStore } from 'src/stores/radioStationsStore'
+import { usePlayerStore } from 'src/stores/playerStore'
 
-const radioStationsStore = useRadioStationsStore()
+const playerStore = usePlayerStore()
 const router = useRouter()
 const loading = ref(false)
 
-const radioStations = computed(() => radioStationsStore.getEntries)
+const radioStations = computed(() => playerStore.stations)
 
 onMounted(async () => {
   loading.value = true
   try {
-    await radioStationsStore.fetchRadioStations()
+    await playerStore.fetchRadioStations()
   } finally {
     loading.value = false
   }
