@@ -1,20 +1,20 @@
 <template>
   <q-page class="q-pa-md">
     <q-linear-progress v-if="loading" indeterminate color="primary" />
-    
+
     <div v-else class="row q-col-gutter-md">
-      <div 
-        v-for="station in radioStations" 
+      <div
+        v-for="station in radioStations"
         :key="station.slugName"
         class="col-12 col-sm-6 col-md-4 col-lg-3"
       >
-        <q-card 
-          flat 
+        <q-card
+          flat
           class="station-card cursor-pointer"
           @click="openStation(station.slugName)"
         >
           <div class="color-bar" :style="{ backgroundColor: station.color }"></div>
-          
+
           <q-card-section>
             <div class="row items-center q-gutter-sm">
               <div class="text-h6">{{ station.name }}</div>
@@ -25,9 +25,9 @@
               </div>
             </div>
           </q-card-section>
-          
+
           <q-separator />
-          
+
           <q-card-section>
             <div class="text-body2 ellipsis-2-lines">{{ station.description }}</div>
           </q-card-section>
@@ -58,7 +58,7 @@ onMounted(async () => {
 })
 
 function openStation(slugName: string) {
-  void router.push(`/radiostations/${encodeURIComponent(slugName)}`)
+  void router.push(`/station/${slugName}`)
 }
 
 function statusText(s?: string) {

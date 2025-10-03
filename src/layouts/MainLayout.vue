@@ -24,7 +24,7 @@
           Menu
         </q-item-label>
 
-        <q-item v-if=" isAuthenticated " clickable to="/space" v-ripple>
+        <q-item clickable to="/space" v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
           </q-item-section>
@@ -33,12 +33,21 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/radiostations" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/radiostations" v-ripple>
           <q-item-section avatar>
             <q-icon name="radio" />
           </q-item-section>
           <q-item-section>
             {{ $t( 'menu.radistions' ) }}
+          </q-item-section>
+        </q-item>
+
+        <q-item v-if=" isAuthenticated " clickable to="/listeners" v-ripple>
+          <q-item-section avatar>
+            <q-icon name="people" />
+          </q-item-section>
+          <q-item-section>
+            Listeners
           </q-item-section>
         </q-item>
 

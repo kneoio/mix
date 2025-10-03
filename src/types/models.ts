@@ -158,3 +158,27 @@ export interface PageParams {
   page?: number
   size?: number
 }
+
+export interface Listener {
+  id: string
+  author: string
+  regDate: string
+  lastModifier: string
+  lastModifiedDate: string
+  localizedName: Record<string, string>
+  userId: number
+  country: string
+  nickName: Record<string, string>
+  slugName: string
+  archived: number
+}
+
+export interface ListenerSave {
+  localizedName?: Record<string, string>
+  nickName?: Record<string, string>
+  country?: string
+  slugName?: string
+  archived?: number
+  userId?: number
+  listenerOf?: string[]
+}
