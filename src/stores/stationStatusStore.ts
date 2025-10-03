@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import { unsecuredClient } from 'src/api/apiClient'
 
 export const useStationStatusStore = defineStore('stationStatus', () => {
   const radioSlug = ref('')
@@ -27,7 +27,7 @@ export const useStationStatusStore = defineStore('stationStatus', () => {
     statusText.value = 'Loading station information...'
 
     try {
-      const response = await axios.get(`/${slugName}/radio/status`)
+      const response = await unsecuredClient.get(`/radio/all-stations/${slugName}`)
       const data = response.data
 
       stationName.value = data.name || stationName.value
