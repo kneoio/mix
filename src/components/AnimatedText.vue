@@ -2,8 +2,8 @@
   <div class="animated-text-container">
     <div class="static-text">
       <span>{{ parsedText.title }}</span>
-      <span v-if="parsedText.artist" class="separator">•</span>
-      <span v-if="parsedText.artist">{{ parsedText.artist }}</span>
+      <span v-if=" parsedText.artist " class="separator">•</span>
+      <span v-if=" parsedText.artist ">{{ parsedText.artist }}</span>
     </div>
   </div>
 </template>
@@ -15,19 +15,19 @@ const props = defineProps<{
   text: string
 }>()
 
-const parsedText = computed(() => {
-  if (props.text.includes('|')) {
-    const parts = props.text.split('|')
+const parsedText = computed( () => {
+  if ( props.text.includes( '|' ) ) {
+    const parts = props.text.split( '|' )
     return {
-      title: (parts[0] || '').trim(),
-      artist: (parts[1] || '').trim() || null
+      title: ( parts[0] || '' ).trim(),
+      artist: ( parts[1] || '' ).trim() || null
     }
   }
   return {
     title: props.text,
     artist: null
   }
-})
+} )
 </script>
 
 <style scoped>

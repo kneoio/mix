@@ -8,13 +8,7 @@
           Mixpla
         </q-toolbar-title>
 
-        <q-btn
-          flat
-          dense
-          round
-          :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'"
-          @click="toggleDarkMode"
-        />
+        <q-btn flat dense round :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" @click="toggleDarkMode" />
       </q-toolbar>
     </q-header>
 
@@ -87,24 +81,14 @@
     </q-page-container>
 
     <q-footer elevated class="bg-grey-9">
-      <div 
-        v-touch-swipe.mouse.up="handleSwipeUp"
-        class="cursor-pointer"
-      >
+      <div v-touch-swipe.mouse.up="handleSwipeUp" class="cursor-pointer">
         <div class="row justify-center q-pt-xs">
           <div class="bg-grey-6" style="width: 40px; height: 4px; border-radius: 2px;"></div>
         </div>
         <q-toolbar>
           <div class="text-caption footer-text">{{ nowPlayingParts.title }}</div>
-          <q-btn 
-            flat 
-            round 
-            dense 
-            :icon="isPlaying ? 'pause' : 'play_arrow'" 
-            color="white" 
-            @click="togglePlay"
-            class="footer-play-btn"
-          />
+          <q-btn flat round dense :icon="isPlaying ? 'pause' : 'play_arrow'" color="white" @click="togglePlay"
+            class="footer-play-btn" />
           <div class="text-caption footer-text">{{ nowPlayingParts.artist }}</div>
           <q-btn flat round dense icon="expand_less" @click="showFullscreen = true" class="gt-xs" />
         </q-toolbar>
@@ -130,23 +114,23 @@ const playerStore = usePlayerStore()
 const leftDrawerOpen = ref( false );
 const isAuthenticated = ref( false )
 const showFullscreen = ref( false )
-const audioPlayer = ref<HTMLAudioElement | null>(null)
+const audioPlayer = ref<HTMLAudioElement | null>( null )
 
-const { nowPlaying, isPlaying } = storeToRefs(playerStore)
+const { nowPlaying, isPlaying } = storeToRefs( playerStore )
 
-const nowPlayingParts = computed(() => {
-  if (nowPlaying.value.includes('|')) {
-    const parts = nowPlaying.value.split('|')
+const nowPlayingParts = computed( () => {
+  if ( nowPlaying.value.includes( '|' ) ) {
+    const parts = nowPlaying.value.split( '|' )
     return {
-      title: (parts[0] || '').trim(),
-      artist: (parts[1] || '').trim()
+      title: ( parts[0] || '' ).trim(),
+      artist: ( parts[1] || '' ).trim()
     }
   }
   return {
     title: nowPlaying.value,
     artist: ''
   }
-})
+} )
 
 onMounted( () => {
   isAuthenticated.value = keycloak.authenticated === true
@@ -154,15 +138,15 @@ onMounted( () => {
   keycloak.onAuthLogout = () => { isAuthenticated.value = false }
   keycloak.onAuthRefreshSuccess = () => { isAuthenticated.value = true }
   keycloak.onTokenExpired = () => { isAuthenticated.value = !!keycloak.authenticated }
-  
-  if (audioPlayer.value) {
-    playerStore.setAudioElement(audioPlayer.value)
+
+  if ( audioPlayer.value ) {
+    playerStore.setAudioElement( audioPlayer.value )
   }
 } );
 
-onBeforeUnmount(() => {
+onBeforeUnmount( () => {
   playerStore.cleanup()
-});
+} );
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -170,7 +154,7 @@ function toggleLeftDrawer() {
 
 function toggleDarkMode() {
   $q.dark.toggle()
-  localStorage.setItem('darkMode', String($q.dark.isActive))
+  localStorage.setItem( 'darkMode', String( $q.dark.isActive ) )
 }
 
 function handleSwipeUp() {

@@ -12,7 +12,7 @@ export const usePlayerStore = defineStore('player', () => {
   const stationColor = ref<string | null>('#3D20E4')
   const djName = ref<string | null>(null)
   const djStatus = ref<string | null>(null)
-  const nowPlaying = ref('Song Title | Artist Name')
+  const nowPlaying = ref('|')
   const isAsleep = ref(false)
   const isBroadcasting = ref(false)
   const isWaitingForCurator = ref(false)

@@ -5,6 +5,8 @@ import { unsecuredClient } from 'src/api/apiClient'
 export const useStationStatusStore = defineStore('stationStatus', () => {
   const radioSlug = ref('')
   const stationName = ref('')
+  const currentStatus = ref('')
+  const description = ref('')
   const djName = ref<string | null>(null)
   const djStatus = ref<string | null>(null)
   const nowPlaying = ref('')
@@ -18,19 +20,30 @@ export const useStationStatusStore = defineStore('stationStatus', () => {
     return statusText.value
   })
 
+  function formatStatusText(s?: string) {
+    if (s === 'ON_LINE') return 'Online'
+    if (s === 'WARMING_UP') return 'Online'
+    if (s === 'WAITING_FOR_CURATOR') return 'Online'
+    if (s === 'OFF_LINE') return 'Offline'
+    return 'Offline'
+  }
+
   const fetchStation = async (slugName: string) => {
     radioSlug.value = slugName
     isAsleep.value = false
     djName.value = null
     djStatus.value = null
-    nowPlaying.value = ''
+    currentStatus.value = ''
+    description.value = ''
     statusText.value = 'Loading station information...'
 
     try {
       const response = await unsecuredClient.get(`/radio/all-stations/${slugName}`)
       const data = response.data
 
-      stationName.value = data.name || stationName.value
+      stationName.value = data.name
+      currentStatus.value = data.currentStatus
+      description.value = data.description
       djName.value = data.djName
       djStatus.value = data.djStatus
 
@@ -65,12 +78,15 @@ export const useStationStatusStore = defineStore('stationStatus', () => {
   return {
     radioSlug,
     stationName,
+    currentStatus,
+    description,
     djName,
     djStatus,
     nowPlaying,
     isAsleep,
     statusText,
     displayStatusText,
+    formatStatusText,
     fetchStation
   }
 })

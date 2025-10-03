@@ -21,7 +21,7 @@
               <div class="text-caption text-grey-7">{{ station.countryCode }}</div>
               <q-space />
               <div class="text-caption" :class="getStatusClass(station.currentStatus)">
-                {{ statusText(station.currentStatus) }}
+                {{ formatStatusText(station.currentStatus) }}
               </div>
             </div>
           </q-card-section>
@@ -41,8 +41,11 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePlayerStore } from 'src/stores/playerStore'
+import { useStationStatusStore } from 'src/stores/stationStatusStore'
 
 const playerStore = usePlayerStore()
+const stationStatusStore = useStationStatusStore()
+const { formatStatusText } = stationStatusStore
 const router = useRouter()
 const loading = ref(false)
 
@@ -59,13 +62,6 @@ onMounted(async () => {
 
 function openStation(slugName: string) {
   void router.push(`/station/${slugName}`)
-}
-
-function statusText(s?: string) {
-  if (s === 'ON_LINE') return 'Online'
-  if (s === 'WARMING_UP') return 'Online'
-  if (s === 'OFF_LINE') return 'Offline'
-  return 'Unknown'
 }
 
 function getStatusClass(status?: string): string {
