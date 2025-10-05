@@ -18,7 +18,7 @@
           Menu
         </q-item-label>
 
-        <q-item clickable to="/space" v-ripple>
+        <q-item v-if=" !isAuthenticated " clickable to="/space" v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
           </q-item-section>

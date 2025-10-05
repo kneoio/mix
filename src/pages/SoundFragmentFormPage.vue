@@ -10,7 +10,74 @@
       </div>
     </div>
 
-    <q-card flat bordered>
+    <q-card flat class="gt-sm" style="max-width: 50%;">
+      <q-linear-progress v-if=" loading " indeterminate color="primary" />
+      <q-card-section v-else>
+        <div v-if=" !fragment " class="text-caption text-grey-7">Not found</div>
+        <q-form v-else class="q-gutter-md">
+          <div class="row items-center">
+            <div class="col-3 text-caption text-right q-pr-md">Title</div>
+            <div class="col">
+              <q-input
+                v-model="formData.title"
+                outlined
+                dense
+              />
+            </div>
+          </div>
+          <div class="row items-center">
+            <div class="col-3 text-caption text-right q-pr-md">Artist</div>
+            <div class="col">
+              <q-input
+                v-model="formData.artist"
+                outlined
+                dense
+              />
+            </div>
+          </div>
+          <div class="row items-center">
+            <div class="col-3 text-caption text-right q-pr-md">Type</div>
+            <div class="col-6">
+              <q-select
+                v-model="formData.type"
+                :options="typeOptions"
+                outlined
+                dense
+              />
+            </div>
+          </div>
+          <div class="row items-start">
+            <div class="col-3 text-caption text-right q-pr-md" style="padding-top: 8px;">Genres</div>
+            <div class="col-9">
+              <q-select
+                v-model="formData.genres"
+                :options="referencesStore.genreOptions"
+                option-label="label"
+                option-value="value"
+                emit-value
+                map-options
+                outlined
+                dense
+                multiple
+                use-chips
+              />
+            </div>
+          </div>
+          <div class="row items-center">
+            <div class="col-3 text-caption text-right q-pr-md">Album</div>
+            <div class="col">
+              <q-input
+                v-model="formData.album"
+                outlined
+                dense
+              />
+            </div>
+          </div>
+        </q-form>
+      </q-card-section>
+    </q-card>
+
+    <q-card flat class="lt-md">
       <q-linear-progress v-if=" loading " indeterminate color="primary" />
       <q-card-section v-else>
         <div v-if=" !fragment " class="text-caption text-grey-7">Not found</div>

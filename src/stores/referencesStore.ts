@@ -103,7 +103,37 @@ export const useReferencesStore = defineStore('references', () => {
     { label: 'Africa/Accra (+0)', value: 'Africa/Accra' },
     { label: 'Africa/Dakar (+0)', value: 'Africa/Dakar' },
     { label: 'Australia/Sydney (+10/+11)', value: 'Australia/Sydney' }
-  ];
+  ]
+
+  const musicUploadAgreement = ref<{ title: string; clause: string; version: string }>({
+    title: 'Music Upload Agreement',
+    version: '1.0',
+    clause:
+      'By uploading music to this service, you confirm that:\n\n' +
+      '- **Ownership or License**: You own the copyright to this music OR have proper licensing/permission to distribute it.\n' +
+      '- **Free to Use**: The music is either your original work, public domain, or licensed under terms that permit sharing on this platform.\n' +
+      '- **No Infringement**: Your upload does not violate any third-party copyrights, trademarks, or other intellectual property rights.\n' +
+      '- **Legal Responsibility**: You accept full legal responsibility for any copyright claims or disputes arising from your upload.\n' +
+      '- **Removal Rights**: We reserve the right to remove any content that violates copyright or receives valid takedown requests.\n' +
+      '- **Content Standards**: The music does not contain content that promotes violence, war, hate speech, discrimination, or offensive religious content.\n' +
+      '- **Content Guidelines**: The content complies with general broadcasting standards and applicable content regulations.\n' +
+      '- **Indemnification**: You agree to defend and hold harmless the service from any legal claims related to your uploaded content.\n\n'
+  })
+
+  const messagePostingAgreement = ref<{ title: string; clause: string; version: string }>({
+    title: 'Message Posting Agreement',
+    version: '1.0',
+    clause:
+      'By posting a message to this service, you agree that:\n\n' +
+      '- **Appropriate Content**: Your message does not contain violence, racism, hate speech, discrimination, or harassment of any kind.\n' +
+      '- **Respectful Communication**: You will communicate respectfully and avoid offensive, threatening, or abusive language.\n' +
+      '- **No Harmful Content**: Your message does not promote illegal activities, self-harm, or dangerous behavior.\n' +
+      '- **Personal Responsibility**: You are fully responsible for the content of your message and its consequences.\n' +
+      '- **Moderation Rights**: We reserve the right to review, edit, or remove messages that violate these guidelines.\n' +
+      '- **Broadcasting Standards**: Your content complies with general broadcasting standards and community guidelines.\n' +
+      '- **Legal Compliance**: Your message does not violate any applicable laws or regulations.\n' +
+      '- **Consequences**: Violation of these terms may result in message removal and potential restrictions on future submissions.\n\n'
+  })
   
   const fetchGenres = async () => {
     const response = await apiClient.get('/dictionary/genres?page=1&size=1000')
@@ -122,6 +152,8 @@ export const useReferencesStore = defineStore('references', () => {
     languageOptions,
     managedByOptions,
     timezones,
+    musicUploadAgreement,
+    messagePostingAgreement,
     fetchGenres
   }
 })
