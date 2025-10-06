@@ -16,7 +16,7 @@
         <div v-if=" !fragment " class="text-caption text-grey-7">Not found</div>
         <q-form v-else class="q-gutter-md">
           <div class="row items-center">
-            <div class="col-3 text-caption text-right q-pr-md">Title</div>
+            <div class="col-3 text-body2 text-right q-pr-md">Title</div>
             <div class="col">
               <q-input
                 v-model="formData.title"
@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="row items-center">
-            <div class="col-3 text-caption text-right q-pr-md">Artist</div>
+            <div class="col-3 text-body2 text-right q-pr-md">Artist</div>
             <div class="col">
               <q-input
                 v-model="formData.artist"
@@ -36,7 +36,7 @@
             </div>
           </div>
           <div class="row items-center">
-            <div class="col-3 text-caption text-right q-pr-md">Type</div>
+            <div class="col-3 text-body2 text-right q-pr-md">Type</div>
             <div class="col-6">
               <q-select
                 v-model="formData.type"
@@ -47,7 +47,7 @@
             </div>
           </div>
           <div class="row items-start">
-            <div class="col-3 text-caption text-right q-pr-md" style="padding-top: 8px;">Genres</div>
+            <div class="col-3 text-body2 text-right q-pr-md" style="padding-top: 8px;">Genres</div>
             <div class="col-9">
               <q-select
                 v-model="formData.genres"
@@ -64,7 +64,7 @@
             </div>
           </div>
           <div class="row items-center">
-            <div class="col-3 text-caption text-right q-pr-md">Album</div>
+            <div class="col-3 text-body2 text-right q-pr-md">Album</div>
             <div class="col">
               <q-input
                 v-model="formData.album"

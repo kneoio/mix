@@ -109,30 +109,34 @@ export const useReferencesStore = defineStore('references', () => {
     title: 'Music Upload Agreement',
     version: '1.0',
     clause:
-      'By uploading music to this service, you confirm that:\n\n' +
-      '- **Ownership or License**: You own the copyright to this music OR have proper licensing/permission to distribute it.\n' +
-      '- **Free to Use**: The music is either your original work, public domain, or licensed under terms that permit sharing on this platform.\n' +
-      '- **No Infringement**: Your upload does not violate any third-party copyrights, trademarks, or other intellectual property rights.\n' +
-      '- **Legal Responsibility**: You accept full legal responsibility for any copyright claims or disputes arising from your upload.\n' +
-      '- **Removal Rights**: We reserve the right to remove any content that violates copyright or receives valid takedown requests.\n' +
-      '- **Content Standards**: The music does not contain content that promotes violence, war, hate speech, discrimination, or offensive religious content.\n' +
-      '- **Content Guidelines**: The content complies with general broadcasting standards and applicable content regulations.\n' +
-      '- **Indemnification**: You agree to defend and hold harmless the service from any legal claims related to your uploaded content.\n\n'
+      '<p>By uploading music to this service, you confirm that:</p>' +
+      '<ul>' +
+      '<li><strong>Ownership or License</strong>: You own the copyright to this music OR have proper licensing/permission to distribute it.</li>' +
+      '<li><strong>Free to Use</strong>: The music is either your original work, public domain, or licensed under terms that permit sharing on this platform.</li>' +
+      '<li><strong>No Infringement</strong>: Your upload does not violate any third-party copyrights, trademarks, or other intellectual property rights.</li>' +
+      '<li><strong>Legal Responsibility</strong>: You accept full legal responsibility for any copyright claims or disputes arising from your upload.</li>' +
+      '<li><strong>Removal Rights</strong>: We reserve the right to remove any content that violates copyright or receives valid takedown requests.</li>' +
+      '<li><strong>Content Standards</strong>: The music does not contain content that promotes violence, war, hate speech, discrimination, or offensive religious content.</li>' +
+      '<li><strong>Content Guidelines</strong>: The content complies with general broadcasting standards and applicable content regulations.</li>' +
+      '<li><strong>Indemnification</strong>: You agree to defend and hold harmless the service from any legal claims related to your uploaded content.</li>' +
+      '</ul>'
   })
 
   const messagePostingAgreement = ref<{ title: string; clause: string; version: string }>({
     title: 'Message Posting Agreement',
     version: '1.0',
     clause:
-      'By posting a message to this service, you agree that:\n\n' +
-      '- **Appropriate Content**: Your message does not contain violence, racism, hate speech, discrimination, or harassment of any kind.\n' +
-      '- **Respectful Communication**: You will communicate respectfully and avoid offensive, threatening, or abusive language.\n' +
-      '- **No Harmful Content**: Your message does not promote illegal activities, self-harm, or dangerous behavior.\n' +
-      '- **Personal Responsibility**: You are fully responsible for the content of your message and its consequences.\n' +
-      '- **Moderation Rights**: We reserve the right to review, edit, or remove messages that violate these guidelines.\n' +
-      '- **Broadcasting Standards**: Your content complies with general broadcasting standards and community guidelines.\n' +
-      '- **Legal Compliance**: Your message does not violate any applicable laws or regulations.\n' +
-      '- **Consequences**: Violation of these terms may result in message removal and potential restrictions on future submissions.\n\n'
+      '<p>By posting a message to this service, you agree that:</p>' +
+      '<ul>' +
+      '<li><strong>Appropriate Content</strong>: Your message does not contain violence, racism, hate speech, discrimination, or harassment of any kind.</li>' +
+      '<li><strong>Respectful Communication</strong>: You will communicate respectfully and avoid offensive, threatening, or abusive language.</li>' +
+      '<li><strong>No Harmful Content</strong>: Your message does not promote illegal activities, self-harm, or dangerous behavior.</li>' +
+      '<li><strong>Personal Responsibility</strong>: You are fully responsible for the content of your message and its consequences.</li>' +
+      '<li><strong>Moderation Rights</strong>: We reserve the right to review, edit, or remove messages that violate these guidelines.</li>' +
+      '<li><strong>Broadcasting Standards</strong>: Your content complies with general broadcasting standards and community guidelines.</li>' +
+      '<li><strong>Legal Compliance</strong>: Your message does not violate any applicable laws or regulations.</li>' +
+      '<li><strong>Consequences</strong>: Violation of these terms may result in message removal and potential restrictions on future submissions.</li>' +
+      '</ul>'
   })
   
   const fetchGenres = async () => {
