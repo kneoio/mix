@@ -51,8 +51,20 @@
                 <div class="row items-start">
                   <div class="col-3 text-body2 text-right q-pr-md" style="padding-top: 8px;">Genres</div>
                   <div class="col-9">
-                    <q-select v-model="form.genres" :options="referencesStore.genreOptions" outlined dense multiple
-                      use-chips emit-value map-options />
+                    <q-select
+                      v-model="form.genres"
+                      :options="referencesStore.genreOptions"
+                      outlined
+                      dense
+                      options-dense
+                      multiple
+                      use-chips
+                      emit-value
+                      map-options
+                      virtual-scroll
+                      behavior="menu"
+                      popup-content-class="genres-popup"
+                    />
                   </div>
                 </div>
                 <div class="row items-start">
@@ -138,8 +150,21 @@
                     <q-input v-model="form.album" label="Album (optional)" outlined dense />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-select v-model="form.genres" :options="referencesStore.genreOptions" label="Genres" outlined
-                      dense multiple use-chips emit-value map-options />
+                    <q-select
+                      v-model="form.genres"
+                      :options="referencesStore.genreOptions"
+                      label="Genres"
+                      outlined
+                      dense
+                      options-dense
+                      multiple
+                      use-chips
+                      emit-value
+                      map-options
+                      virtual-scroll
+                      behavior="menu"
+                      popup-content-class="genres-popup"
+                    />
                   </div>
                 </div>
 
@@ -367,13 +392,58 @@ const isValidEmail = ( email: string ): boolean => {
   return /.+@.+\..+/.test( email || '' )
 }
 
+// Ensure genres are sent as UUID strings (server expects UUID, not objects)
+function toGenreIds(input: unknown): string[] {
+  const arr = Array.isArray(input) ? input : []
+  const opts = referencesStore.genreOptions || []
+  const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  return arr
+    .map((g: unknown) => {
+      if (typeof g === 'string') {
+        if (uuidRe.test(g)) return g
+        const match = opts.find((o: { label: string; value: string }) => o.label === g)
+        return match?.value || ''
+      }
+      if (g && typeof g === 'object') {
+        const val = (g as { value?: unknown; id?: unknown; label?: unknown })
+        const maybe = val.value ?? val.id
+        if (typeof maybe === 'string') return maybe
+        if (typeof val.label === 'string') {
+          const match = opts.find((o: { label: string; value: string }) => o.label === val.label)
+          return match?.value || ''
+        }
+        return ''
+      }
+      return ''
+    })
+    .filter((x: string) => !!x)
+}
+
 const validateForm = (): string | null => {
+  // Debug: capture current state used by validation
+  try {
+    const f = fileList.value?.[0]
+    console.log('[SubmitSong][validateForm] state', {
+      artist: form.value.artist,
+      title: form.value.title,
+      email: form.value.email,
+      genresCount: Array.isArray(form.value.genres) ? form.value.genres.length : 0,
+      fileListLen: fileList.value?.length || 0,
+      uploadedFileName: uploadedFileName.value,
+      fileStatus: f ? f.__status : null,
+      isUploading: Boolean(isUploading.value)
+    })
+  } catch (e) {
+    console.warn('[SubmitSong][validateForm] debug log failed', e)
+  }
   if ( !form.value.artist?.trim() ) return 'Artist is required'
   if ( !form.value.title?.trim() ) return 'Title is required'
   if ( !form.value.email?.trim() ) return 'Email is required'
   if ( !isValidEmail( form.value.email ) ) return 'Enter a valid email'
   if ( !form.value.genres?.length ) return 'Select at least one genre'
-  if ( !fileList.value.length || !uploadedFileName.value ) return 'Audio file is required'
+  // Consider either a selected file OR a finished external upload as valid
+  const hasFile = (fileList.value?.length || 0) > 0 || Boolean(uploadedFileName.value) || Boolean(currentUploadId.value)
+  if ( !hasFile ) return 'Audio file is required'
   if ( !form.value.agree ) return 'You must agree to the terms'
   if ( codeSent.value && !form.value.confirmationCode?.trim() ) return 'Confirmation code is required'
   return null
@@ -436,6 +506,7 @@ const handleUpload = async ( files: readonly File[] | readonly { file?: File }[]
       throw new Error( 'No file selected for upload' )
     }
 
+    console.log('[Upload] start', { name: file.name, size: file.size, type: file.type })
     uploadStatus.value = { type: 'info', message: 'Uploading file...' }
     const uploadId = crypto.randomUUID()
     currentUploadId.value = uploadId
@@ -447,11 +518,12 @@ const handleUpload = async ( files: readonly File[] | readonly { file?: File }[]
       'temp',
       uploadId,
       ( progress ) => {
-        console.log( 'Upload progress:', progress.percent )
+        console.log( '[Upload] progress', { percent: progress.percent })
       }
     )
 
     uploadedFileName.value = originalFileName
+    console.log('[Upload] success', { uploadId, resHasMd: Boolean(res?.metadata) })
     applyMetadataFromUpload( res )
     const md = res?.metadata || {}
     const title = md?.title || ''
@@ -464,7 +536,7 @@ const handleUpload = async ( files: readonly File[] | readonly { file?: File }[]
     }
 
   } catch ( e: unknown ) {
-    console.error( '[Upload] Error', e )
+    console.error( '[Upload] error', e )
     const errorMessage = ( e as { response?: { data?: { message?: string } }; message?: string } )?.response?.data?.message || ( e as { message?: string } )?.message || 'Upload failed'
     uploadStatus.value = { type: 'negative', message: errorMessage }
     showNotification( 'negative', errorMessage )
@@ -494,13 +566,28 @@ const sendCode = async () => {
 }
 
 const handleSubmit = async () => {
+  // Debug: dump file state prior to validation
+  try {
+    const f = fileList.value?.[0]
+    console.log('[SubmitSong][handleSubmit] before-validate', {
+      fileListLen: fileList.value?.length || 0,
+      uploadedFileName: uploadedFileName.value,
+      fileStatus: f ? f.__status : null,
+      isUploading: Boolean(isUploading.value),
+      currentUploadId: currentUploadId.value,
+      uploadStatus: uploadStatus.value
+    })
+  } catch { /* noop */ }
+
   const validationError = validateForm()
   if ( validationError ) {
+    console.warn('[SubmitSong][handleSubmit] validation failed', { validationError })
     showNotification( 'negative', validationError )
     return
   }
 
   if ( isUploading.value ) {
+    console.warn('[SubmitSong][handleSubmit] blocked: still uploading')
     showNotification( 'warning', 'Please wait for the file upload to complete' )
     return
   }
@@ -510,11 +597,24 @@ const handleSubmit = async () => {
   try {
     const termsText = `${referencesStore.musicUploadAgreement.title}\n\n${referencesStore.musicUploadAgreement.clause}`
 
+    // Ensure options are loaded with values (UUIDs). If not, refetch once.
+    try {
+      const opts = (referencesStore.genreOptions || []) as Array<{ label: string; value?: string }>
+      const hasMissingValues = opts.some((o) => typeof o.value !== 'string' || !o.value)
+      if (hasMissingValues) {
+        console.warn('[SubmitSong] genre options missing values; refetching...')
+        await referencesStore.fetchGenres()
+      }
+    } catch { /* noop */ }
+
+    const mappedGenres = toGenreIds(form.value.genres as unknown)
+    console.log('[SubmitSong] genres', { raw: form.value.genres, mapped: mappedGenres, opts: referencesStore.genreOptions })
+
     const payload = {
       brand: stationSlug.value,
       artist: form.value.artist,
       title: form.value.title,
-      genres: form.value.genres,
+      genres: mappedGenres,
       email: form.value.email,
       confirmationCode: codeSent.value ? form.value.confirmationCode : '',
       description: form.value.description,

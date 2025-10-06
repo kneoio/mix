@@ -10,3 +10,15 @@
 .mixpla-title {
   font-family: 'Kaylon', sans-serif;
 }
+
+/* Limit height of genre dropdown so it doesn't take over the screen */
+.genres-popup {
+  max-height: 50vh;
+  overflow: auto;
+}
+
+@media (max-width: 599px) {
+  .genres-popup {
+    max-height: 45vh;
+  }
+}
