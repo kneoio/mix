@@ -37,3 +37,7 @@ yarn-error.log*
 .env.development
 .env.production
 
+src-capacitor/android/
+src-capacitor/ios/
+src-capacitor/www/
+
