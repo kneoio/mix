@@ -38,7 +38,7 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     await keycloakReady
     // Handle root entry: if unauthenticated, go straight to hosted Keycloak login
     if (to.path === '/') {
-      if (keycloak.authenticated) return '/space'
+      if (keycloak.authenticated) return '/radiostations'
       await keycloak.login({ redirectUri: window.location.origin + '/' })
       return false
     }

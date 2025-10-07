@@ -3,10 +3,10 @@ import type { AxiosInstance } from 'axios'
 import { keycloak } from 'src/boot/keycloak'
 
 export const apiServer: string = import.meta.env.VITE_API_SERVER || '/api'
-export const baseWithoutApi = apiServer.replace(/\/api\/?$/, '')
+export const publicApi =  import.meta.env.VITE_PUBLIC_API_SERVER
 
 export const unsecuredClient: AxiosInstance = axios.create({
-  baseURL: baseWithoutApi,
+  baseURL: publicApi,
   withCredentials: false,
   headers: {
     'X-Client-ID': 'mixpla-web'
@@ -62,7 +62,7 @@ apiClient.interceptors.response.use(
 )
 
 export const absoluteApi = {
-  radioAllStations: `${baseWithoutApi}/radio/all-stations`
+  radioAllStations: `${publicApi}/radio/all-stations`
 }
 
 export default apiClient

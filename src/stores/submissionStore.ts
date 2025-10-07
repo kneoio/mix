@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { unsecuredClient, baseWithoutApi } from 'src/api/apiClient'
+import { unsecuredClient, publicApi } from 'src/api/apiClient'
 import type { AxiosProgressEvent } from 'axios'
 
 export const useSubmissionStore = defineStore('submission', () => {
@@ -46,7 +46,7 @@ export const useSubmissionStore = defineStore('submission', () => {
   }
 
   async function getStation(brand: string): Promise<Station> {
-    const url = `${baseWithoutApi}/radio/all-stations/${encodeURIComponent(brand)}`
+    const url = `${publicApi}/radio/all-stations/${encodeURIComponent(brand)}`
     const res = await unsecuredClient.get(url)
     return res.data as Station
   }
@@ -65,7 +65,7 @@ export const useSubmissionStore = defineStore('submission', () => {
   ): Promise<{ metadata?: { title?: string; artist?: string; album?: string; genre?: string } }> {
     const formData = new FormData()
     formData.append('file', file)
-    const url = `${baseWithoutApi}/radio/${encodeURIComponent(brand)}/submissions/files/${encodeURIComponent(entityId)}?uploadId=${uploadId}`
+    const url = `${publicApi}/radio/${encodeURIComponent(brand)}/submissions/files/${encodeURIComponent(entityId)}?uploadId=${uploadId}`
 
     const res = await unsecuredClient.post<{ metadata?: { title?: string; artist?: string; album?: string; genre?: string } }>(url, formData, {
       maxContentLength: 200 * 1024 * 1024,
@@ -84,7 +84,7 @@ export const useSubmissionStore = defineStore('submission', () => {
   }
 
   async function submit(slug: string, data: SubmissionPayload): Promise<void> {
-    const url = `${baseWithoutApi}/radio/${encodeURIComponent(slug)}/submissions`
+    const url = `${publicApi}/radio/${encodeURIComponent(slug)}/submissions`
     await unsecuredClient.post(url, data)
   }
 
@@ -96,7 +96,7 @@ export const useSubmissionStore = defineStore('submission', () => {
     agreedAt: string
     userAgent: string
   }): Promise<void> {
-    const url = `${baseWithoutApi}/radio/${encodeURIComponent(slug)}/messages`
+    const url = `${publicApi}/radio/${encodeURIComponent(slug)}/messages`
     await unsecuredClient.post(url, data)
   }
 
