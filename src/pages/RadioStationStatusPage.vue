@@ -51,20 +51,9 @@
                 <div class="row items-start">
                   <div class="col-3 text-body2 text-right q-pr-md" style="padding-top: 8px;">Genres</div>
                   <div class="col-9">
-                    <q-select
-                      v-model="form.genres"
-                      :options="referencesStore.genreOptions"
-                      outlined
-                      dense
-                      options-dense
-                      multiple
-                      use-chips
-                      emit-value
-                      map-options
-                      virtual-scroll
-                      behavior="menu"
-                      popup-content-class="genres-popup"
-                    />
+                    <q-select v-model="form.genres" :options="referencesStore.genreOptions" outlined dense options-dense
+                      multiple use-chips emit-value map-options virtual-scroll behavior="menu"
+                      popup-content-class="genres-popup" />
                   </div>
                 </div>
                 <div class="row items-start">
@@ -80,8 +69,7 @@
                   </div>
                   <div class="col-auto">
                     <q-btn class="q-ml-sm" :label="codeSent ? 'Resend code' : 'Send code'" color="primary" outline dense
-                      :loading="sendingCode" :disable="sendingCode || !isValidEmail( form.email )"
-                      @click="sendCode" />
+                      :loading="sendingCode" :disable="sendingCode || !isValidEmail( form.email )" @click="sendCode" />
                   </div>
                 </div>
                 <div class="row items-center">
@@ -150,70 +138,60 @@
                     <q-input v-model="form.album" label="Album (optional)" outlined dense />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-select
-                      v-model="form.genres"
-                      :options="referencesStore.genreOptions"
-                      label="Genres"
-                      outlined
-                      dense
-                      options-dense
-                      multiple
-                      use-chips
-                      emit-value
-                      map-options
-                      virtual-scroll
-                      behavior="menu"
-                      popup-content-class="genres-popup"
-                    />
+                    <q-select v-model="form.genres" :options="referencesStore.genreOptions" label="Genres" outlined
+                      dense options-dense multiple use-chips emit-value map-options virtual-scroll behavior="menu"
+                      popup-content-class="genres-popup" />
                   </div>
-                </div>
-
-                <q-input v-model="form.description" label="Description (optional)" outlined dense type="textarea"
-                  :rows="3" />
-
-                <EmailVerifyFields :email="form.email" :confirmation-code="form.confirmationCode"
-                  :sending-code="sendingCode" :code-sent="codeSent" :can-send="isValidEmail( form.email )"
-                  @update:email="( v: string ) => ( form.email = v )"
-                  @update:confirmationCode="( v: string ) => ( form.confirmationCode = v )" @send-code="sendCode" />
-
-                <div>
-                  <q-uploader v-model="fileList" label="Audio File (mp3, wav)" accept="audio/*,.mp3,.wav" :max-files="1"
-                    :disable="submitting" @added="handleUpload" @removed="handleRemove" flat bordered
-                    style="width: 100%" />
-                  <q-banner v-if=" uploadStatus " :class="`bg-${uploadStatus.type} text-white q-mt-sm`" dense>
-                    {{ uploadStatus.message }}
-                  </q-banner>
-
-                  <q-expansion-item v-if=" policyText " label="Submission Policy" class="q-mt-sm" dense>
-                    <q-card>
-                      <q-card-section class="text-body2">
-                        {{ policyText }}
-                      </q-card-section>
-                    </q-card>
-                  </q-expansion-item>
-
-                  <q-expansion-item :label="referencesStore.musicUploadAgreement.title" class="q-mt-sm" dense>
-                    <q-card>
-                      <q-card-section class="text-body2" style="white-space: pre-wrap">
-                        {{ referencesStore.musicUploadAgreement.clause }}
-                      </q-card-section>
-                    </q-card>
-                  </q-expansion-item>
-
-                  <div class="q-mt-sm">
-                    <q-checkbox v-model="form.agree" dense>
-                      <span :class="!form.agree ? 'text-negative' : ''">I agree with the Music Upload Agreement</span>
-                    </q-checkbox>
-                    <q-checkbox v-model="form.isShareable" dense>
-                      I agree that Mixpla can share this song with other radio stations
-                    </q-checkbox>
+                  <div class="col-12">
+                    <q-input v-model="form.description" label="Description (optional)" outlined dense type="textarea"
+                      :rows="3" />
                   </div>
-                </div>
+                  <div class="col-12">
+                    <EmailVerifyFields :email="form.email" :confirmation-code="form.confirmationCode"
+                      :sending-code="sendingCode" :code-sent="codeSent" :can-send="isValidEmail( form.email )"
+                      @update:email="( v: string ) => ( form.email = v )"
+                      @update:confirmationCode="( v: string ) => ( form.confirmationCode = v )" @send-code="sendCode" />
+                  </div>
+                  <div class="col-12">
+                    <q-uploader v-model="fileList" label="Audio File (mp3, wav)" accept="audio/*,.mp3,.wav" :max-files="1"
+                      :disable="submitting" @added="handleUpload" @removed="handleRemove" flat bordered
+                      style="width: 100%" />
+                    <q-banner v-if=" uploadStatus " :class="`bg-${uploadStatus.type} text-white q-mt-sm`" dense>
+                      {{ uploadStatus.message }}
+                    </q-banner>
 
-                <div class="row justify-end q-gutter-sm">
-                  <q-btn label="Reset" outline @click="resetForm" :disable="submitting" />
-                  <q-btn label="Submit" type="submit" color="primary" :loading="submitting"
-                    :disable="submitting || isUploading" />
+                    <q-expansion-item v-if=" policyText " label="Submission Policy" class="q-mt-sm" dense>
+                      <q-card>
+                        <q-card-section class="text-body2">
+                          {{ policyText }}
+                        </q-card-section>
+                      </q-card>
+                    </q-expansion-item>
+
+                    <q-expansion-item :label="referencesStore.musicUploadAgreement.title" class="q-mt-sm" dense>
+                      <q-card>
+                        <q-card-section class="text-body2" style="white-space: pre-wrap">
+                          {{ referencesStore.musicUploadAgreement.clause }}
+                        </q-card-section>
+                      </q-card>
+                    </q-expansion-item>
+
+                    <div class="q-mt-sm">
+                      <q-checkbox v-model="form.agree" dense>
+                        <span :class="!form.agree ? 'text-negative' : ''">I agree with the Music Upload Agreement</span>
+                      </q-checkbox>
+                      <q-checkbox v-model="form.isShareable" dense>
+                        I agree that Mixpla can share this song with other radio stations
+                      </q-checkbox>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="row justify-end q-gutter-sm">
+                      <q-btn label="Reset" outline @click="resetForm" :disable="submitting" />
+                      <q-btn label="Submit" type="submit" color="primary" :loading="submitting"
+                        :disable="submitting || isUploading" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </q-form>
@@ -239,9 +217,9 @@
                     <q-input v-model="messageForm.email" outlined dense type="email" />
                   </div>
                   <div class="col-auto">
-                    <q-btn class="q-ml-sm" :label="messageCodeSent ? 'Resend code' : 'Send code'" color="primary" outline dense
-                      :loading="sendingMessageCode" :disable="sendingMessageCode || !isValidEmail( messageForm.email )"
-                      @click="sendMessageCode" />
+                    <q-btn class="q-ml-sm" :label="messageCodeSent ? 'Resend code' : 'Send code'" color="primary"
+                      outline dense :loading="sendingMessageCode"
+                      :disable="sendingMessageCode || !isValidEmail( messageForm.email )" @click="sendMessageCode" />
                   </div>
                 </div>
                 <div class="row items-center">
@@ -393,48 +371,48 @@ const isValidEmail = ( email: string ): boolean => {
 }
 
 // Ensure genres are sent as UUID strings (server expects UUID, not objects)
-function toGenreIds(input: unknown): string[] {
-  const arr = Array.isArray(input) ? input : []
+function toGenreIds( input: unknown ): string[] {
+  const arr = Array.isArray( input ) ? input : []
   const opts = referencesStore.genreOptions || []
   const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
   return arr
-    .map((g: unknown) => {
-      if (typeof g === 'string') {
-        if (uuidRe.test(g)) return g
-        const match = opts.find((o: { label: string; value: string }) => o.label === g)
+    .map( ( g: unknown ) => {
+      if ( typeof g === 'string' ) {
+        if ( uuidRe.test( g ) ) return g
+        const match = opts.find( ( o: { label: string; value: string } ) => o.label === g )
         return match?.value || ''
       }
-      if (g && typeof g === 'object') {
-        const val = (g as { value?: unknown; id?: unknown; label?: unknown })
+      if ( g && typeof g === 'object' ) {
+        const val = ( g as { value?: unknown; id?: unknown; label?: unknown } )
         const maybe = val.value ?? val.id
-        if (typeof maybe === 'string') return maybe
-        if (typeof val.label === 'string') {
-          const match = opts.find((o: { label: string; value: string }) => o.label === val.label)
+        if ( typeof maybe === 'string' ) return maybe
+        if ( typeof val.label === 'string' ) {
+          const match = opts.find( ( o: { label: string; value: string } ) => o.label === val.label )
           return match?.value || ''
         }
         return ''
       }
       return ''
-    })
-    .filter((x: string) => !!x)
+    } )
+    .filter( ( x: string ) => !!x )
 }
 
 const validateForm = (): string | null => {
   // Debug: capture current state used by validation
   try {
     const f = fileList.value?.[0]
-    console.log('[SubmitSong][validateForm] state', {
+    console.log( '[SubmitSong][validateForm] state', {
       artist: form.value.artist,
       title: form.value.title,
       email: form.value.email,
-      genresCount: Array.isArray(form.value.genres) ? form.value.genres.length : 0,
+      genresCount: Array.isArray( form.value.genres ) ? form.value.genres.length : 0,
       fileListLen: fileList.value?.length || 0,
       uploadedFileName: uploadedFileName.value,
       fileStatus: f ? f.__status : null,
-      isUploading: Boolean(isUploading.value)
-    })
-  } catch (e) {
-    console.warn('[SubmitSong][validateForm] debug log failed', e)
+      isUploading: Boolean( isUploading.value )
+    } )
+  } catch ( e ) {
+    console.warn( '[SubmitSong][validateForm] debug log failed', e )
   }
   if ( !form.value.artist?.trim() ) return 'Artist is required'
   if ( !form.value.title?.trim() ) return 'Title is required'
@@ -442,7 +420,7 @@ const validateForm = (): string | null => {
   if ( !isValidEmail( form.value.email ) ) return 'Enter a valid email'
   if ( !form.value.genres?.length ) return 'Select at least one genre'
   // Consider either a selected file OR a finished external upload as valid
-  const hasFile = (fileList.value?.length || 0) > 0 || Boolean(uploadedFileName.value) || Boolean(currentUploadId.value)
+  const hasFile = ( fileList.value?.length || 0 ) > 0 || Boolean( uploadedFileName.value ) || Boolean( currentUploadId.value )
   if ( !hasFile ) return 'Audio file is required'
   if ( !form.value.agree ) return 'You must agree to the terms'
   if ( codeSent.value && !form.value.confirmationCode?.trim() ) return 'Confirmation code is required'
@@ -506,7 +484,7 @@ const handleUpload = async ( files: readonly File[] | readonly { file?: File }[]
       throw new Error( 'No file selected for upload' )
     }
 
-    console.log('[Upload] start', { name: file.name, size: file.size, type: file.type })
+    console.log( '[Upload] start', { name: file.name, size: file.size, type: file.type } )
     uploadStatus.value = { type: 'info', message: 'Uploading file...' }
     const uploadId = crypto.randomUUID()
     currentUploadId.value = uploadId
@@ -518,12 +496,12 @@ const handleUpload = async ( files: readonly File[] | readonly { file?: File }[]
       'temp',
       uploadId,
       ( progress ) => {
-        console.log( '[Upload] progress', { percent: progress.percent })
+        console.log( '[Upload] progress', { percent: progress.percent } )
       }
     )
 
     uploadedFileName.value = originalFileName
-    console.log('[Upload] success', { uploadId, resHasMd: Boolean(res?.metadata) })
+    console.log( '[Upload] success', { uploadId, resHasMd: Boolean( res?.metadata ) } )
     applyMetadataFromUpload( res )
     const md = res?.metadata || {}
     const title = md?.title || ''
@@ -569,25 +547,25 @@ const handleSubmit = async () => {
   // Debug: dump file state prior to validation
   try {
     const f = fileList.value?.[0]
-    console.log('[SubmitSong][handleSubmit] before-validate', {
+    console.log( '[SubmitSong][handleSubmit] before-validate', {
       fileListLen: fileList.value?.length || 0,
       uploadedFileName: uploadedFileName.value,
       fileStatus: f ? f.__status : null,
-      isUploading: Boolean(isUploading.value),
+      isUploading: Boolean( isUploading.value ),
       currentUploadId: currentUploadId.value,
       uploadStatus: uploadStatus.value
-    })
+    } )
   } catch { /* noop */ }
 
   const validationError = validateForm()
   if ( validationError ) {
-    console.warn('[SubmitSong][handleSubmit] validation failed', { validationError })
+    console.warn( '[SubmitSong][handleSubmit] validation failed', { validationError } )
     showNotification( 'negative', validationError )
     return
   }
 
   if ( isUploading.value ) {
-    console.warn('[SubmitSong][handleSubmit] blocked: still uploading')
+    console.warn( '[SubmitSong][handleSubmit] blocked: still uploading' )
     showNotification( 'warning', 'Please wait for the file upload to complete' )
     return
   }
@@ -599,16 +577,16 @@ const handleSubmit = async () => {
 
     // Ensure options are loaded with values (UUIDs). If not, refetch once.
     try {
-      const opts = (referencesStore.genreOptions || []) as Array<{ label: string; value?: string }>
-      const hasMissingValues = opts.some((o) => typeof o.value !== 'string' || !o.value)
-      if (hasMissingValues) {
-        console.warn('[SubmitSong] genre options missing values; refetching...')
+      const opts = ( referencesStore.genreOptions || [] ) as Array<{ label: string; value?: string }>
+      const hasMissingValues = opts.some( ( o ) => typeof o.value !== 'string' || !o.value )
+      if ( hasMissingValues ) {
+        console.warn( '[SubmitSong] genre options missing values; refetching...' )
         await referencesStore.fetchGenres()
       }
     } catch { /* noop */ }
 
-    const mappedGenres = toGenreIds(form.value.genres as unknown)
-    console.log('[SubmitSong] genres', { raw: form.value.genres, mapped: mappedGenres, opts: referencesStore.genreOptions })
+    const mappedGenres = toGenreIds( form.value.genres as unknown )
+    console.log( '[SubmitSong] genres', { raw: form.value.genres, mapped: mappedGenres, opts: referencesStore.genreOptions } )
 
     const payload = {
       brand: stationSlug.value,
