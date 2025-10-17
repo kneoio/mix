@@ -18,7 +18,7 @@
           <q-card-section>
             <div class="row items-center q-gutter-sm">
               <div class="text-h6">{{ station.name }}</div>
-              <div class="text-caption text-grey-7">{{ station.countryCode }}</div>
+              <div class="text-caption text-accent">{{ station.countryCode }}</div>
               <q-space />
               <div class="text-caption" :class="getStatusClass(station.currentStatus)">
                 {{ formatStatusText(station.currentStatus) }}
@@ -66,7 +66,7 @@ function openStation(slugName: string) {
 
 function getStatusClass(status?: string): string {
   if (status === 'ON_LINE' || status === 'WARMING_UP') return 'text-positive'
-  return 'text-grey-7'
+  return 'text-accent'
 }
 </script>
 

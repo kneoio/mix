@@ -9,7 +9,8 @@ export const unsecuredClient: AxiosInstance = axios.create({
   baseURL: publicApi,
   withCredentials: false,
   headers: {
-    'X-Client-ID': 'mixpla-web'
+    'X-Client-ID': 'mixpla-web',
+    'X-Mixpla-App': 'mixpla-mobile'
   }
 })
 

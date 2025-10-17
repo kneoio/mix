@@ -17,8 +17,8 @@
     <q-card flat>
       <q-linear-progress v-if=" loading " indeterminate color="primary" />
       <q-card-section v-else>
-        <div v-if=" !station.id " class="text-caption text-grey-7">Not found</div>
-        <q-tabs v-else-if=" $q.screen.gt.sm " v-model="activeTab" dense class="text-grey" active-color="primary"
+        <div v-if=" !station.id " class="text-caption text-accent">Not found</div>
+        <q-tabs v-else-if=" $q.screen.gt.sm " v-model="activeTab" dense class="text-accent" active-color="primary"
           indicator-color="primary" align="left">
           <q-tab name="properties" label="Properties" />
           <q-tab name="aiAgent" label="AI Agent" />
@@ -195,8 +195,8 @@ function statusText( s?: string ) {
 
 function getStatusClass( status?: string ): string {
   if ( status === 'ON_LINE' ) return 'text-positive'
-  if ( status === 'OFF_LINE' ) return 'text-grey-7'
-  return 'text-grey-7'
+  if ( status === 'OFF_LINE' ) return 'text-accent'
+  return 'text-accent'
 }
 
 function handleSave() {

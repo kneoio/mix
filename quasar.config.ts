@@ -67,7 +67,7 @@ export default defineConfig((/* ctx */) => {
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
-      
+
       vitePlugins: [
         ['vite-plugin-checker', {
           vueTsc: true,
@@ -91,14 +91,14 @@ export default defineConfig((/* ctx */) => {
       config: {
         dark: 'auto',
         brand: {
-          primary: '#616161',
-          secondary: '#26A69A',
-          accent: '#9C27B0',
+          primary: '#2c4875',
+          secondary: '#58508d',
+          accent: '#8a508f', //'#ff6361'
           dark: '#1d1d1d',
           positive: '#21BA45',
-          negative: '#C10015',
+          negative: '#ff6361',
           info: '#31CCEC',
-          warning: '#F2C037'
+          warning: '#7a71f8'
         }
       },
 

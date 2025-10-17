@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="dialogModel" maximized transition-show="slide-up" transition-hide="slide-down">
     <q-card>
-      <q-bar class="bg-grey-8 text-white">
+      <q-bar class="bg-accent text-white">
         <div class="text-h6 mixpla-title">Mixpla</div>
         <q-space />
         <q-btn flat dense round icon="expand_less" v-close-popup class="lt-sm" />
@@ -20,7 +20,7 @@
           <q-btn
             round
             size="xl"
-            color="primary"
+            color="accent"
             :icon="isPlaying ? 'pause' : 'play_arrow'"
             @click="togglePlay"
           />

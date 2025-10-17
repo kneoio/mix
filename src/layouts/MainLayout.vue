@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="bg-grey-8">
+    <q-header elevated class="bg-accent">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
@@ -18,7 +18,7 @@
           Menu
         </q-item-label>
 
-        <q-item v-if=" !isAuthenticated " clickable to="/space" v-ripple>
+        <q-item v-if=" !isAuthenticated " clickable to="/space" active-class="text-warning" exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
           </q-item-section>
@@ -27,7 +27,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/radiostations" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/radiostations" active-class="text-warning" exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="radio" />
           </q-item-section>
@@ -36,7 +36,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/listeners" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/listeners" active-class="text-warning" exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="people" />
           </q-item-section>
@@ -45,7 +45,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/fragments" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/fragments" active-class="text-warning" exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="library_music" />
           </q-item-section>
@@ -54,7 +54,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/profile" v-ripple>
+        <q-item clickable to="/profile" active-class="text-warning" exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="person" />
           </q-item-section>
@@ -63,7 +63,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" !isAuthenticated " clickable to="/login" v-ripple>
+        <q-item v-if=" !isAuthenticated " clickable to="/login" active-class="text-warning" exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="login" />
           </q-item-section>
@@ -80,10 +80,10 @@
       <router-view />
     </q-page-container>
 
-    <q-footer elevated class="bg-grey-9">
+    <q-footer elevated class="bg-primary text-white">
       <div v-touch-swipe.mouse.up="handleSwipeUp" class="cursor-pointer">
         <div class="row justify-center q-pt-xs">
-          <div class="bg-grey-6" style="width: 40px; height: 4px; border-radius: 2px;"></div>
+          <div class="bg-white" style="width: 40px; height: 4px; border-radius: 2px;"></div>
         </div>
         <q-toolbar>
           <div class="text-caption footer-text">{{ nowPlayingParts.title }}</div>
