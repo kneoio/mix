@@ -10,8 +10,7 @@
     />
 
     <q-card flat>
-      <q-linear-progress v-if=" loading " indeterminate color="primary" />
-      <q-card-section v-else>
+      <q-card-section v-if=" !loading ">
         <div v-if=" !station.id " class="text-caption text-accent">Not found</div>
         <q-tabs v-else-if=" $q.screen.gt.sm " v-model="activeTab" dense class="text-accent" active-color="primary"
           indicator-color="primary" align="left">
@@ -141,6 +140,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import { useReferencesStore } from 'src/stores/referencesStore'
+import { useUiStore } from 'src/stores/uiStore'
 import FormHeader from 'src/components/FormHeader.vue'
 import LocalizedNameInput from 'src/components/LocalizedNameInput.vue'
 import type { ManagedBy } from 'src/types/models'
@@ -153,6 +153,7 @@ const referencesStore = useReferencesStore()
 
 const stationId = computed( () => String( route.params.id || '' ) )
 const loading = ref( false )
+const ui = useUiStore()
 const activeTab = ref( 'properties' )
 
 const station = computed( () => radioStationsStore.getCurrent )
@@ -207,5 +208,7 @@ onMounted( async () => {
     loading.value = false
   }
 } )
+
+watch( loading, ( v ) => ui.setGlobalLoading( v ) )
 
 </script>

@@ -1,12 +1,10 @@
 <template>
   <q-page class="q-pa-md">
-    <q-linear-progress v-if="loading" indeterminate color="primary" />
-
-    <q-banner v-else-if="stationsLoadError" dense inline-actions class="bg-negative text-white q-mb-md">
+    <q-banner v-if="stationsLoadError" dense inline-actions class="bg-negative text-white q-mb-md">
       Failed to load stations. Please try again later.
     </q-banner>
 
-    <div v-else class="row q-col-gutter-md">
+    <div class="row q-col-gutter-md">
       <div
         v-for="station in radioStations"
         :key="station.slugName"
@@ -42,16 +40,18 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePlayerStore } from 'src/stores/playerStore'
 import { useStationStatusStore } from 'src/stores/stationStatusStore'
+import { useUiStore } from 'src/stores/uiStore'
 
 const playerStore = usePlayerStore()
 const stationStatusStore = useStationStatusStore()
 const { formatStatusText } = stationStatusStore
 const router = useRouter()
 const loading = ref(false)
+const ui = useUiStore()
 
 const radioStations = computed(() => playerStore.stations)
 const stationsLoadError = computed(() => playerStore.stationsLoadError)
@@ -64,6 +64,8 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+watch(loading, (v) => ui.setGlobalLoading(v))
 
 function openStation(slugName: string) {
   void router.push(`/station/${slugName}`)

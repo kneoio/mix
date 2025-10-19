@@ -8,6 +8,7 @@
           Mixpla
         </q-toolbar-title>
       </q-toolbar>
+      <q-linear-progress v-if="ui.globalLoading" indeterminate color="white" class="absolute-bottom" />
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" bordered>
@@ -106,12 +107,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { keycloak } from 'src/boot/keycloak'
 import PlayerPage from 'src/pages/PlayerPage.vue'
 import { usePlayerStore } from 'src/stores/playerStore'
+import { useUiStore } from 'src/stores/uiStore'
 
 const playerStore = usePlayerStore()
+const ui = useUiStore()
+const router = useRouter()
 const leftDrawerOpen = ref( false );
 const isAuthenticated = ref( false )
 const showFullscreen = ref( false )
@@ -143,6 +148,10 @@ onMounted( () => {
   if ( audioPlayer.value ) {
     playerStore.setAudioElement( audioPlayer.value )
   }
+
+  router.afterEach(() => {
+    ui.setGlobalLoading(false)
+  })
 } );
 
 onBeforeUnmount( () => {

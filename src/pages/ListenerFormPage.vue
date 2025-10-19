@@ -8,8 +8,7 @@
     />
 
     <q-card flat>
-      <q-linear-progress v-if=" loading " indeterminate color="primary" />
-      <q-card-section v-else>
+      <q-card-section v-if=" !loading ">
         <div v-if=" !listener.id && listenerId !== 'new' " class="text-caption text-grey-7">Not found</div>
         <q-form v-else class="column q-col-gutter-md">
           <div class="row q-col-gutter-md">
@@ -49,6 +48,7 @@ import { useQuasar } from 'quasar'
 import { useListenersStore } from 'src/stores/listenersStore'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import { useReferencesStore } from 'src/stores/referencesStore'
+import { useUiStore } from 'src/stores/uiStore'
 import FormHeader from 'src/components/FormHeader.vue'
 import LocalizedNameInput from 'src/components/LocalizedNameInput.vue'
 import type { ListenerSave } from 'src/types/models'
@@ -60,6 +60,7 @@ const $q = useQuasar()
 const listenersStore = useListenersStore()
 const radioStationsStore = useRadioStationsStore()
 const referencesStore = useReferencesStore()
+const ui = useUiStore()
 
 const listenerId = computed( () => String( route.params.id || '' ) )
 const loading = ref( false )
@@ -129,4 +130,6 @@ onMounted( async () => {
     loading.value = false
   }
 } )
+
+watch( loading, ( v ) => ui.setGlobalLoading( v ) )
 </script>

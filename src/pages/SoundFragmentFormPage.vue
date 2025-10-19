@@ -4,8 +4,7 @@
       :show-delete="true" @back="goBack" @save="handleSave" @delete="handleDelete" />
 
     <q-card flat class="gt-sm" style="max-width: 50%;">
-      <q-linear-progress v-if=" loading " indeterminate color="primary" />
-      <q-card-section v-else class="q-px-none">
+      <q-card-section v-if=" !loading " class="q-px-none">
         <div v-if=" !fragment " class="text-caption text-grey-7">Not found</div>
         <q-form v-else class="column q-gutter-md">
           <q-input v-model="formData.title" label="Title" outlined dense />
@@ -19,8 +18,7 @@
     </q-card>
 
     <q-card flat class="lt-md">
-      <q-linear-progress v-if=" loading " indeterminate color="primary" />
-      <q-card-section v-else class="q-px-none">
+      <q-card-section v-if=" !loading " class="q-px-none">
         <div v-if=" !fragment " class="text-caption text-grey-7">Not found</div>
         <q-form v-else class="column q-gutter-md">
           <q-input v-model="formData.title" label="Title" outlined dense />
@@ -43,6 +41,7 @@ import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
 import { useReferencesStore } from 'src/stores/referencesStore'
 import type { SoundFragment } from 'src/types/models'
 import { FragmentType } from 'src/types/models'
+import { useUiStore } from 'src/stores/uiStore'
 
 const route = useRoute()
 const router = useRouter()
@@ -51,6 +50,7 @@ const referencesStore = useReferencesStore()
 
 const id = computed( () => String( route.params.id || '' ) )
 const loading = ref( false )
+const ui = useUiStore()
 
 const fragment = computed( () => soundFragmentsStore.apiFormResponse?.docData )
 
@@ -98,4 +98,6 @@ onMounted( async () => {
     loading.value = false
   }
 } )
+
+watch(loading, (v) => ui.setGlobalLoading(v))
 </script>

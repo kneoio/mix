@@ -1,10 +1,15 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="text-h5 q-mb-md">Sound Fragments</div>
+  <q-page class="q-px-md q-pb-md q-pt-none">
+    <ListHeader
+      title="Sound Fragments"
+      :show-back="false"
+      :show-new="true"
+      :show-delete="true"
+      @new="handleNew"
+      @delete="handleDelete"
+    />
 
-    <q-linear-progress v-if="loading" indeterminate color="primary" />
     <q-table
-      v-else
       :rows="items"
       :columns="columns"
       row-key="id"
@@ -38,10 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
+import { useUiStore } from 'src/stores/uiStore'
+import ListHeader from 'src/components/ListHeader.vue'
 import type { SoundFragment } from 'src/types/models'
 
 const store = useSoundFragmentsStore()
@@ -53,6 +60,7 @@ const search = ref('')
 
 const items = computed(() => store.getEntries)
 const loading = ref(false)
+const ui = useUiStore()
 const maxPage = computed(() => store.getPagination.pageCount || 1)
 const selectedRows = ref<SoundFragment[]>([])
 
@@ -109,9 +117,23 @@ function updateSelected(rows: readonly SoundFragment[]) {
   selectedRows.value = [...rows]
 }
 
+function handleNew() {
+  void router.push('/fragments/new')
+}
+
+function handleDelete() {
+  if (selectedRows.value.length === 0) {
+    $q.notify({ type: 'warning', message: 'No items selected' })
+    return
+  }
+  $q.notify({ type: 'info', message: `Delete ${selectedRows.value.length} item(s) - not implemented` })
+}
+
 onMounted(() => {
   void load()
 })
+
+watch(loading, (v) => ui.setGlobalLoading(v))
 </script>
 
 <style scoped>
