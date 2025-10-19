@@ -1,18 +1,13 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="row items-center q-mb-md">
-      <div class="col-auto">
-        <q-btn flat icon="arrow_back" label="Back" @click="goBack" />
-      </div>
-      <div class="col-auto">
-        <q-btn color="primary" label="Save" size="md" @click="handleSave" />
-      </div>
-      <div class="col text-center">
-        <div class="text-h5">{{ station.slugName }}</div>
-        <div class="text-caption" :class="getStatusClass( station.status )">{{ statusText( station.status ) }}</div>
-      </div>
-      <div class="col-auto" style="width: 80px;"></div>
-    </div>
+  <q-page class="q-px-md q-pb-md q-pt-none">
+    <FormHeader
+      :title="station?.slugName || ''"
+      :subtitle="statusText( station?.status )"
+      :subtitle-class="getStatusClass( station?.status )"
+      :show-save="true"
+      @back="goBack"
+      @save="handleSave"
+    />
 
     <q-card flat>
       <q-linear-progress v-if=" loading " indeterminate color="primary" />
@@ -146,6 +141,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import { useReferencesStore } from 'src/stores/referencesStore'
+import FormHeader from 'src/components/FormHeader.vue'
 import LocalizedNameInput from 'src/components/LocalizedNameInput.vue'
 import type { ManagedBy } from 'src/types/models'
 

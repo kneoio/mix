@@ -11,6 +11,11 @@
   font-family: 'Kaylon', sans-serif;
 }
 
+/* Utility: tighten top spacing under fixed headers */
+.tight-top {
+  margin-top: -8px;
+}
+
 /* Gradient background for the app header */
 .mixpla-header-gradient {
   background: linear-gradient(90deg,

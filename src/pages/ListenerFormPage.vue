@@ -1,17 +1,11 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="row items-center q-mb-md">
-      <div class="col-auto">
-        <q-btn flat icon="arrow_back" label="Back" @click="goBack" />
-      </div>
-      <div class="col-auto">
-        <q-btn color="primary" label="Save" size="md" @click="handleSave" />
-      </div>
-      <div class="col text-center">
-        <div class="text-h5">{{ listener.slugName || 'New Listener' }}</div>
-      </div>
-      <div class="col-auto" style="width: 80px;"></div>
-    </div>
+  <q-page class="q-px-md q-pb-md q-pt-none">
+    <FormHeader
+      :title="listener?.slugName || 'New Listener'"
+      :show-save="true"
+      @back="goBack"
+      @save="handleSave"
+    />
 
     <q-card flat>
       <q-linear-progress v-if=" loading " indeterminate color="primary" />
@@ -55,6 +49,7 @@ import { useQuasar } from 'quasar'
 import { useListenersStore } from 'src/stores/listenersStore'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import { useReferencesStore } from 'src/stores/referencesStore'
+import FormHeader from 'src/components/FormHeader.vue'
 import LocalizedNameInput from 'src/components/LocalizedNameInput.vue'
 import type { ListenerSave } from 'src/types/models'
 import type { AxiosError } from 'axios'
