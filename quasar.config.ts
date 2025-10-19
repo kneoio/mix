@@ -91,9 +91,9 @@ export default defineConfig((/* ctx */) => {
       config: {
         dark: 'auto',
         brand: {
-          primary: '#2c4875',
+          primary: '#00baf2',
           secondary: '#58508d',
-          accent: '#8a508f', //'#ff6361'
+          accent: '#ffa600', //'#ff6361'
           dark: '#1d1d1d',
           positive: '#21BA45',
           negative: '#ff6361',

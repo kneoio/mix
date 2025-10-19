@@ -1,14 +1,12 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="bg-accent">
+    <q-header elevated class="mixpla-header-gradient text-white">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="mixpla-title">
           Mixpla
         </q-toolbar-title>
-
-        <q-btn flat dense round :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" @click="toggleDarkMode" />
       </q-toolbar>
     </q-header>
 
@@ -18,7 +16,8 @@
           Menu
         </q-item-label>
 
-        <q-item v-if=" !isAuthenticated " clickable to="/space" active-class="text-warning" exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" !isAuthenticated " clickable to="/space" active-class="text-warning"
+          exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
           </q-item-section>
@@ -27,7 +26,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/radiostations" active-class="text-warning" exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/radiostations" active-class="text-warning"
+          exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="radio" />
           </q-item-section>
@@ -36,7 +36,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/listeners" active-class="text-warning" exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/listeners" active-class="text-warning"
+          exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="people" />
           </q-item-section>
@@ -45,7 +46,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/fragments" active-class="text-warning" exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/fragments" active-class="text-warning"
+          exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="library_music" />
           </q-item-section>
@@ -63,7 +65,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" !isAuthenticated " clickable to="/login" active-class="text-warning" exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" !isAuthenticated " clickable to="/login" active-class="text-warning"
+          exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="login" />
           </q-item-section>
@@ -104,12 +107,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { storeToRefs } from 'pinia'
-import { useQuasar } from 'quasar'
 import { keycloak } from 'src/boot/keycloak'
 import PlayerPage from 'src/pages/PlayerPage.vue'
 import { usePlayerStore } from 'src/stores/playerStore'
 
-const $q = useQuasar()
 const playerStore = usePlayerStore()
 const leftDrawerOpen = ref( false );
 const isAuthenticated = ref( false )
@@ -150,11 +151,6 @@ onBeforeUnmount( () => {
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
-}
-
-function toggleDarkMode() {
-  $q.dark.toggle()
-  localStorage.setItem( 'darkMode', String( $q.dark.isActive ) )
 }
 
 function handleSwipeUp() {

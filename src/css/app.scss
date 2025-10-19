@@ -11,6 +11,17 @@
   font-family: 'Kaylon', sans-serif;
 }
 
+/* Gradient background for the app header */
+.mixpla-header-gradient {
+  background: linear-gradient(90deg,
+    #8f53fe 0%,
+    #7a71f8 25%,
+    #658ef2 50%,
+    #50aceb 75%,
+    #3bcae5 100%
+  );
+}
+
 /* Limit height of genre dropdown so it doesn't take over the screen */
 .genres-popup {
   max-height: 50vh;

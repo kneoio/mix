@@ -2,6 +2,10 @@
   <q-page class="q-pa-md">
     <q-linear-progress v-if="loading" indeterminate color="primary" />
 
+    <q-banner v-else-if="stationsLoadError" dense inline-actions class="bg-negative text-white q-mb-md">
+      Failed to load stations. Please try again later.
+    </q-banner>
+
     <div v-else class="row q-col-gutter-md">
       <div
         v-for="station in radioStations"
@@ -50,6 +54,7 @@ const router = useRouter()
 const loading = ref(false)
 
 const radioStations = computed(() => playerStore.stations)
+const stationsLoadError = computed(() => playerStore.stationsLoadError)
 
 onMounted(async () => {
   loading.value = true

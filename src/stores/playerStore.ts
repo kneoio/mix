@@ -20,6 +20,7 @@ export const usePlayerStore = defineStore('player', () => {
   const bufferStatus = ref('ok')
   const isPlaying = ref(false)
   const audioElement = ref<HTMLAudioElement | null>(null)
+  const stationsLoadError = ref(false)
 
   let statusPollingInterval: NodeJS.Timeout | null = null
   let listPollingInterval: NodeJS.Timeout | null = null
@@ -33,8 +34,14 @@ export const usePlayerStore = defineStore('player', () => {
   })
 
   const fetchRadioStations = async () => {
-    const response = await unsecuredClient.get(absoluteApi.radioAllStations)
-    stations.value = response.data
+    try {
+      const response = await unsecuredClient.get(absoluteApi.radioAllStations)
+      stations.value = response.data
+      stationsLoadError.value = false
+    } catch {
+      stations.value = []
+      stationsLoadError.value = true
+    }
   }
 
   const fetchStationInfo = async () => {
@@ -214,6 +221,7 @@ export const usePlayerStore = defineStore('player', () => {
   return {
     // State
     stations,
+    stationsLoadError,
     radioName,
     radioSlug,
     stationName,
