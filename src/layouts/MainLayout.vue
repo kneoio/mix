@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="mixpla-header-gradient text-white">
+    <q-header class="mixpla-header-gradient text-white">
       <q-toolbar>
         <q-btn flat dense round icon="menu" :aria-label="$t('menu.title')" @click="toggleLeftDrawer" />
 
@@ -84,7 +84,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer elevated class="bg-primary text-white">
+    <q-footer class="bg-primary text-white">
       <div v-touch-swipe.mouse.up="handleSwipeUp" class="cursor-pointer">
         <div class="row justify-center q-pt-xs">
           <div class="bg-white" style="width: 40px; height: 4px; border-radius: 2px;"></div>

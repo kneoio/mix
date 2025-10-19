@@ -99,6 +99,7 @@ export interface SoundFragment {
   title?: string;
   artist?: string;
   genres: string[];
+  labels: string[];
   album?: string;
   url: string;
   description: string;
@@ -113,6 +114,7 @@ export interface SoundFragmentSave {
   title?: string;
   artist?: string;
   genres: string[];
+  labels: string[];
   album?: string;
   description: string;
   representedInBrands: string[];

@@ -1,7 +1,7 @@
 <template>
   <div class="column q-mt-none q-mb-none q-pt-none tight-top">
     <div class="row items-center q-mt-none q-pt-none">
-      <div class="col-auto row items-center q-gutter-sm">
+      <div class="col-auto row items-center q-gutter-xs">
         <q-btn flat icon="arrow_back" @click="$emit('back')" class="lt-sm" />
         <q-btn flat icon="arrow_back" :label="$t('common.back')" @click="$emit('back')" class="gt-xs" />
         <q-btn v-if="showSave" color="primary" :label="$t('common.save')" size="md" unelevated @click="$emit('save')" />

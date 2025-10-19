@@ -1,18 +1,35 @@
 <template>
   <q-page class="q-px-md q-pb-md q-pt-none">
-    <FormHeader :title="formData.title || $t('menu.soundFragments')" :subtitle="formData.artist || ''" :show-save="true"
+    <FormHeader :title="formData.title || $t( 'menu.soundFragments' )" :subtitle="formData.artist || ''" :show-save="true"
       :show-delete="true" @back="goBack" @save="handleSave" @delete="handleDelete" />
 
     <q-card flat class="gt-sm" style="max-width: 50%;">
       <q-card-section v-if=" !loading " class="q-px-none">
-        <div v-if=" !fragment " class="text-caption text-grey-7">{{ $t('errors.notFound') }}</div>
+        <div v-if=" !fragment " class="text-caption text-grey-7">{{ $t( 'errors.notFound' ) }}</div>
         <q-form v-else class="column q-gutter-md">
-          <q-input v-model="formData.title" :label="$t('columns.title')" outlined dense />
-          <q-input v-model="formData.artist" :label="$t('columns.artist')" outlined dense />
-          <q-select v-model="formData.type" :options="typeOptions" :label="$t('columns.type')" outlined dense />
+          <q-input v-model="formData.title" :label="$t( 'columns.title' )" outlined dense />
+          <q-input v-model="formData.artist" :label="$t( 'columns.artist' )" outlined dense />
+          <q-select v-model="formData.type" :options="typeOptions" :label="$t( 'columns.type' )" outlined dense />
           <q-select v-model="formData.genres" :options="referencesStore.genreOptions" option-label="label"
-            option-value="value" emit-value map-options :label="$t('columns.genres')" outlined dense multiple use-chips />
-          <q-input v-model="formData.album" :label="$t('fields.album')" outlined dense />
+            option-value="value" emit-value map-options :label="$t( 'columns.genres' )" outlined dense multiple use-chips>
+            <template v-slot:selected-item=" scope ">
+              <q-chip dense square size="md" removable @remove="scope.removeAtIndex( scope.index )"
+                :tabindex="scope.tabindex">
+                {{ scope.opt.label }}
+              </q-chip>
+            </template>
+          </q-select>
+          <q-select v-model="formData.labels" :options="referencesStore.labelOptions" option-label="label"
+            option-value="value" emit-value map-options :label="$t( 'columns.labels' )" outlined dense multiple use-chips>
+            <template v-slot:selected-item=" scope ">
+              <q-chip dense square size="md" removable @remove="scope.removeAtIndex( scope.index )"
+                :tabindex="scope.tabindex"
+                :style="{ backgroundColor: scope.opt.color || '#e5e7eb', color: scope.opt.fontColor || '#111827' }">
+                {{ scope.opt.label }}
+              </q-chip>
+            </template>
+          </q-select>
+          <q-input v-model="formData.album" :label="$t( 'fields.album' )" outlined dense />
         </q-form>
       </q-card-section>
       <q-card-section v-else class="q-px-none column q-gutter-sm">
@@ -32,7 +49,23 @@
           <q-input v-model="formData.artist" label="Artist" outlined dense />
           <q-select v-model="formData.type" :options="typeOptions" label="Type" outlined dense />
           <q-select v-model="formData.genres" :options="referencesStore.genreOptions" option-label="label"
-            option-value="value" emit-value map-options label="Genres" outlined dense multiple use-chips />
+            option-value="value" emit-value map-options label="Genres" outlined dense multiple use-chips>
+            <template v-slot:selected-item=" scope ">
+              <q-chip dense square removable @remove="scope.removeAtIndex( scope.index )" :tabindex="scope.tabindex">
+                {{ scope.opt.label }}
+              </q-chip>
+            </template>
+          </q-select>
+          <q-select v-model="formData.labels" :options="referencesStore.labelOptions" option-label="label"
+            option-value="value" emit-value map-options label="Labels" outlined dense multiple use-chips>
+            <template v-slot:selected-item=" scope ">
+              <q-chip dense square size="md" removable @remove="scope.removeAtIndex( scope.index )"
+                :tabindex="scope.tabindex"
+                :style="{ backgroundColor: scope.opt.color || '#e5e7eb', color: scope.opt.fontColor || '#111827' }">
+                {{ scope.opt.label }}
+              </q-chip>
+            </template>
+          </q-select>
           <q-input v-model="formData.album" label="Album" outlined dense />
         </q-form>
       </q-card-section>
@@ -75,6 +108,7 @@ const formData = reactive<Partial<SoundFragment>>( {
   artist: '',
   type: FragmentType.SONG,
   genres: [],
+  labels: [],
   album: ''
 } )
 
@@ -84,6 +118,7 @@ watch( fragment, ( newFragment ) => {
     formData.artist = newFragment.artist || ''
     formData.type = newFragment.type
     formData.genres = newFragment.genres || []
+    formData.labels = newFragment.labels || []
     formData.album = newFragment.album || ''
   }
 }, { immediate: true } )
@@ -106,12 +141,13 @@ onMounted( async () => {
   try {
     await Promise.all( [
       soundFragmentsStore.fetchSoundFragment( id.value ),
-      referencesStore.fetchGenres()
+      referencesStore.fetchGenres(),
+      referencesStore.fetchLabels()
     ] )
   } finally {
     loading.value = false
   }
 } )
 
-watch(loading, (v) => ui.setGlobalLoading(v))
+watch( loading, ( v ) => ui.setGlobalLoading( v ) )
 </script>

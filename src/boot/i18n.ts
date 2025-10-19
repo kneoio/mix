@@ -38,7 +38,8 @@ const messages = {
       description: 'Descrição',
       artist: 'Artista',
       type: 'Tipo',
-      genres: 'Gêneros'
+      genres: 'Gêneros',
+      labels: 'Etiquetas'
     },
     tabs: {
       properties: 'Propriedades',
@@ -120,7 +121,8 @@ const messages = {
       description: 'Description',
       artist: 'Artist',
       type: 'Type',
-      genres: 'Genres'
+      genres: 'Genres',
+      labels: 'Labels'
     },
     tabs: {
       properties: 'Properties',

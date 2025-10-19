@@ -1,9 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import apiClient from 'src/api/apiClient'
+import { i18n } from 'src/boot/i18n'
 
 export const useReferencesStore = defineStore('references', () => {
   const genreOptions = ref<Array<{label: string, value: string}>>([])
+  const labelOptions = ref<Array<{ label: string, value: string, color?: string, fontColor?: string }>>([])
+
+  type LabelApiEntry = { id: string; identifier?: string; localizedName?: Record<string, string>; color?: string; fontColor?: string }
 
   const countryOptions = [
     { label: "United States", value: "US" },
@@ -138,7 +142,7 @@ export const useReferencesStore = defineStore('references', () => {
       '<li><strong>Consequences</strong>: Violation of these terms may result in message removal and potential restrictions on future submissions.</li>' +
       '</ul>'
   })
-  
+
   const fetchGenres = async () => {
     const response = await apiClient.get('/dictionary/genres?page=1&size=1000')
     if (!response?.data?.payload) throw new Error('Invalid API response')
@@ -151,14 +155,31 @@ export const useReferencesStore = defineStore('references', () => {
       .sort((a: {label: string}, b: {label: string}) => a.label.localeCompare(b.label))
   }
 
+  const fetchLabels = async (category: string = 'sound_fragment') => {
+    const response = await apiClient.get(`/labels/only/category/${encodeURIComponent(category)}`)
+    if (!response?.data?.payload) throw new Error('Invalid API response')
+
+    const lang = i18n.global.locale.value
+    labelOptions.value = response.data.payload.viewData.entries
+      .map((entry: LabelApiEntry) => ({
+        label: entry.localizedName?.[lang] ?? entry.identifier ?? '',
+        value: entry.id,
+        color: entry.color,
+        fontColor: entry.fontColor
+      }))
+      .sort((a: {label: string}, b: {label: string}) => a.label.localeCompare(b.label))
+  }
+
   return {
     genreOptions,
+    labelOptions,
     countryOptions,
     languageOptions,
     managedByOptions,
     timezones,
     musicUploadAgreement,
     messagePostingAgreement,
-    fetchGenres
+    fetchGenres,
+    fetchLabels
   }
 })
