@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated class="mixpla-header-gradient text-white">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn flat dense round icon="menu" :aria-label="$t('menu.title')" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="mixpla-title">
           Mixpla
@@ -14,7 +14,7 @@
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
         <q-item-label header>
-          Menu
+          {{ $t('menu.title') }}
         </q-item-label>
 
         <q-item v-if=" !isAuthenticated " clickable to="/space" active-class="text-warning"
@@ -43,7 +43,7 @@
             <q-icon name="people" />
           </q-item-section>
           <q-item-section>
-            Listeners
+            {{ $t('menu.listeners') }}
           </q-item-section>
         </q-item>
 
@@ -53,7 +53,7 @@
             <q-icon name="library_music" />
           </q-item-section>
           <q-item-section>
-            Sound Fragments
+            {{ $t('menu.soundFragments') }}
           </q-item-section>
         </q-item>
 
@@ -62,7 +62,7 @@
             <q-icon name="person" />
           </q-item-section>
           <q-item-section>
-            User Profile
+            {{ $t('menu.account') }}
           </q-item-section>
         </q-item>
 

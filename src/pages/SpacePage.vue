@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md">
     <q-banner v-if="stationsLoadError" dense inline-actions class="bg-negative text-white q-mb-md">
-      Failed to load stations. Please try again later.
+      {{ $t('space.loadFailed') }}
     </q-banner>
 
     <div class="row q-col-gutter-md">

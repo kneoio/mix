@@ -1,22 +1,24 @@
 <template>
-  <div class="column q-gutter-sm">
-    <div v-for="(entry, index) in localEntries" :key="index" class="row q-gutter-sm items-center">
+  <div class="column q-gutter-y-sm q-px-none">
+    <div v-for="(entry, index) in localEntries" :key="index" class="row items-center q-gutter-x-sm">
       <q-select
         v-model="entry.language"
         :options="referencesStore.languageOptions"
-        option-label="label"
+        :option-label="languageOptionLabel"
         option-value="value"
         emit-value
         map-options
-        label="Language"
+        :label="languageLabel"
         outlined
         dense
-        style="width: 150px"
+        options-dense
+        :hide-dropdown-icon="hideDropdownIcon"
+        :style="{ width: selectWidth }"
         @update:model-value="emitUpdate"
       />
       <q-input
         v-model="entry.name"
-        label="Name"
+        :label="$t('fields.name')"
         outlined
         dense
         class="col"
@@ -45,7 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
+import { i18n } from 'boot/i18n'
+import { useQuasar } from 'quasar'
 import { useReferencesStore } from 'src/stores/referencesStore'
 
 interface LocalizedEntry {
@@ -62,9 +66,18 @@ const emit = defineEmits<{
 }>()
 
 const referencesStore = useReferencesStore()
+const $q = useQuasar()
 
 const localEntries = ref<LocalizedEntry[]>([])
 const isInternalUpdate = ref(false)
+
+const languageOptionLabel = computed(() => {
+  return $q.screen.lt.md ? (opt: { label: string; value: string }) => opt.value : 'label'
+})
+
+const languageLabel = computed(() => ($q.screen.lt.md ? '' : i18n.global.t('fields.language')))
+const selectWidth = computed(() => ($q.screen.lt.md ? '84px' : '150px'))
+const hideDropdownIcon = computed(() => $q.screen.lt.md)
 
 function initializeEntries() {
   const entries = Object.entries(props.modelValue || {})

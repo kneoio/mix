@@ -7,8 +7,9 @@
       @save="handleSave"
     />
 
-    <q-card flat>
-      <q-card-section v-if=" !loading ">
+    <!-- Desktop: constrained card, no inner horizontal padding -->
+    <q-card flat class="gt-sm" style="max-width: 50%;">
+      <q-card-section v-if=" !loading " class="q-px-none">
         <div v-if=" !listener.id && listenerId !== 'new' " class="text-caption text-grey-7">Not found</div>
         <q-form v-else class="column q-col-gutter-md">
           <div class="row q-col-gutter-md">
@@ -24,13 +25,46 @@
             </div>
           </div>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6">
+            <div class="col-12">
               <q-select v-model="formData.country" :options="referencesStore.countryOptions" option-label="label"
                 option-value="value" emit-value map-options label="Country" outlined dense />
             </div>
           </div>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6">
+            <div class="col-12">
+              <q-select v-model="formData.listenerOf" :options="radioStationOptions" option-label="label"
+                option-value="value" emit-value map-options multiple label="Listener Of" outlined dense />
+            </div>
+          </div>
+        </q-form>
+      </q-card-section>
+    </q-card>
+
+    <!-- Mobile: full-width card, no inner horizontal padding -->
+    <q-card flat class="lt-md">
+      <q-card-section v-if=" !loading " class="q-px-none">
+        <div v-if=" !listener.id && listenerId !== 'new' " class="text-caption text-grey-7">Not found</div>
+        <q-form v-else class="column q-col-gutter-md">
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <div class="text-subtitle2 q-mb-sm">Localized Names</div>
+              <LocalizedNameInput v-model="formData.localizedName" />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <div class="text-subtitle2 q-mb-sm">Nick Names</div>
+              <LocalizedNameInput v-model="formData.nickName" />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select v-model="formData.country" :options="referencesStore.countryOptions" option-label="label"
+                option-value="value" emit-value map-options label="Country" outlined dense />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
               <q-select v-model="formData.listenerOf" :options="radioStationOptions" option-label="label"
                 option-value="value" emit-value map-options multiple label="Listener Of" outlined dense />
             </div>

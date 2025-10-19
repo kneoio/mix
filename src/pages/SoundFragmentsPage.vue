@@ -1,7 +1,8 @@
 <template>
   <q-page class="q-px-md q-pb-md q-pt-none">
     <ListHeader
-      title="Sound Fragments"
+      :title="$t('menu.soundFragments')"
+      :quantity="store.getPagination.itemCount"
       :show-back="false"
       :show-new="true"
       :show-delete="true"
@@ -15,6 +16,8 @@
       row-key="id"
       flat
       :selected="selectedRows"
+      v-model:pagination="tablePagination"
+      :rows-per-page-options="[0]"
       @update:selected="updateSelected"
       selection="multiple"
       :visible-columns="visibleColumns"
@@ -22,10 +25,10 @@
       class="sticky-header-table"
     >
       <template v-slot:top>
-        <q-input v-model="search" dense clearable debounce="300" placeholder="Search fragments" @update:model-value="onSearch" class="col-6" />
+        <q-input v-model="search" dense clearable debounce="300" :placeholder="$t('common.search')" @update:model-value="onSearch" class="col-6" />
         <q-space />
         <q-btn dense flat icon="chevron_left" :disable="page <= 1 || loading" @click="prevPage" />
-        <div class="text-caption q-mx-sm">Page {{ page }} / {{ maxPage }}</div>
+        <div class="text-caption q-mx-sm">{{ $t('common.page') }} {{ page }} / {{ maxPage }}</div>
         <q-btn dense flat icon="chevron_right" :disable="loading || page >= maxPage" @click="nextPage" />
       </template>
       <template v-slot:body-cell-title="props">
@@ -63,13 +66,15 @@ const loading = ref(false)
 const ui = useUiStore()
 const maxPage = computed(() => store.getPagination.pageCount || 1)
 const selectedRows = ref<SoundFragment[]>([])
+const tablePagination = ref({ page: 1, rowsPerPage: 0 })
 
-const columns = [
-  { name: 'title', label: 'Title', field: 'title', align: 'left' as const },
-  { name: 'artist', label: 'Artist', field: 'artist', align: 'left' as const },
-  { name: 'type', label: 'Type', field: 'type', align: 'left' as const },
-  { name: 'genres', label: 'Genres', field: 'genres', align: 'left' as const }
-]
+import { i18n } from 'boot/i18n'
+const columns = computed(() => [
+  { name: 'title', label: i18n.global.t('columns.title'), field: 'title', align: 'left' as const },
+  { name: 'artist', label: i18n.global.t('columns.artist'), field: 'artist', align: 'left' as const },
+  { name: 'type', label: i18n.global.t('columns.type'), field: 'type', align: 'left' as const },
+  { name: 'genres', label: i18n.global.t('columns.genres'), field: 'genres', align: 'left' as const }
+])
 
 const visibleColumns = computed(() => {
   if ($q.screen.lt.sm) {
@@ -123,10 +128,10 @@ function handleNew() {
 
 function handleDelete() {
   if (selectedRows.value.length === 0) {
-    $q.notify({ type: 'warning', message: 'No items selected' })
+    $q.notify({ type: 'warning', message: i18n.global.t('common.noItemsSelected') })
     return
   }
-  $q.notify({ type: 'info', message: `Delete ${selectedRows.value.length} item(s) - not implemented` })
+  $q.notify({ type: 'info', message: i18n.global.t('common.deleteNNotImplemented', { count: selectedRows.value.length }) })
 }
 
 onMounted(() => {

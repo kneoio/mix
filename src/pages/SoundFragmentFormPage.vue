@@ -1,19 +1,26 @@
 <template>
   <q-page class="q-px-md q-pb-md q-pt-none">
-    <FormHeader :title="formData.title || 'Sound Fragment'" :subtitle="formData.artist || ''" :show-save="true"
+    <FormHeader :title="formData.title || $t('menu.soundFragments')" :subtitle="formData.artist || ''" :show-save="true"
       :show-delete="true" @back="goBack" @save="handleSave" @delete="handleDelete" />
 
     <q-card flat class="gt-sm" style="max-width: 50%;">
       <q-card-section v-if=" !loading " class="q-px-none">
-        <div v-if=" !fragment " class="text-caption text-grey-7">Not found</div>
+        <div v-if=" !fragment " class="text-caption text-grey-7">{{ $t('errors.notFound') }}</div>
         <q-form v-else class="column q-gutter-md">
-          <q-input v-model="formData.title" label="Title" outlined dense />
-          <q-input v-model="formData.artist" label="Artist" outlined dense />
-          <q-select v-model="formData.type" :options="typeOptions" label="Type" outlined dense />
+          <q-input v-model="formData.title" :label="$t('columns.title')" outlined dense />
+          <q-input v-model="formData.artist" :label="$t('columns.artist')" outlined dense />
+          <q-select v-model="formData.type" :options="typeOptions" :label="$t('columns.type')" outlined dense />
           <q-select v-model="formData.genres" :options="referencesStore.genreOptions" option-label="label"
-            option-value="value" emit-value map-options label="Genres" outlined dense multiple use-chips />
-          <q-input v-model="formData.album" label="Album" outlined dense />
+            option-value="value" emit-value map-options :label="$t('columns.genres')" outlined dense multiple use-chips />
+          <q-input v-model="formData.album" :label="$t('fields.album')" outlined dense />
         </q-form>
+      </q-card-section>
+      <q-card-section v-else class="q-px-none column q-gutter-sm">
+        <q-skeleton type="text" class="q-mb-sm" style="width: 60%" />
+        <q-skeleton type="text" class="q-mb-sm" style="width: 40%" />
+        <q-skeleton type="rect" height="38px" class="q-mb-sm" />
+        <q-skeleton type="rect" height="38px" class="q-mb-sm" />
+        <q-skeleton type="text" class="q-mb-sm" style="width: 50%" />
       </q-card-section>
     </q-card>
 
@@ -28,6 +35,13 @@
             option-value="value" emit-value map-options label="Genres" outlined dense multiple use-chips />
           <q-input v-model="formData.album" label="Album" outlined dense />
         </q-form>
+      </q-card-section>
+      <q-card-section v-else class="q-px-none column q-gutter-sm">
+        <q-skeleton type="text" class="q-mb-sm" style="width: 60%" />
+        <q-skeleton type="text" class="q-mb-sm" style="width: 40%" />
+        <q-skeleton type="rect" height="38px" class="q-mb-sm" />
+        <q-skeleton type="rect" height="38px" class="q-mb-sm" />
+        <q-skeleton type="text" class="q-mb-sm" style="width: 50%" />
       </q-card-section>
     </q-card>
   </q-page>

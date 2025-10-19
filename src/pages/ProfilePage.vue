@@ -4,9 +4,9 @@
       <div class="col-12 col-md-6">
         <q-card>
           <q-card-section>
-            <div class="text-h6">User Profile</div>
+            <div class="text-h6">{{ $t('menu.account') }}</div>
             <div v-if="!isAuthenticated" class="text-negative q-mt-sm">
-              Not authenticated.
+              {{ $t('profile.notAuthenticated') }}
             </div>
           </q-card-section>
 
@@ -16,19 +16,19 @@
             <q-list bordered separator>
               <q-item>
                 <q-item-section>
-                  <q-item-label caption>Client ID</q-item-label>
+                  <q-item-label caption>{{ $t('profile.clientId') }}</q-item-label>
                   <q-item-label>{{ clientId }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label caption>Preferred Username</q-item-label>
+                  <q-item-label caption>{{ $t('profile.preferredUsername') }}</q-item-label>
                   <q-item-label>{{ preferredUsername }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label caption>Email</q-item-label>
+                  <q-item-label caption>{{ $t('profile.email') }}</q-item-label>
                   <q-item-label>{{ email }}</q-item-label>
                 </q-item-section>
               </q-item>
@@ -38,7 +38,7 @@
           <q-separator v-if="isAuthenticated" />
 
           <q-card-section>
-            <div class="text-subtitle2 q-mb-md">Preferences</div>
+            <div class="text-subtitle2 q-mb-md">{{ $t('profile.preferences') }}</div>
             <div class="row items-center q-col-gutter-md">
               <div class="col-auto">
                 <q-btn
@@ -46,12 +46,12 @@
                   dense
                   round
                   :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'"
-                  :aria-label="$q.dark.isActive ? 'Switch to light theme' : 'Switch to dark theme'"
+                  :aria-label="$q.dark.isActive ? $t('theme.switchToLight') : $t('theme.switchToDark')"
                   @click="toggleDark"
                 />
               </div>
               <div class="col-auto">
-                <q-btn-dropdown dense flat :label="currentLocale.toUpperCase()" aria-label="Change language">
+                <q-btn-dropdown dense flat :label="currentLocale.toUpperCase()" :aria-label="$t('profile.changeLanguage')">
                   <q-list>
                     <q-item v-for="loc in locales" :key="loc" clickable v-close-popup @click="changeLocale(loc)">
                       <q-item-section>{{ loc.toUpperCase() }}</q-item-section>
@@ -63,7 +63,7 @@
           </q-card-section>
           <q-separator v-if="isAuthenticated" />
           <q-card-actions align="right" v-if="isAuthenticated">
-            <q-btn color="negative" outline label="Logout" @click="logout" />
+            <q-btn color="negative" outline :label="$t('profile.logout')" @click="logout" />
           </q-card-actions>
         </q-card>
       </div>
@@ -110,7 +110,7 @@ onMounted(() => {
 })
 
 // language
-const locales: readonly Locale[] = ['pt', 'en'] as const
+const locales = i18n.global.availableLocales as unknown as readonly Locale[]
 const currentLocale = ref<Locale>(i18n.global.locale.value as Locale)
 function changeLocale (loc: Locale) {
   if (locales.includes(loc)) {
