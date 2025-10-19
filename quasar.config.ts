@@ -91,14 +91,14 @@ export default defineConfig((/* ctx */) => {
       config: {
         dark: 'auto',
         brand: {
-          primary: '#00baf2',
-          secondary: '#58508d',
-          accent: '#ffa600', //'#ff6361'
-          dark: '#1d1d1d',
+          primary: '#3c83f6',
+          secondary: '#10b77f',
+          accent: '#9C27B0',
+          dark: '#1D1D1D',
           positive: '#21BA45',
-          negative: '#ff6361',
-          info: '#31CCEC',
-          warning: '#7a71f8'
+          negative: '#C10015',
+          info: '#07b6d5',
+          warning: '#f59f0a'
         }
       },
 

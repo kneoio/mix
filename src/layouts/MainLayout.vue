@@ -1,20 +1,23 @@
+.player-footer {
+  background-color: #1e3b8a;
+}
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="mixpla-header-gradient text-white">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" :aria-label="$t('menu.title')" @click="toggleLeftDrawer" />
+        <q-btn flat dense round icon="menu" :aria-label="$t( 'menu.title' )" @click="toggleLeftDrawer" />
 
         <q-toolbar-title class="mixpla-title">
           Mixpla
         </q-toolbar-title>
       </q-toolbar>
-      <q-linear-progress v-if="ui.globalLoading" indeterminate color="white" class="absolute-bottom" />
+      <q-linear-progress v-if=" ui.globalLoading " indeterminate color="white" class="absolute-bottom" />
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
         <q-item-label header>
-          {{ $t('menu.title') }}
+          {{ $t( 'menu.title' ) }}
         </q-item-label>
 
         <q-item v-if=" !isAuthenticated " clickable to="/space" active-class="text-warning"
@@ -43,7 +46,7 @@
             <q-icon name="people" />
           </q-item-section>
           <q-item-section>
-            {{ $t('menu.listeners') }}
+            {{ $t( 'menu.listeners' ) }}
           </q-item-section>
         </q-item>
 
@@ -53,7 +56,7 @@
             <q-icon name="library_music" />
           </q-item-section>
           <q-item-section>
-            {{ $t('menu.soundFragments') }}
+            {{ $t( 'menu.soundFragments' ) }}
           </q-item-section>
         </q-item>
 
@@ -62,7 +65,7 @@
             <q-icon name="person" />
           </q-item-section>
           <q-item-section>
-            {{ $t('menu.account') }}
+            {{ $t( 'menu.account' ) }}
           </q-item-section>
         </q-item>
 
@@ -84,7 +87,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer class="bg-primary text-white">
+    <q-footer class="text-white player-footer">
       <div v-touch-swipe.mouse.up="handleSwipeUp" class="cursor-pointer">
         <div class="row justify-center q-pt-xs">
           <div class="bg-white" style="width: 40px; height: 4px; border-radius: 2px;"></div>
@@ -149,9 +152,9 @@ onMounted( () => {
     playerStore.setAudioElement( audioPlayer.value )
   }
 
-  router.afterEach(() => {
-    ui.setGlobalLoading(false)
-  })
+  router.afterEach( () => {
+    ui.setGlobalLoading( false )
+  } )
 } );
 
 onBeforeUnmount( () => {
@@ -188,4 +191,6 @@ function togglePlay() {
   flex-shrink: 0;
   margin: 0 8px;
 }
+
+
 </style>
