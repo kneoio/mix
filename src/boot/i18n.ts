@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers'
 import { createI18n } from 'vue-i18n'
 
-export type Locale = 'pt' | 'en' | 'uk' | 'kk' | 'de' | 'fr' | 'zh' | 'ja' | 'ka' | 'lv' | 'ru' | 'it' | 'tr' | 'ar' | 'pl' | 'hi'
+export type Locale = 'pt' | 'en' | 'uk' | 'kk' | 'de' | 'fr' | 'zh' | 'ja' | 'ka' | 'lv' | 'ru' | 'it' | 'tr' | 'ar' | 'pl' | 'hi' | 'ko' | 'fi' | 'sv' | 'no'
 
 const LOCALE_KEY = 'mix-locale'
 
@@ -322,6 +322,15 @@ const messages = {
     tabs: {
       properties: 'Eigenschaften',
       aiAgent: 'AI Agent'
+    },
+    profile: {
+      notAuthenticated: 'Nicht authentifiziert.',
+      preferences: 'Einstellungen',
+      changeLanguage: 'Sprache ändern',
+      clientId: 'Client-ID',
+      preferredUsername: 'Bevorzugter Benutzername',
+      email: 'E‑Mail',
+      logout: 'Abmelden'
     }
   },
   fr: {
@@ -970,6 +979,258 @@ const messages = {
     tabs: {
       properties: 'गुण',
       aiAgent: 'AI एजेंट'
+    }
+  },
+  ko: {
+    appTitle: 'Mix',
+    menu: {
+      space: 'Space',
+      radistions: 'Radiostations',
+      login: 'Login',
+      account: 'Account',
+      title: 'Menu',
+      listeners: 'Listeners',
+      soundFragments: 'Sound Fragments'
+    },
+    theme: {
+      switchToLight: 'Switch to light theme',
+      switchToDark: 'Switch to dark theme'
+    },
+    errors: {
+      notFound: 'Oops. Nothing here...'
+    },
+    common: {
+      back: 'Back',
+      new: 'New',
+      save: 'Save',
+      delete: 'Delete',
+      search: 'Search',
+      page: 'Page',
+      noItemsSelected: 'No items selected',
+      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+    },
+    columns: {
+      title: 'Title',
+      country: 'Country',
+      status: 'Status',
+      description: 'Description',
+      artist: 'Artist',
+      type: 'Type',
+      genres: 'Genres'
+    },
+    fields: {
+      localizedNames: 'Localized Names',
+      language: 'Language',
+      name: 'Name',
+      country: 'Country',
+      color: 'Color',
+      timeZone: 'Time Zone',
+      managedBy: 'Managed By',
+      bitRate: 'Bit Rate',
+      description: 'Description',
+      album: 'Album'
+    },
+    tabs: {
+      properties: 'Properties',
+      aiAgent: 'AI Agent'
+    },
+    profile: {
+      notAuthenticated: 'Not authenticated.',
+      preferences: 'Preferences',
+      changeLanguage: 'Change language',
+      clientId: 'Client ID',
+      preferredUsername: 'Preferred Username',
+      email: 'Email',
+      logout: 'Logout'
+    }
+  },
+  fi: {
+    appTitle: 'Mix',
+    menu: {
+      space: 'Space',
+      radistions: 'Radiostations',
+      login: 'Login',
+      account: 'Account',
+      title: 'Menu',
+      listeners: 'Listeners',
+      soundFragments: 'Sound Fragments'
+    },
+    theme: {
+      switchToLight: 'Switch to light theme',
+      switchToDark: 'Switch to dark theme'
+    },
+    errors: {
+      notFound: 'Oops. Nothing here...'
+    },
+    common: {
+      back: 'Back',
+      new: 'New',
+      save: 'Save',
+      delete: 'Delete',
+      search: 'Search',
+      page: 'Page',
+      noItemsSelected: 'No items selected',
+      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+    },
+    columns: {
+      title: 'Title',
+      country: 'Country',
+      status: 'Status',
+      description: 'Description',
+      artist: 'Artist',
+      type: 'Type',
+      genres: 'Genres'
+    },
+    fields: {
+      localizedNames: 'Localized Names',
+      language: 'Language',
+      name: 'Name',
+      country: 'Country',
+      color: 'Color',
+      timeZone: 'Time Zone',
+      managedBy: 'Managed By',
+      bitRate: 'Bit Rate',
+      description: 'Description',
+      album: 'Album'
+    },
+    tabs: {
+      properties: 'Properties',
+      aiAgent: 'AI Agent'
+    },
+    profile: {
+      notAuthenticated: 'Not authenticated.',
+      preferences: 'Preferences',
+      changeLanguage: 'Change language',
+      clientId: 'Client ID',
+      preferredUsername: 'Preferred Username',
+      email: 'Email',
+      logout: 'Logout'
+    }
+  },
+  sv: {
+    appTitle: 'Mix',
+    menu: {
+      space: 'Space',
+      radistions: 'Radiostations',
+      login: 'Login',
+      account: 'Account',
+      title: 'Menu',
+      listeners: 'Listeners',
+      soundFragments: 'Sound Fragments'
+    },
+    theme: {
+      switchToLight: 'Switch to light theme',
+      switchToDark: 'Switch to dark theme'
+    },
+    errors: {
+      notFound: 'Oops. Nothing here...'
+    },
+    common: {
+      back: 'Back',
+      new: 'New',
+      save: 'Save',
+      delete: 'Delete',
+      search: 'Search',
+      page: 'Page',
+      noItemsSelected: 'No items selected',
+      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+    },
+    columns: {
+      title: 'Title',
+      country: 'Country',
+      status: 'Status',
+      description: 'Description',
+      artist: 'Artist',
+      type: 'Type',
+      genres: 'Genres'
+    },
+    fields: {
+      localizedNames: 'Localized Names',
+      language: 'Language',
+      name: 'Name',
+      country: 'Country',
+      color: 'Color',
+      timeZone: 'Time Zone',
+      managedBy: 'Managed By',
+      bitRate: 'Bit Rate',
+      description: 'Description',
+      album: 'Album'
+    },
+    tabs: {
+      properties: 'Properties',
+      aiAgent: 'AI Agent'
+    },
+    profile: {
+      notAuthenticated: 'Not authenticated.',
+      preferences: 'Preferences',
+      changeLanguage: 'Change language',
+      clientId: 'Client ID',
+      preferredUsername: 'Preferred Username',
+      email: 'Email',
+      logout: 'Logout'
+    }
+  },
+  no: {
+    appTitle: 'Mix',
+    menu: {
+      space: 'Space',
+      radistions: 'Radiostations',
+      login: 'Login',
+      account: 'Account',
+      title: 'Menu',
+      listeners: 'Listeners',
+      soundFragments: 'Sound Fragments'
+    },
+    theme: {
+      switchToLight: 'Switch to light theme',
+      switchToDark: 'Switch to dark theme'
+    },
+    errors: {
+      notFound: 'Oops. Nothing here...'
+    },
+    common: {
+      back: 'Back',
+      new: 'New',
+      save: 'Save',
+      delete: 'Delete',
+      search: 'Search',
+      page: 'Page',
+      noItemsSelected: 'No items selected',
+      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+    },
+    columns: {
+      title: 'Title',
+      country: 'Country',
+      status: 'Status',
+      description: 'Description',
+      artist: 'Artist',
+      type: 'Type',
+      genres: 'Genres'
+    },
+    fields: {
+      localizedNames: 'Localized Names',
+      language: 'Language',
+      name: 'Name',
+      country: 'Country',
+      color: 'Color',
+      timeZone: 'Time Zone',
+      managedBy: 'Managed By',
+      bitRate: 'Bit Rate',
+      description: 'Description',
+      album: 'Album'
+    },
+    tabs: {
+      properties: 'Properties',
+      aiAgent: 'AI Agent'
+    },
+    profile: {
+      notAuthenticated: 'Not authenticated.',
+      preferences: 'Preferences',
+      changeLanguage: 'Change language',
+      clientId: 'Client ID',
+      preferredUsername: 'Preferred Username',
+      email: 'Email',
+      logout: 'Logout'
     }
   }
 } as const
