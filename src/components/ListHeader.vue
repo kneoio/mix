@@ -5,7 +5,7 @@
         <q-btn v-if="showBack" flat icon="arrow_back" @click="$emit('back')" class="lt-sm" />
         <q-btn v-if="showBack" flat icon="arrow_back" :label="$t('common.back')" @click="$emit('back')" class="gt-xs" />
         <q-btn v-if="showNew" color="primary" :label="$t('common.new')" unelevated @click="$emit('new')" />
-        <q-btn v-if="showDelete" color="negative" :label="$t('common.delete')" unelevated @click="$emit('delete')" />
+        <q-btn v-if="showDelete" color="negative" :label="$t('common.delete')" unelevated :disable="deleteDisabled" @click="$emit('delete')" />
         <slot name="actions" />
       </div>
     </div>
@@ -32,6 +32,7 @@ defineProps<{
   showBack?: boolean
   showNew?: boolean
   showDelete?: boolean
+  deleteDisabled?: boolean
   quantity?: number | string
 }>()
 </script>

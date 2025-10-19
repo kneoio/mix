@@ -907,6 +907,15 @@ const messages = {
     tabs: {
       properties: 'Właściwości',
       aiAgent: 'Agent AI'
+    },
+    profile: {
+      notAuthenticated: 'Nie uwierzytelniono.',
+      preferences: 'Preferencje',
+      changeLanguage: 'Zmień język',
+      clientId: 'ID klienta',
+      preferredUsername: 'Preferowana nazwa użytkownika',
+      email: 'E‑mail',
+      logout: 'Wyloguj'
     }
   },
   hi: {

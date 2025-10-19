@@ -6,6 +6,7 @@
       :show-back="false"
       :show-new="true"
       :show-delete="true"
+      :delete-disabled="selectedRows.length === 0"
       @new="handleNew"
       @delete="handleDelete"
     />
