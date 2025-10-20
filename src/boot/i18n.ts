@@ -476,7 +476,8 @@ const messages = {
       description: 'Description',
       artist: 'Artist',
       type: 'Type',
-      genres: 'Genres'
+      genres: 'Genres',
+      labels: 'Labels'
     },
     fields: {
       localizedNames: 'Localized Names',
