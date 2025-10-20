@@ -32,6 +32,17 @@
             </template>
           </q-select>
           <q-input v-model="formData.album" :label="$t( 'fields.album' )" outlined dense />
+          <q-select
+            v-model="formData.representedInBrands"
+            :label="$t('columns.representedInBrands') || 'Assign To'"
+            multiple
+            use-input
+            use-chips
+            hide-dropdown-icon
+            new-value-mode="add-unique"
+            outlined
+            dense
+          />
           <q-uploader
             v-model="fileList"
             :label="$t( 'fields.uploadFile' )"
@@ -54,6 +65,7 @@
               <span v-if="i < attachedFiles.length - 1">, </span>
             </template>
           </div>
+          <q-input v-model="formData.description" :label="$t('fields.description')" type="textarea" autogrow outlined />
         </q-form>
       </q-card-section>
       <q-card-section v-else class="q-px-none column q-gutter-sm">
@@ -91,6 +103,17 @@
             </template>
           </q-select>
           <q-input v-model="formData.album" label="Album" outlined dense />
+          <q-select
+            v-model="formData.representedInBrands"
+            label="Assign To"
+            multiple
+            use-input
+            use-chips
+            hide-dropdown-icon
+            new-value-mode="add-unique"
+            outlined
+            dense
+          />
           <q-uploader
             v-model="fileList"
             :label="$t('fields.uploadFile')"
@@ -113,6 +136,7 @@
               <span v-if="i < attachedFiles.length - 1">, </span>
             </template>
           </div>
+          <q-input v-model="formData.description" label="Description" type="textarea" autogrow outlined />
         </q-form>
       </q-card-section>
       <q-card-section v-else class="q-px-none column q-gutter-sm">
@@ -137,6 +161,8 @@ import { FragmentType } from 'src/types/models'
 import { useUiStore } from 'src/stores/uiStore'
 import apiClient from 'src/api/apiClient'
 
+type SaveDTO = Partial<SoundFragment> & { newlyUploaded: string[] | null }
+
 const route = useRoute()
 const router = useRouter()
 const soundFragmentsStore = useSoundFragmentsStore()
@@ -156,11 +182,14 @@ const formData = reactive<Partial<SoundFragment>>( {
   type: FragmentType.SONG,
   genres: [],
   labels: [],
-  album: ''
+  album: '',
+  representedInBrands: [],
+  description: ''
 } )
 
 type QUploadFile = { name: string; __status?: string }
 const fileList = ref<QUploadFile[]>([])
+const uploadedFileNames = ref<string[]>([])
 
 type AttachedFile = { name: string; url?: string }
 const attachedFiles = computed<AttachedFile[]>( () => {
@@ -176,15 +205,33 @@ watch( fragment, ( newFragment ) => {
     formData.genres = newFragment.genres || []
     formData.labels = newFragment.labels || []
     formData.album = newFragment.album || ''
+    // Optional fields (may be absent in backend response)
+    const opt = newFragment as Partial<{ representedInBrands: string[]; description: string }>
+    formData.representedInBrands = opt.representedInBrands || []
+    formData.description = opt.description || ''
   }
-}, { immediate: true } )
+}, { immediate: true })
 
 function goBack() {
   router.back()
 }
 
-function handleSave() {
-  console.log( 'Save Sound Fragment', formData )
+async function handleSave() {
+  if (!id.value) return
+  const dto: Partial<SoundFragment> = {}
+  if (formData.type) dto.type = formData.type
+  if (typeof formData.title !== 'undefined') dto.title = formData.title
+  if (typeof formData.artist !== 'undefined') dto.artist = formData.artist
+  if (Array.isArray(formData.genres)) dto.genres = formData.genres as unknown as string[]
+  if (Array.isArray(formData.labels)) dto.labels = formData.labels as unknown as string[]
+  if (typeof formData.album !== 'undefined') dto.album = formData.album
+  if (Array.isArray(formData.representedInBrands)) dto.representedInBrands = formData.representedInBrands as unknown as string[]
+  if (typeof formData.description !== 'undefined') dto.description = formData.description
+  const payload: SaveDTO = {
+    ...dto,
+    newlyUploaded: uploadedFileNames.value.length > 0 ? uploadedFileNames.value : null,
+  }
+  await soundFragmentsStore.updateSoundFragment(id.value, payload as unknown as Partial<SoundFragment>)
 }
 
 function handleDelete() {
@@ -200,6 +247,7 @@ onMounted( async () => {
       referencesStore.fetchGenres(),
       referencesStore.fetchLabels()
     ] )
+    uploadedFileNames.value = []
   } finally {
     loading.value = false
   }
@@ -224,10 +272,12 @@ async function handleUploaderAdded(files: readonly File[] | readonly { file?: Fi
     const form = new FormData()
     form.append('file', f)
     await apiClient.post(`/soundfragments/files/${encodeURIComponent(id.value)}?uploadId=${encodeURIComponent(uploadId)}`, form)
+    if (!uploadedFileNames.value.includes(f.name)) uploadedFileNames.value.push(f.name)
   } catch { /* ignore */ }
 }
 
 function handleUploaderRemoved() {
-  // no-op; UI list is managed by q-uploader
+  const current = new Set((fileList.value || []).map(f => f.name))
+  uploadedFileNames.value = uploadedFileNames.value.filter(n => current.has(n))
 }
 </script>

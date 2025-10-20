@@ -122,7 +122,8 @@ const messages = {
       artist: 'Artist',
       type: 'Type',
       genres: 'Genres',
-      labels: 'Labels'
+      labels: 'Labels',
+      representedInBrands: 'Assign To'
     },
     tabs: {
       properties: 'Properties',
@@ -138,7 +139,8 @@ const messages = {
       managedBy: 'Managed By',
       bitRate: 'Bit Rate',
       description: 'Description',
-      album: 'Album'
+      album: 'Album',
+      uploadFile: 'Upload file'
     },
     status: {
       online: 'Online',
@@ -224,6 +226,15 @@ const messages = {
     tabs: {
       properties: 'Властивості',
       aiAgent: 'AI агент'
+    },
+    profile: {
+      notAuthenticated: 'Не автентифіковано.',
+      preferences: 'Налаштування',
+      changeLanguage: 'Змінити мову',
+      clientId: 'ID клієнта',
+      preferredUsername: 'Бажане імʼя користувача',
+      email: 'Електронна пошта',
+      logout: 'Вийти'
     }
   },
   kk: {
@@ -385,6 +396,15 @@ const messages = {
     tabs: {
       properties: 'Propriétés',
       aiAgent: 'Agent IA'
+    },
+    profile: {
+      notAuthenticated: 'Non authentifié.',
+      preferences: 'Préférences',
+      changeLanguage: 'Changer de langue',
+      clientId: 'ID client',
+      preferredUsername: 'Nom d’utilisateur préféré',
+      email: 'E-mail',
+      logout: 'Se déconnecter'
     }
   },
   zh: {
@@ -439,6 +459,15 @@ const messages = {
     tabs: {
       properties: '属性',
       aiAgent: 'AI 代理'
+    },
+    profile: {
+      notAuthenticated: '未认证。',
+      preferences: '偏好设置',
+      changeLanguage: '更改语言',
+      clientId: '客户端 ID',
+      preferredUsername: '首选用户名',
+      email: '电子邮件',
+      logout: '退出登录'
     }
   },
   ja: {
@@ -448,52 +477,61 @@ const messages = {
       radistions: 'ラジオ局',
       login: 'ログイン',
       account: 'アカウント',
-      title: 'Menu',
-      listeners: 'Listeners',
-      soundFragments: 'Sound Fragments'
+      title: 'メニュー',
+      listeners: 'リスナー',
+      soundFragments: 'サウンドフラグメント'
     },
     theme: {
       switchToLight: 'ライトテーマに切り替え',
       switchToDark: 'ダークテーマに切り替え'
     },
     errors: {
-      notFound: 'Oops. Nothing here...'
+      notFound: '何も見つかりません'
     },
     common: {
-      back: 'Back',
-      new: 'New',
-      save: 'Save',
-      delete: 'Delete',
-      search: 'Search',
-      page: 'Page',
-      noItemsSelected: 'No items selected',
-      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+      back: '戻る',
+      new: '新規',
+      save: '保存',
+      delete: '削除',
+      search: '検索',
+      page: 'ページ',
+      noItemsSelected: '選択された項目はありません',
+      deleteNNotImplemented: '{count} 件の削除 — 未実装'
     },
     columns: {
-      title: 'Title',
-      country: 'Country',
-      status: 'Status',
-      description: 'Description',
-      artist: 'Artist',
-      type: 'Type',
-      genres: 'Genres',
-      labels: 'Labels'
+      title: 'タイトル',
+      country: '国',
+      status: 'ステータス',
+      description: '説明',
+      artist: 'アーティスト',
+      type: '種類',
+      genres: 'ジャンル',
+      labels: 'ラベル'
     },
     fields: {
-      localizedNames: 'Localized Names',
-      language: 'Language',
-      name: 'Name',
-      country: 'Country',
-      color: 'Color',
-      timeZone: 'Time Zone',
-      managedBy: 'Managed By',
-      bitRate: 'Bit Rate',
-      description: 'Description',
-      album: 'Album'
+      localizedNames: 'ローカライズされた名前',
+      language: '言語',
+      name: '名前',
+      country: '国',
+      color: '色',
+      timeZone: 'タイムゾーン',
+      managedBy: '管理者',
+      bitRate: 'ビットレート',
+      description: '説明',
+      album: 'アルバム'
     },
     tabs: {
-      properties: 'Properties',
-      aiAgent: 'AI Agent'
+      properties: 'プロパティ',
+      aiAgent: 'AI エージェント'
+    },
+    profile: {
+      notAuthenticated: '認証されていません。',
+      preferences: '設定',
+      changeLanguage: '言語を変更',
+      clientId: 'クライアントID',
+      preferredUsername: '優先ユーザー名',
+      email: 'メール',
+      logout: 'ログアウト'
     }
   },
   ka: {
@@ -737,6 +775,15 @@ const messages = {
     tabs: {
       properties: 'Proprietà',
       aiAgent: 'Agente AI'
+    },
+    profile: {
+      notAuthenticated: 'Non autenticato.',
+      preferences: 'Preferenze',
+      changeLanguage: 'Cambia lingua',
+      clientId: 'ID cliente',
+      preferredUsername: 'Nome utente preferito',
+      email: 'E‑mail',
+      logout: 'Esci'
     }
   },
   tr: {
@@ -980,258 +1027,273 @@ const messages = {
     tabs: {
       properties: 'गुण',
       aiAgent: 'AI एजेंट'
+    },
+    profile: {
+      notAuthenticated: 'प्रमाणीकृत नहीं है.',
+      preferences: 'वरीयताएँ',
+      changeLanguage: 'भाषा बदलें',
+      clientId: 'क्लाइंट आईडी',
+      preferredUsername: 'पसंदीदा उपयोगकर्ता नाम',
+      email: 'ईमेल',
+      logout: 'लॉगआउट'
     }
   },
   ko: {
     appTitle: 'Mix',
     menu: {
-      space: 'Space',
-      radistions: 'Radiostations',
-      login: 'Login',
-      account: 'Account',
-      title: 'Menu',
-      listeners: 'Listeners',
-      soundFragments: 'Sound Fragments'
+      space: '공간',
+      radistions: '라디오 방송국',
+      login: '로그인',
+      account: '계정',
+      title: '메뉴',
+      listeners: '청취자',
+      soundFragments: '사운드 조각'
     },
     theme: {
-      switchToLight: 'Switch to light theme',
-      switchToDark: 'Switch to dark theme'
+      switchToLight: '라이트 테마로 전환',
+      switchToDark: '다크 테마로 전환'
     },
     errors: {
-      notFound: 'Oops. Nothing here...'
+      notFound: '아무것도 없습니다'
     },
     common: {
-      back: 'Back',
-      new: 'New',
-      save: 'Save',
-      delete: 'Delete',
-      search: 'Search',
-      page: 'Page',
-      noItemsSelected: 'No items selected',
-      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+      back: '뒤로',
+      new: '새로 만들기',
+      save: '저장',
+      delete: '삭제',
+      search: '검색',
+      page: '페이지',
+      noItemsSelected: '선택된 항목이 없습니다',
+      deleteNNotImplemented: '{count}개 항목 삭제 — 아직 구현되지 않음'
     },
     columns: {
-      title: 'Title',
-      country: 'Country',
-      status: 'Status',
-      description: 'Description',
-      artist: 'Artist',
-      type: 'Type',
-      genres: 'Genres'
+      title: '제목',
+      country: '국가',
+      status: '상태',
+      description: '설명',
+      artist: '아티스트',
+      type: '유형',
+      genres: '장르',
+      labels: '레이블'
     },
     fields: {
-      localizedNames: 'Localized Names',
-      language: 'Language',
-      name: 'Name',
-      country: 'Country',
-      color: 'Color',
-      timeZone: 'Time Zone',
-      managedBy: 'Managed By',
-      bitRate: 'Bit Rate',
-      description: 'Description',
-      album: 'Album'
+      localizedNames: '현지화된 이름',
+      language: '언어',
+      name: '이름',
+      country: '국가',
+      color: '색상',
+      timeZone: '시간대',
+      managedBy: '관리자',
+      bitRate: '비트레이트',
+      description: '설명',
+      album: '앨범',
+      uploadFile: '파일 업로드'
     },
     tabs: {
-      properties: 'Properties',
-      aiAgent: 'AI Agent'
+      properties: '속성',
+      aiAgent: 'AI 에이전트'
     },
     profile: {
-      notAuthenticated: 'Not authenticated.',
-      preferences: 'Preferences',
-      changeLanguage: 'Change language',
-      clientId: 'Client ID',
-      preferredUsername: 'Preferred Username',
-      email: 'Email',
-      logout: 'Logout'
+      notAuthenticated: '인증되지 않았습니다.',
+      preferences: '환경설정',
+      changeLanguage: '언어 변경',
+      clientId: '클라이언트 ID',
+      preferredUsername: '선호 사용자 이름',
+      email: '이메일',
+      logout: '로그아웃'
     }
   },
   fi: {
     appTitle: 'Mix',
     menu: {
-      space: 'Space',
-      radistions: 'Radiostations',
-      login: 'Login',
-      account: 'Account',
-      title: 'Menu',
-      listeners: 'Listeners',
-      soundFragments: 'Sound Fragments'
+      space: 'Tila',
+      radistions: 'Radiokanavat',
+      login: 'Kirjaudu',
+      account: 'Tili',
+      title: 'Valikko',
+      listeners: 'Kuuntelijat',
+      soundFragments: 'Äänileikkeet'
     },
     theme: {
-      switchToLight: 'Switch to light theme',
-      switchToDark: 'Switch to dark theme'
+      switchToLight: 'Vaihda vaaleaan teemaan',
+      switchToDark: 'Vaihda tummaan teemaan'
     },
     errors: {
-      notFound: 'Oops. Nothing here...'
+      notFound: 'Mitään ei löytynyt'
     },
     common: {
-      back: 'Back',
-      new: 'New',
-      save: 'Save',
-      delete: 'Delete',
-      search: 'Search',
-      page: 'Page',
-      noItemsSelected: 'No items selected',
-      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+      back: 'Takaisin',
+      new: 'Uusi',
+      save: 'Tallenna',
+      delete: 'Poista',
+      search: 'Haku',
+      page: 'Sivu',
+      noItemsSelected: 'Ei valittuja kohteita',
+      deleteNNotImplemented: 'Poista {count} kohde(tta) — ei toteutettu'
     },
     columns: {
-      title: 'Title',
-      country: 'Country',
-      status: 'Status',
-      description: 'Description',
-      artist: 'Artist',
-      type: 'Type',
-      genres: 'Genres'
+      title: 'Otsikko',
+      country: 'Maa',
+      status: 'Tila',
+      description: 'Kuvaus',
+      artist: 'Artisti',
+      type: 'Tyyppi',
+      genres: 'Genret',
+      labels: 'Tunnisteet'
     },
     fields: {
-      localizedNames: 'Localized Names',
-      language: 'Language',
-      name: 'Name',
-      country: 'Country',
-      color: 'Color',
-      timeZone: 'Time Zone',
-      managedBy: 'Managed By',
-      bitRate: 'Bit Rate',
-      description: 'Description',
-      album: 'Album'
+      localizedNames: 'Lokalisoidut nimet',
+      language: 'Kieli',
+      name: 'Nimi',
+      country: 'Maa',
+      color: 'Väri',
+      timeZone: 'Aikavyöhyke',
+      managedBy: 'Hallinnoija',
+      bitRate: 'Bittinopeus',
+      description: 'Kuvaus',
+      album: 'Albumi',
+      uploadFile: 'Lataa tiedosto'
     },
     tabs: {
-      properties: 'Properties',
-      aiAgent: 'AI Agent'
+      properties: 'Ominaisuudet',
+      aiAgent: 'AI-agentti'
     },
     profile: {
-      notAuthenticated: 'Not authenticated.',
-      preferences: 'Preferences',
-      changeLanguage: 'Change language',
-      clientId: 'Client ID',
-      preferredUsername: 'Preferred Username',
-      email: 'Email',
-      logout: 'Logout'
+      notAuthenticated: 'Ei kirjautunut.',
+      preferences: 'Asetukset',
+      changeLanguage: 'Vaihda kieltä',
+      clientId: 'Asiakas-ID',
+      preferredUsername: 'Toivottu käyttäjänimi',
+      email: 'Sähköposti',
+      logout: 'Kirjaudu ulos'
     }
   },
   sv: {
     appTitle: 'Mix',
     menu: {
-      space: 'Space',
-      radistions: 'Radiostations',
-      login: 'Login',
-      account: 'Account',
-      title: 'Menu',
-      listeners: 'Listeners',
-      soundFragments: 'Sound Fragments'
+      space: 'Utrymme',
+      radistions: 'Radiostationer',
+      login: 'Logga in',
+      account: 'Konto',
+      title: 'Meny',
+      listeners: 'Lyssnare',
+      soundFragments: 'Ljudfragment'
     },
     theme: {
-      switchToLight: 'Switch to light theme',
-      switchToDark: 'Switch to dark theme'
+      switchToLight: 'Byt till ljust tema',
+      switchToDark: 'Byt till mörkt tema'
     },
     errors: {
-      notFound: 'Oops. Nothing here...'
+      notFound: 'Inget här...'
     },
     common: {
-      back: 'Back',
-      new: 'New',
-      save: 'Save',
-      delete: 'Delete',
-      search: 'Search',
-      page: 'Page',
-      noItemsSelected: 'No items selected',
-      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+      back: 'Tillbaka',
+      new: 'Ny',
+      save: 'Spara',
+      delete: 'Ta bort',
+      search: 'Sök',
+      page: 'Sida',
+      noItemsSelected: 'Inga objekt valda',
+      deleteNNotImplemented: 'Ta bort {count} objekt — ej implementerat'
     },
     columns: {
-      title: 'Title',
-      country: 'Country',
+      title: 'Titel',
+      country: 'Land',
       status: 'Status',
-      description: 'Description',
+      description: 'Beskrivning',
       artist: 'Artist',
-      type: 'Type',
-      genres: 'Genres'
+      type: 'Typ',
+      genres: 'Genrer',
+      labels: 'Etiketter'
     },
     fields: {
-      localizedNames: 'Localized Names',
-      language: 'Language',
-      name: 'Name',
-      country: 'Country',
-      color: 'Color',
-      timeZone: 'Time Zone',
-      managedBy: 'Managed By',
-      bitRate: 'Bit Rate',
-      description: 'Description',
-      album: 'Album'
+      localizedNames: 'Lokaliserade namn',
+      language: 'Språk',
+      name: 'Namn',
+      country: 'Land',
+      color: 'Färg',
+      timeZone: 'Tidszon',
+      managedBy: 'Hanteras av',
+      bitRate: 'Bitrate',
+      description: 'Beskrivning',
+      album: 'Album',
+      uploadFile: 'Ladda upp fil'
     },
     tabs: {
-      properties: 'Properties',
-      aiAgent: 'AI Agent'
+      properties: 'Egenskaper',
+      aiAgent: 'AI‑agent'
     },
     profile: {
-      notAuthenticated: 'Not authenticated.',
-      preferences: 'Preferences',
-      changeLanguage: 'Change language',
-      clientId: 'Client ID',
-      preferredUsername: 'Preferred Username',
-      email: 'Email',
-      logout: 'Logout'
+      notAuthenticated: 'Inte autentiserad.',
+      preferences: 'Inställningar',
+      changeLanguage: 'Byt språk',
+      clientId: 'Klient‑ID',
+      preferredUsername: 'Föredraget användarnamn',
+      email: 'E‑post',
+      logout: 'Logga ut'
     }
   },
   no: {
     appTitle: 'Mix',
     menu: {
-      space: 'Space',
-      radistions: 'Radiostations',
-      login: 'Login',
-      account: 'Account',
-      title: 'Menu',
-      listeners: 'Listeners',
-      soundFragments: 'Sound Fragments'
+      space: 'Rom',
+      radistions: 'Radiostasjoner',
+      login: 'Logg inn',
+      account: 'Konto',
+      title: 'Meny',
+      listeners: 'Lyttere',
+      soundFragments: 'Lydfragmenter'
     },
     theme: {
-      switchToLight: 'Switch to light theme',
-      switchToDark: 'Switch to dark theme'
+      switchToLight: 'Bytt til lyst tema',
+      switchToDark: 'Bytt til mørkt tema'
     },
     errors: {
-      notFound: 'Oops. Nothing here...'
+      notFound: 'Ingenting her...'
     },
     common: {
-      back: 'Back',
-      new: 'New',
-      save: 'Save',
-      delete: 'Delete',
-      search: 'Search',
-      page: 'Page',
-      noItemsSelected: 'No items selected',
-      deleteNNotImplemented: 'Delete {count} item(s) - not implemented'
+      back: 'Tilbake',
+      new: 'Ny',
+      save: 'Lagre',
+      delete: 'Slett',
+      search: 'Søk',
+      page: 'Side',
+      noItemsSelected: 'Ingen elementer valgt',
+      deleteNNotImplemented: 'Slett {count} element(er) — ikke implementert'
     },
     columns: {
-      title: 'Title',
-      country: 'Country',
+      title: 'Tittel',
+      country: 'Land',
       status: 'Status',
-      description: 'Description',
+      description: 'Beskrivelse',
       artist: 'Artist',
       type: 'Type',
-      genres: 'Genres'
+      genres: 'Sjangre'
     },
     fields: {
-      localizedNames: 'Localized Names',
-      language: 'Language',
-      name: 'Name',
-      country: 'Country',
-      color: 'Color',
-      timeZone: 'Time Zone',
-      managedBy: 'Managed By',
-      bitRate: 'Bit Rate',
-      description: 'Description',
+      localizedNames: 'Lokalisert navn',
+      language: 'Språk',
+      name: 'Navn',
+      country: 'Land',
+      color: 'Farge',
+      timeZone: 'Tidssone',
+      managedBy: 'Administrert av',
+      bitRate: 'Bitrate',
+      description: 'Beskrivelse',
       album: 'Album'
     },
     tabs: {
-      properties: 'Properties',
-      aiAgent: 'AI Agent'
+      properties: 'Egenskaper',
+      aiAgent: 'AI‑agent'
     },
     profile: {
-      notAuthenticated: 'Not authenticated.',
-      preferences: 'Preferences',
-      changeLanguage: 'Change language',
-      clientId: 'Client ID',
-      preferredUsername: 'Preferred Username',
-      email: 'Email',
-      logout: 'Logout'
+      notAuthenticated: 'Ikke autentisert.',
+      preferences: 'Innstillinger',
+      changeLanguage: 'Bytt språk',
+      clientId: 'Klient‑ID',
+      preferredUsername: 'Foretrukket brukernavn',
+      email: 'E‑post',
+      logout: 'Logg ut'
     }
   }
 } as const

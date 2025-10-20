@@ -34,11 +34,17 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
     apiFormResponse.value = response.data.payload;
   }
 
+  const updateSoundFragment = async (id: string, dto: Partial<SoundFragment>) => {
+    await apiClient.post(`/soundfragments/${encodeURIComponent(id)}`, dto)
+    await fetchSoundFragment(id)
+  }
+
   return {
     apiFormResponse,
     getPagination,
     getEntries,
     fetchSoundFragments,
     fetchSoundFragment,
+    updateSoundFragment,
   }
 })
