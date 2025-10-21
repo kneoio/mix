@@ -123,9 +123,3 @@ function prevPage () {
 }
 </script>
 
-<style scoped>
-.sticky-header-table :deep(thead tr th) {
-  background-color: #f5f5f5;
-  font-weight: 600;
-}
-</style>

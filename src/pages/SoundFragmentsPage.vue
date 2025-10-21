@@ -146,5 +146,6 @@ watch(loading, (v) => ui.setGlobalLoading(v))
 .sticky-header-table :deep(thead tr th) {
   background-color: #f5f5f5;
   font-weight: 600;
+  color: #111;
 }
 </style>

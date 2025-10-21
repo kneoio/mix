@@ -38,3 +38,29 @@
     max-height: 45vh;
   }
 }
+
+/* Shared: sticky q-table header style (light theme baseline) */
+.sticky-header-table thead tr th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #111;
+}
+
+/* Dark mode: use darker header background with light text for lower contrast */
+.body--dark .sticky-header-table thead tr th {
+  background-color: #2b2b2b !important; /* darker than rows but not pitch black */
+  color: #e6e6e6 !important;            /* light text on dark header */
+}
+
+.body--dark .sticky-header-table thead tr th .q-checkbox,
+.body--dark .sticky-header-table thead tr th .q-checkbox__inner,
+.body--dark .sticky-header-table thead tr th .q-checkbox__bg,
+.body--dark .sticky-header-table thead tr th .q-checkbox__icon {
+  color: #e6e6e6 !important;
+  border-color: #e6e6e6 !important;
+}
+
+.body--dark .sticky-header-table thead tr th .q-checkbox__inner.q-checkbox__inner--truthy,
+.body--dark .sticky-header-table thead tr th .q-checkbox__inner.q-checkbox__inner--indet {
+  color: #8ab4f8 !important; /* visible blue on dark bg */
+}
