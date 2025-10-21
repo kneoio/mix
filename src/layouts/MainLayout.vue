@@ -20,7 +20,7 @@
           {{ $t( 'menu.title' ) }}
         </q-item-label>
 
-        <q-item v-if=" !isAuthenticated " clickable to="/space" active-class="text-warning"
+        <q-item clickable to="/space" active-class="text-warning"
           exact-active-class="text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
