@@ -34,15 +34,24 @@
           <q-input v-model="formData.album" :label="$t( 'fields.album' )" outlined dense />
           <q-select
             v-model="formData.representedInBrands"
+            :options="brandOptions"
+            option-label="label"
+            option-value="value"
+            emit-value
+            map-options
             :label="$t('columns.representedInBrands') || 'Assign To'"
-            multiple
-            use-input
-            use-chips
-            hide-dropdown-icon
-            new-value-mode="add-unique"
             outlined
             dense
-          />
+            multiple
+            use-chips
+          >
+            <template v-slot:selected-item=" scope ">
+              <q-chip dense square size="md" removable @remove="scope.removeAtIndex( scope.index )"
+                :tabindex="scope.tabindex">
+                {{ scope.opt.label }}
+              </q-chip>
+            </template>
+          </q-select>
           <q-uploader
             v-model="fileList"
             :label="$t( 'fields.uploadFile' )"
@@ -105,15 +114,23 @@
           <q-input v-model="formData.album" label="Album" outlined dense />
           <q-select
             v-model="formData.representedInBrands"
+            :options="brandOptions"
+            option-label="label"
+            option-value="value"
+            emit-value
+            map-options
             label="Assign To"
-            multiple
-            use-input
-            use-chips
-            hide-dropdown-icon
-            new-value-mode="add-unique"
             outlined
             dense
-          />
+            multiple
+            use-chips
+          >
+            <template v-slot:selected-item=" scope ">
+              <q-chip dense square removable @remove="scope.removeAtIndex( scope.index )" :tabindex="scope.tabindex">
+                {{ scope.opt.label }}
+              </q-chip>
+            </template>
+          </q-select>
           <q-uploader
             v-model="fileList"
             :label="$t('fields.uploadFile')"
@@ -156,6 +173,7 @@ import { useRoute, useRouter } from 'vue-router'
 import FormHeader from 'src/components/FormHeader.vue'
 import { useSoundFragmentsStore } from 'src/stores/soundFragmentsStore'
 import { useReferencesStore } from 'src/stores/referencesStore'
+import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import type { SoundFragment } from 'src/types/models'
 import { FragmentType } from 'src/types/models'
 import { useUiStore } from 'src/stores/uiStore'
@@ -167,6 +185,7 @@ const route = useRoute()
 const router = useRouter()
 const soundFragmentsStore = useSoundFragmentsStore()
 const referencesStore = useReferencesStore()
+const radioStationsStore = useRadioStationsStore()
 
 const id = computed( () => String( route.params.id || '' ) )
 const loading = ref( false )
@@ -196,6 +215,10 @@ const attachedFiles = computed<AttachedFile[]>( () => {
   const anyFrag = fragment.value as unknown as { uploadedFiles?: AttachedFile[] } | null
   return (anyFrag?.uploadedFiles || [])
 } )
+
+const brandOptions = computed(() =>
+  radioStationsStore.getEntries.map(rs => ({ label: rs.slugName, value: rs.id }))
+)
 
 watch( fragment, ( newFragment ) => {
   if ( newFragment ) {
@@ -244,6 +267,7 @@ onMounted( async () => {
   try {
     await Promise.all( [
       soundFragmentsStore.fetchSoundFragment( id.value ),
+      radioStationsStore.fetchRadioStations(1, 100),
       referencesStore.fetchGenres(),
       referencesStore.fetchLabels()
     ] )
