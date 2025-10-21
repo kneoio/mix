@@ -12,6 +12,7 @@ export const usePlayerStore = defineStore('player', () => {
   const stationColor = ref<string | null>('#3D20E4')
   const djName = ref<string | null>(null)
   const djStatus = ref<string | null>(null)
+  const countryCode = ref<string | null>(null)
   const nowPlaying = ref('|')
   const isAsleep = ref(false)
   const isBroadcasting = ref(false)
@@ -21,6 +22,12 @@ export const usePlayerStore = defineStore('player', () => {
   const isPlaying = ref(false)
   const audioElement = ref<HTMLAudioElement | null>(null)
   const stationsLoadError = ref(false)
+
+  const titleAnimation = ref<{ enabled: boolean; type: 'static' | 'marquee'; speed: number }>({
+    enabled: false,
+    type: 'static',
+    speed: 1
+  })
 
   let statusPollingInterval: NodeJS.Timeout | null = null
   let listPollingInterval: NodeJS.Timeout | null = null
@@ -48,14 +55,15 @@ export const usePlayerStore = defineStore('player', () => {
     if (!radioSlug.value) return
 
     try {
-      const response = await unsecuredClient.get(`/radiostations/${radioSlug.value}/status`)
+      const response = await unsecuredClient.get(`https://mixpla.online/${radioSlug.value}/radio/status`)
       const data = response.data
 
       stationName.value = data.name || stationName.value
       djName.value = data.djName
       djStatus.value = data.djStatus
+      countryCode.value = data.countryCode || null
 
-      const isOnline = data.currentStatus === 'ONLINE' || data.currentStatus === 'BROADCASTING'
+      const isOnline = data.currentStatus === 'ONLINE' || data.currentStatus === 'BROADCASTING' || data.currentStatus === 'ON_LINE'
 
       if (isOnline) {
         statusText.value = 'Station is online, waiting for curator...'
@@ -79,6 +87,19 @@ export const usePlayerStore = defineStore('player', () => {
 
       if (data.color && data.color.match(/^#[0-9a-fA-F]{6,8}$/)) {
         stationColor.value = data.color.length === 9 ? data.color.substring(0, 7) : data.color
+      }
+
+      if (data.animation) {
+        const rawType = typeof data.animation.type === 'string' ? data.animation.type.toLowerCase() : 'static'
+        const mappedType = rawType === 'marquee' ? 'marquee' : 'static'
+        const spd = typeof data.animation.speed === 'number' && data.animation.speed > 0 ? data.animation.speed : 1
+        titleAnimation.value = {
+          enabled: !!data.animation.enabled,
+          type: mappedType,
+          speed: spd
+        }
+      } else {
+        titleAnimation.value = { enabled: false, type: 'static', speed: 1 }
       }
     } catch (error: unknown) {
       if ((error as { response?: { status?: number } }).response?.status === 404) {
@@ -228,6 +249,7 @@ export const usePlayerStore = defineStore('player', () => {
     stationColor,
     djName,
     djStatus,
+    countryCode,
     nowPlaying,
     isAsleep,
     isBroadcasting,
@@ -236,6 +258,7 @@ export const usePlayerStore = defineStore('player', () => {
     bufferStatus,
     isPlaying,
     audioElement,
+    titleAnimation,
 
     // Getters
     displayStatusText,

@@ -20,8 +20,8 @@
           {{ $t( 'menu.title' ) }}
         </q-item-label>
 
-        <q-item clickable to="/space" active-class="text-warning"
-          exact-active-class="text-warning" v-ripple>
+        <q-item clickable to="/space" active-class="bg-grey-3 text-warning"
+          exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
           </q-item-section>
@@ -30,8 +30,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/radiostations" active-class="text-warning"
-          exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/radiostations" active-class="bg-grey-3 text-warning"
+          exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="radio" />
           </q-item-section>
@@ -40,8 +40,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/listeners" active-class="text-warning"
-          exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/listeners" active-class="bg-grey-3 text-warning"
+          exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="people" />
           </q-item-section>
@@ -50,8 +50,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/fragments" active-class="text-warning"
-          exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" isAuthenticated " clickable to="/fragments" active-class="bg-grey-3 text-warning"
+          exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="library_music" />
           </q-item-section>
@@ -60,7 +60,7 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/profile" active-class="text-warning" exact-active-class="text-warning" v-ripple>
+        <q-item clickable to="/profile" active-class="bg-grey-3 text-warning" exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="person" />
           </q-item-section>
@@ -69,8 +69,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" !isAuthenticated " clickable to="/login" active-class="text-warning"
-          exact-active-class="text-warning" v-ripple>
+        <q-item v-if=" !isAuthenticated " clickable to="/login" active-class="bg-grey-3 text-warning"
+          exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="login" />
           </q-item-section>
@@ -88,9 +88,9 @@
     </q-page-container>
 
     <q-footer class="text-white player-footer">
-      <div v-touch-swipe.mouse.up="handleSwipeUp" class="cursor-pointer">
+      <div v-touch-swipe.mouse.up="handleSwipeUp" class="cursor-pointer footer-swipe">
         <div class="row justify-center q-pt-xs">
-          <div class="bg-white" style="width: 40px; height: 4px; border-radius: 2px;"></div>
+          <div class="bg-white" style="width: 40px; height: 6px; border-radius: 3px;"></div>
         </div>
         <q-toolbar>
           <div class="text-caption footer-text">{{ nowPlayingParts.title }}</div>
@@ -175,6 +175,18 @@ function togglePlay() {
 </script>
 
 <style scoped>
+.player-footer {
+  min-height: 72px;
+}
+
+.footer-swipe {
+  padding: 10px 0 12px;
+}
+
+.player-footer :deep(.q-toolbar) {
+  min-height: 56px;
+}
+
 .footer-text {
   flex: 1;
   overflow: hidden;

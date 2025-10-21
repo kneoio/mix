@@ -10,10 +10,21 @@
       <q-card-section class="q-pa-md player-content">
         <div class="station-info">
           <h1 class="station-name">{{ stationName }}</h1>
+          <div class="station-meta" v-if="djName || countryCode">
+            <span v-if="djName">DJ: {{ djName }}</span>
+            <span v-if="djName && countryCode"> · </span>
+            <span v-if="countryCode">Country: {{ countryCode }}</span>
+          </div>
         </div>
 
         <div class="now-playing-info">
-          <AnimatedText :text="nowPlaying" />
+          <AnimatedText
+            :text="nowPlaying"
+            :animation-type="titleAnimation.enabled ? titleAnimation.type : 'static'"
+            :animation-speed="titleAnimation.speed"
+            :visual-style="titleAnimation.enabled ? 'glow' : 'none'"
+            :station-color="stationColor || ''"
+          />
         </div>
 
         <div class="controls">
@@ -50,7 +61,7 @@ const dialogModel = computed({
 })
 
 const playerStore = usePlayerStore()
-const { stationName, nowPlaying, isPlaying } = storeToRefs(playerStore)
+const { stationName, djName, countryCode, stationColor, nowPlaying, isPlaying, titleAnimation } = storeToRefs(playerStore)
 
 function togglePlay() {
   playerStore.togglePlay()

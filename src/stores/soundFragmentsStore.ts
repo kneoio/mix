@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import {computed, ref} from 'vue'
 import apiClient from 'src/api/apiClient'
+import { parseValidationProblem } from 'src/api/validation'
 import {usePagination} from 'src/composables/usePagination'
 import type {ApiFormResponse, ApiViewPageResponse} from 'src/types/api'
 import type {SoundFragment, SoundFragmentFilterDTO} from 'src/types/models'
@@ -34,9 +35,42 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
     apiFormResponse.value = response.data.payload;
   }
 
-  const updateSoundFragment = async (id: string, dto: Partial<SoundFragment>) => {
-    await apiClient.post(`/soundfragments/${encodeURIComponent(id)}`, dto)
-    await fetchSoundFragment(id)
+  const createSoundFragment = async (dto: unknown): Promise<string> => {
+    try {
+      const response = await apiClient.post('/soundfragments/new', dto)
+      apiFormResponse.value = response.data.payload
+      const newId = (response?.data?.payload?.docData as { id?: string } | null)?.id
+      return String(newId || '')
+    } catch (err) {
+      const parsed = parseValidationProblem(err)
+      if (parsed) {
+        const e = new Error(parsed.message) as Error & { name: string; fieldErrors: Record<string, string[]> }
+        e.name = 'ValidationError'
+        e.fieldErrors = parsed.fieldErrors
+        throw e
+      }
+      throw err
+    }
+  }
+
+  const updateSoundFragment = async (id: string, dto: unknown) => {
+    try {
+      await apiClient.post(`/soundfragments/${encodeURIComponent(id)}`, dto)
+      await fetchSoundFragment(id)
+    } catch (err) {
+      const parsed = parseValidationProblem(err)
+      if (parsed) {
+        const e = new Error(parsed.message) as Error & { name: string; fieldErrors: Record<string, string[]> }
+        e.name = 'ValidationError'
+        e.fieldErrors = parsed.fieldErrors
+        throw e
+      }
+      throw err
+    }
+  }
+
+  const deleteSoundFragment = async (id: string) => {
+    await apiClient.delete(`/soundfragments/${encodeURIComponent(id)}`)
   }
 
   return {
@@ -45,6 +79,8 @@ export const useSoundFragmentsStore = defineStore('soundFragments', () => {
     getEntries,
     fetchSoundFragments,
     fetchSoundFragment,
+    createSoundFragment,
     updateSoundFragment,
+    deleteSoundFragment,
   }
 })

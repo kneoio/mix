@@ -179,19 +179,19 @@ import { FragmentType } from 'src/types/models'
 import { useUiStore } from 'src/stores/uiStore'
 import apiClient from 'src/api/apiClient'
 
-type SaveDTO = Partial<SoundFragment> & { newlyUploaded: string[] | null }
-
 const route = useRoute()
 const router = useRouter()
 const soundFragmentsStore = useSoundFragmentsStore()
 const referencesStore = useReferencesStore()
 const radioStationsStore = useRadioStationsStore()
 
-const id = computed( () => String( route.params.id || '' ) )
+const id = computed(() => fragment.value?.id)
 const loading = ref( false )
 const ui = useUiStore()
 
-const fragment = computed( () => soundFragmentsStore.apiFormResponse?.docData )
+const fragment = computed<SoundFragment | null>(
+  () => soundFragmentsStore.apiFormResponse?.docData as SoundFragment | null
+)
 
 const typeOptions = Object.values( FragmentType )
 
@@ -240,21 +240,35 @@ function goBack() {
 }
 
 async function handleSave() {
-  if (!id.value) return
-  const dto: Partial<SoundFragment> = {}
-  if (formData.type) dto.type = formData.type
-  if (typeof formData.title !== 'undefined') dto.title = formData.title
-  if (typeof formData.artist !== 'undefined') dto.artist = formData.artist
-  if (Array.isArray(formData.genres)) dto.genres = formData.genres as unknown as string[]
-  if (Array.isArray(formData.labels)) dto.labels = formData.labels as unknown as string[]
-  if (typeof formData.album !== 'undefined') dto.album = formData.album
-  if (Array.isArray(formData.representedInBrands)) dto.representedInBrands = formData.representedInBrands as unknown as string[]
-  if (typeof formData.description !== 'undefined') dto.description = formData.description
-  const payload: SaveDTO = {
+  const dto = {
+    type: formData.type as FragmentType,
+    title: formData.title as string,
+    artist: formData.artist as string,
+    genres: formData.genres,
+    labels: formData.labels,
+    album: formData.album as string,
+    representedInBrands: formData.representedInBrands,
+    description: formData.description as string,
+  }
+  const payload = {
     ...dto,
     newlyUploaded: uploadedFileNames.value.length > 0 ? uploadedFileNames.value : null,
   }
-  await soundFragmentsStore.updateSoundFragment(id.value, payload as unknown as Partial<SoundFragment>)
+  try {
+    if (!id.value) {
+      await soundFragmentsStore.createSoundFragment(payload)
+    } else {
+      await soundFragmentsStore.updateSoundFragment(id.value, payload)
+    }
+    await router.push('/fragments')
+  } catch (err) {
+    const e = err as Error & { name?: string; fieldErrors?: Record<string, string[]> }
+    if (e?.name === 'ValidationError') {
+      if (typeof window !== 'undefined' && window.alert) window.alert(e.message)
+      return
+    }
+    throw err
+  }
 }
 
 function handleDelete() {
@@ -262,11 +276,12 @@ function handleDelete() {
 }
 
 onMounted( async () => {
-  if ( !id.value ) return
+  const routeId = route.params.id as string
+  if (!routeId) return
   loading.value = true
   try {
     await Promise.all( [
-      soundFragmentsStore.fetchSoundFragment( id.value ),
+      soundFragmentsStore.fetchSoundFragment(routeId),
       radioStationsStore.fetchRadioStations(1, 100),
       referencesStore.fetchGenres(),
       referencesStore.fetchLabels()
@@ -291,11 +306,12 @@ async function handleUploaderAdded(files: readonly File[] | readonly { file?: Fi
       f = first
     }
     if (!f) return
-    if (!id.value) return
-    const uploadId = (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : String(Date.now()))
+    const targetId = id.value ?? 'temp'
+    const uploadId = globalThis.crypto?.randomUUID?.()
+    if (!uploadId) return
     const form = new FormData()
     form.append('file', f)
-    await apiClient.post(`/soundfragments/files/${encodeURIComponent(id.value)}?uploadId=${encodeURIComponent(uploadId)}`, form)
+    await apiClient.post(`/soundfragments/files/${encodeURIComponent(targetId)}?uploadId=${encodeURIComponent(uploadId)}`, form)
     if (!uploadedFileNames.value.includes(f.name)) uploadedFileNames.value.push(f.name)
   } catch { /* ignore */ }
 }
