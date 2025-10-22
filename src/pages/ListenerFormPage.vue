@@ -40,8 +40,6 @@
                 label="Country"
                 outlined
                 dense
-                options-dense
-                popup-content-style="max-height: 240px"
               />
             </div>
           </div>
