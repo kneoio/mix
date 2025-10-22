@@ -80,7 +80,8 @@ export const useListenersStore = defineStore('listeners', () => {
   }
 
   const saveListener = async (data: ListenerSave, id: string | null) => {
-    const response = await apiClient.post(`/listeners/${id || ''}`, data)
+    const url = id ? `/listeners/${id}` : '/listeners/new'
+    const response = await apiClient.post(url, data)
     if (response?.data?.payload) {
       apiFormResponse.value = response.data.payload
       return apiFormResponse.value

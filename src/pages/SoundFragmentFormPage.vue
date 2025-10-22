@@ -1,7 +1,10 @@
 <template>
   <q-page class="q-px-md q-pb-md q-pt-none">
     <FormHeader :title="formData.title || $t( 'menu.soundFragments' )" :subtitle="formData.artist || ''"
-      :show-save="true" :show-delete="true" :disable-save="saving || downloading" :disable-delete="saving || downloading" @back="goBack" @save="handleSave" @delete="handleDelete" />
+      :show-save="true" :show-delete="true"
+      :disable-save="loading || saving || downloading"
+      :disable-delete="loading || saving || downloading"
+      @back="goBack" @save="handleSave" @delete="handleDelete" />
 
     <q-card flat class="gt-sm" style="max-width: 50%;">
       <q-card-section v-if=" !loading " class="q-px-none">
@@ -184,6 +187,11 @@
         <q-skeleton type="text" class="q-mb-sm" style="width: 50%" />
       </q-card-section>
     </q-card>
+    <ValidationDialog
+      v-model="showValidationDialog"
+      :message="validationMessage"
+      :errors="validationErrors"
+    />
   </q-page>
 </template>
 
@@ -197,6 +205,7 @@ import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import type { SoundFragment } from 'src/types/models'
 import { FragmentType } from 'src/types/models'
 import { useUiStore } from 'src/stores/uiStore'
+import ValidationDialog from 'src/components/ValidationDialog.vue'
 import apiClient from 'src/api/apiClient'
 import { useQuasar } from 'quasar'
 import type { AxiosProgressEvent } from 'axios'
@@ -212,6 +221,10 @@ const id = computed(() => fragment.value?.id)
 const loading = ref( false )
 const saving = ref( false )
 const ui = useUiStore()
+
+const showValidationDialog = ref(false)
+const validationMessage = ref('')
+const validationErrors = ref<Record<string, string[]>>({})
 
 const fragment = computed<SoundFragment | null>(
   () => soundFragmentsStore.apiFormResponse?.docData as SoundFragment | null
@@ -294,7 +307,9 @@ async function handleSave() {
   } catch (err) {
     const e = err as Error & { name?: string; fieldErrors?: Record<string, string[]> }
     if (e?.name === 'ValidationError') {
-      if (typeof window !== 'undefined' && window.alert) window.alert(e.message)
+      validationMessage.value = e.message
+      validationErrors.value = e.fieldErrors || {}
+      showValidationDialog.value = true
       return
     }
     throw err

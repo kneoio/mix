@@ -76,6 +76,17 @@ export const useRadioStationsStore = defineStore('radioStations', () => {
     }
   }
 
+  const saveRadioStation = async (data: unknown, id: string | null) => {
+    const url = id ? `/radiostations/${id}` : '/radiostations/new'
+    const response = await apiClient.post(url, data)
+    if (response?.data?.payload) {
+      apiFormResponse.value = response.data.payload
+      return apiFormResponse.value
+    } else {
+      throw new Error('Invalid API response structure')
+    }
+  }
+
   const deleteRadioStation = async (id: string) => {
     await apiClient.delete(`/radiostations/${id}`)
   }
@@ -86,6 +97,7 @@ export const useRadioStationsStore = defineStore('radioStations', () => {
     getPagination,
     fetchRadioStations,
     fetchRadioStation,
+    saveRadioStation,
     deleteRadioStation
   }
 })
