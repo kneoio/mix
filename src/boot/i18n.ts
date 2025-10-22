@@ -15,7 +15,8 @@ const messages = {
       account: 'Conta',
       title: 'Menu',
       listeners: 'Ouvintes',
-      soundFragments: 'Fragmentos de Som'
+      soundFragments: 'Fragmentos de Som',
+      dashboard: 'Painel'
     },
     theme: {
       switchToLight: 'Mudar para o tema claro',
@@ -87,6 +88,15 @@ const messages = {
     },
     space: {
       loadFailed: 'Falha ao carregar estações. Tente novamente mais tarde.'
+    },
+    dashboard: {
+      noData: 'Nenhum dado disponível',
+      listeners: 'Ouvintes',
+      start: 'Iniciar',
+      stop: 'Parar',
+      status: 'Status',
+      livePlaylist: 'Playlist ao Vivo',
+      noPlaylist: 'Nenhuma playlist disponível'
     }
   },
   en: {
@@ -98,7 +108,8 @@ const messages = {
       account: 'Account',
       title: 'Menu',
       listeners: 'Listeners',
-      soundFragments: 'Sound Fragments'
+      soundFragments: 'Sound Fragments',
+      dashboard: 'Dashboard'
     },
     theme: {
       switchToLight: 'Switch to light theme',
@@ -172,6 +183,15 @@ const messages = {
     },
     space: {
       loadFailed: 'Failed to load stations. Please try again later.'
+    },
+    dashboard: {
+      noData: 'No data available',
+      listeners: 'Listeners',
+      start: 'Start',
+      stop: 'Stop',
+      status: 'Status',
+      livePlaylist: 'Live Playlist',
+      noPlaylist: 'No playlist available'
     }
   },
   uk: {
@@ -183,7 +203,8 @@ const messages = {
       account: 'Обліковий запис',
       title: 'Меню',
       listeners: 'Слухачі',
-      soundFragments: 'Звукові фрагменти'
+      soundFragments: 'Звукові фрагменти',
+      dashboard: 'Панель'
     },
     theme: {
       switchToLight: 'Перемкнути на світлу тему',
@@ -246,7 +267,8 @@ const messages = {
       account: 'Есептік жазба',
       title: 'Мәзір',
       listeners: 'Тыңдаушылар',
-      soundFragments: 'Дыбыс фрагменттері'
+      soundFragments: 'Дыбыс фрагменттері',
+      dashboard: 'Бақылау тақтасы'
     },
     theme: {
       switchToLight: 'Жарық тақырыпқа ауыстыру',
@@ -290,7 +312,8 @@ const messages = {
       account: 'Konto',
       title: 'Menü',
       listeners: 'Hörer',
-      soundFragments: 'Sound‑Fragmente'
+      soundFragments: 'Sound‑Fragmente',
+      dashboard: 'Dashboard'
     },
     theme: {
       switchToLight: 'Zum hellen Theme wechseln',
@@ -353,7 +376,8 @@ const messages = {
       account: 'Compte',
       title: 'Menu',
       listeners: 'Auditeurs',
-      soundFragments: 'Fragments sonores'
+      soundFragments: 'Fragments sonores',
+      dashboard: 'Tableau de bord'
     },
     theme: {
       switchToLight: 'Passer au thème clair',
@@ -416,7 +440,8 @@ const messages = {
       account: '账户',
       title: '菜单',
       listeners: '听众',
-      soundFragments: '音频片段'
+      soundFragments: '音频片段',
+      dashboard: '仪表板'
     },
     theme: {
       switchToLight: '切换到浅色主题',
@@ -479,7 +504,8 @@ const messages = {
       account: 'アカウント',
       title: 'メニュー',
       listeners: 'リスナー',
-      soundFragments: 'サウンドフラグメント'
+      soundFragments: 'サウンドフラグメント',
+      dashboard: 'ダッシュボード'
     },
     theme: {
       switchToLight: 'ライトテーマに切り替え',
@@ -543,7 +569,8 @@ const messages = {
       account: 'ანგარიში',
       title: 'მენიუ',
       listeners: 'მსმენელები',
-      soundFragments: 'ხმის ფრაგმენტები'
+      soundFragments: 'ხმის ფრაგმენტები',
+      dashboard: 'დაფა'
     },
     theme: {
       switchToLight: 'გადართვა ნათელ თემაზე',
@@ -606,7 +633,8 @@ const messages = {
       account: 'Konts',
       title: 'Izvēlne',
       listeners: 'Klausītāji',
-      soundFragments: 'Skaņas fragmenti'
+      soundFragments: 'Skaņas fragmenti',
+      dashboard: 'Informācijas panelis'
     },
     theme: {
       switchToLight: 'Pārslēgt uz gaišo tēmu',
@@ -669,7 +697,8 @@ const messages = {
       account: 'Аккаунт',
       title: 'Меню',
       listeners: 'Слушатели',
-      soundFragments: 'Аудиофрагменты'
+      soundFragments: 'Аудиофрагменты',
+      dashboard: 'Панель управления'
     },
     theme: {
       switchToLight: 'Переключить на светлую тему',
@@ -732,7 +761,8 @@ const messages = {
       account: 'Account',
       title: 'Menu',
       listeners: 'Ascoltatori',
-      soundFragments: 'Frammenti sonori'
+      soundFragments: 'Frammenti sonori',
+      dashboard: 'Dashboard'
     },
     theme: {
       switchToLight: 'Passa al tema chiaro',
@@ -795,7 +825,8 @@ const messages = {
       account: 'Hesap',
       title: 'Menü',
       listeners: 'Dinleyiciler',
-      soundFragments: 'Ses Parçaları'
+      soundFragments: 'Ses Parçaları',
+      dashboard: 'Kontrol Paneli'
     },
     theme: {
       switchToLight: 'Açık temaya geç',
@@ -858,7 +889,8 @@ const messages = {
       account: 'الحساب',
       title: 'القائمة',
       listeners: 'المستمعون',
-      soundFragments: 'مقاطع الصوت'
+      soundFragments: 'مقاطع الصوت',
+      dashboard: 'لوحة التحكم'
     },
     theme: {
       switchToLight: 'التبديل إلى الوضع الفاتح',
@@ -921,7 +953,8 @@ const messages = {
       account: 'Konto',
       title: 'Menu',
       listeners: 'Słuchacze',
-      soundFragments: 'Fragmenty dźwiękowe'
+      soundFragments: 'Fragmenty dźwiękowe',
+      dashboard: 'Panel'
     },
     theme: {
       switchToLight: 'Przełącz na jasny motyw',
@@ -984,7 +1017,8 @@ const messages = {
       account: 'खाता',
       title: 'मेनू',
       listeners: 'श्रोता',
-      soundFragments: 'ध्वनि खंड'
+      soundFragments: 'ध्वनि खंड',
+      dashboard: 'डैशबोर्ड'
     },
     theme: {
       switchToLight: 'हल्के थीम पर स्विच करें',
@@ -1047,7 +1081,8 @@ const messages = {
       account: '계정',
       title: '메뉴',
       listeners: '청취자',
-      soundFragments: '사운드 조각'
+      soundFragments: '사운드 조각',
+      dashboard: '대시보드'
     },
     theme: {
       switchToLight: '라이트 테마로 전환',
@@ -1112,7 +1147,8 @@ const messages = {
       account: 'Tili',
       title: 'Valikko',
       listeners: 'Kuuntelijat',
-      soundFragments: 'Äänileikkeet'
+      soundFragments: 'Äänileikkeet',
+      dashboard: 'Kojelauta'
     },
     theme: {
       switchToLight: 'Vaihda vaaleaan teemaan',
@@ -1177,7 +1213,8 @@ const messages = {
       account: 'Konto',
       title: 'Meny',
       listeners: 'Lyssnare',
-      soundFragments: 'Ljudfragment'
+      soundFragments: 'Ljudfragment',
+      dashboard: 'Instrumentpanel'
     },
     theme: {
       switchToLight: 'Byt till ljust tema',
@@ -1242,7 +1279,8 @@ const messages = {
       account: 'Konto',
       title: 'Meny',
       listeners: 'Lyttere',
-      soundFragments: 'Lydfragmenter'
+      soundFragments: 'Lydfragmenter',
+      dashboard: 'Dashbord'
     },
     theme: {
       switchToLight: 'Bytt til lyst tema',

@@ -272,8 +272,13 @@ function goBack() {
 
 function statusText( s?: string ) {
   if ( s === 'ON_LINE' ) return 'Online'
+  if ( s === 'WARMING_UP' ) return 'Warming Up'
+  if ( s === 'QUEUE_SATURATED' ) return 'Queue Saturated'
+  if ( s === 'WAITING_FOR_CURATOR' ) return 'Waiting for Curator'
+  if ( s === 'IDLE' ) return 'Idle'
+  if ( s === 'SYSTEM_ERROR' ) return 'System Error'
   if ( s === 'OFF_LINE' ) return 'Offline'
-  return 'Unknown'
+  return s || 'Unknown'
 }
 
 function getStatusClass( status?: string ): string {

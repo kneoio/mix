@@ -63,10 +63,22 @@ const selectedRows = ref<RadioStation[]>( [] )
 const filteredStations = computed( () => radioStationsStore.getEntries )
 
 import { i18n } from 'boot/i18n'
+
+function formatStatus( s?: string ) {
+  if ( s === 'ON_LINE' ) return 'Online'
+  if ( s === 'WARMING_UP' ) return 'Warming Up'
+  if ( s === 'QUEUE_SATURATED' ) return 'Queue Saturated'
+  if ( s === 'WAITING_FOR_CURATOR' ) return 'Waiting for Curator'
+  if ( s === 'IDLE' ) return 'Idle'
+  if ( s === 'SYSTEM_ERROR' ) return 'System Error'
+  if ( s === 'OFF_LINE' ) return 'Offline'
+  return s || 'Unknown'
+}
+
 const columns = computed(() => [
   { name: 'title', label: i18n.global.t('columns.title'), field: 'slugName', align: 'left' as const },
   { name: 'country', label: i18n.global.t('columns.country'), field: 'country', align: 'left' as const },
-  { name: 'status', label: i18n.global.t('columns.status'), field: 'status', align: 'left' as const },
+  { name: 'status', label: i18n.global.t('columns.status'), field: (row: RadioStation) => formatStatus(row.status), align: 'left' as const },
   { name: 'description', label: i18n.global.t('columns.description'), field: 'description', align: 'left' as const }
 ])
 

@@ -60,6 +60,16 @@
           </q-item-section>
         </q-item>
 
+        <q-item v-if=" isAuthenticated " clickable to="/dashboard" active-class="bg-grey-3 text-warning"
+          exact-active-class="bg-grey-3 text-warning" v-ripple>
+          <q-item-section avatar>
+            <q-icon name="dashboard" />
+          </q-item-section>
+          <q-item-section>
+            {{ $t( 'menu.dashboard' ) }}
+          </q-item-section>
+        </q-item>
+
         <q-item clickable to="/profile" active-class="bg-grey-3 text-warning" exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="person" />
