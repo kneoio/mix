@@ -4,8 +4,8 @@
       <div class="col-auto row items-center q-gutter-xs">
         <q-btn flat icon="arrow_back" @click="$emit('back')" class="lt-sm" />
         <q-btn flat icon="arrow_back" :label="$t('common.back')" @click="$emit('back')" class="gt-xs" />
-        <q-btn v-if="showSave" color="primary" :label="$t('common.save')" size="md" unelevated @click="$emit('save')" />
-        <q-btn v-if="showDelete" color="negative" :label="$t('common.delete')" size="md" unelevated @click="$emit('delete')" />
+        <q-btn v-if="showSave" color="primary" :label="$t('common.save')" size="md" unelevated @click="$emit('save')" :disable="disableSave" />
+        <q-btn v-if="showDelete" color="negative" :label="$t('common.delete')" size="md" unelevated @click="$emit('delete')" :disable="disableDelete" />
       </div>
     </div>
     <div class="row q-mt-none">
@@ -26,5 +26,7 @@ defineProps<{
   subtitleClass?: string
   showSave?: boolean
   showDelete?: boolean
+  disableSave?: boolean
+  disableDelete?: boolean
 }>()
 </script>

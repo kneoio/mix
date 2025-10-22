@@ -14,7 +14,8 @@ export default defineConfig((/* ctx */) => {
     boot: [
       'i18n',
       'keycloak',
-      'pinia'
+      'pinia',
+      'notify'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css

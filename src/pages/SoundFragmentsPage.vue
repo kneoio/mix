@@ -113,7 +113,7 @@ function handleNew() {
 
 function handleDelete() {
   if ( selectedRows.value.length === 0 ) {
-    $q.notify( { type: 'warning', message: i18n.global.t( 'common.noItemsSelected' ), position: 'right' } )
+    $q.notify( { type: 'app-warning', message: i18n.global.t( 'common.noItemsSelected' ) } )
     return
   }
   $q.dialog( {
@@ -127,12 +127,12 @@ function handleDelete() {
       try {
         const ids = selectedRows.value.map( r => r.id )
         await Promise.all( ids.map( id => store.deleteSoundFragment( id ) ) )
-        $q.notify( { type: 'positive', message: `Deleted ${ids.length} item(s)`, position: 'right' } )
+        $q.notify( { type: 'app-positive', message: `Deleted ${ids.length} item(s)` } )
         selectedRows.value = []
         page.value = Math.max( 1, Math.min( page.value, maxPage.value ) )
         await load()
       } catch {
-        $q.notify( { type: 'negative', message: 'Delete failed', position: 'right' } )
+        $q.notify( { type: 'app-negative', message: 'Delete failed' } )
       } finally {
         loading.value = false
       }

@@ -17,7 +17,7 @@ export const usePlayerStore = defineStore('player', () => {
   const isAsleep = ref(false)
   const isBroadcasting = ref(false)
   const isWaitingForCurator = ref(false)
-  const statusText = ref('Ready to play')
+  const statusText = ref('')
   const bufferStatus = ref('ok')
   const isPlaying = ref(false)
   const audioElement = ref<HTMLAudioElement | null>(null)
@@ -63,7 +63,7 @@ export const usePlayerStore = defineStore('player', () => {
       djStatus.value = data.djStatus
       countryCode.value = data.countryCode || null
 
-      const isOnline = data.currentStatus === 'ONLINE' || data.currentStatus === 'BROADCASTING' || data.currentStatus === 'ON_LINE'
+      const isOnline = data.currentStatus === 'WARMING_UP' || data.currentStatus === 'ON_LINE'
 
       if (isOnline) {
         statusText.value = 'Station is online, waiting for curator...'
@@ -80,13 +80,13 @@ export const usePlayerStore = defineStore('player', () => {
         }
 
         const displayParts = []
-        if (data.countryCode) displayParts.push(`Country: ${data.countryCode}`)
-        if (data.djName) displayParts.push(`DJ: ${data.djName}`)
-        statusText.value = displayParts.join(', ') || 'Broadcasting'
+        displayParts.push(data.countryCode)
+        displayParts.push(`DJ: ${data.djName}`)
+        statusText.value = displayParts.join(', ')
       }
 
       if (data.color && data.color.match(/^#[0-9a-fA-F]{6,8}$/)) {
-        stationColor.value = data.color.length === 9 ? data.color.substring(0, 7) : data.color
+        stationColor.value = data.color
       }
 
       if (data.animation) {
@@ -106,7 +106,7 @@ export const usePlayerStore = defineStore('player', () => {
         isAsleep.value = true
         isBroadcasting.value = false
         isWaitingForCurator.value = false
-        statusText.value = 'Station is offline.'
+        statusText.value = 'offline'
         stopPolling()
         return
       }

@@ -140,12 +140,12 @@ async function handleSave() {
 
     const id = listenerId.value === 'new' ? null : listenerId.value
     await listenersStore.saveListener(dataToSave, id)
-    $q.notify({ type: 'positive', message: 'Listener saved successfully' })
+    $q.notify({ type: 'app-positive', message: 'Listener saved successfully' })
     await router.push('/listeners')
   } catch (error: unknown) {
     const err = error as AxiosError
     $q.notify({
-      type: 'negative',
+      type: 'app-negative',
       message: (err.response?.data as string) || err.message
     })
   } finally {

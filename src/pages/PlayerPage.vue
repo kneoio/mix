@@ -13,7 +13,7 @@
           <div class="station-meta" v-if="djName || countryCode">
             <span v-if="djName">DJ: {{ djName }}</span>
             <span v-if="djName && countryCode"> · </span>
-            <span v-if="countryCode">Country: {{ countryCode }}</span>
+            <span v-if="countryCode">{{ countryCode }}</span>
           </div>
         </div>
 

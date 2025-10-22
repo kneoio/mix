@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-px-md q-pb-md q-pt-none">
     <FormHeader :title="formData.title || $t( 'menu.soundFragments' )" :subtitle="formData.artist || ''"
-      :show-save="true" :show-delete="true" @back="goBack" @save="handleSave" @delete="handleDelete" />
+      :show-save="true" :show-delete="true" :disable-save="saving" :disable-delete="saving" @back="goBack" @save="handleSave" @delete="handleDelete" />
 
     <q-card flat class="gt-sm" style="max-width: 50%;">
       <q-card-section v-if=" !loading " class="q-px-none">
@@ -12,7 +12,7 @@
           <q-select v-model="formData.type" :options="typeOptions" :label="$t( 'columns.type' )" outlined dense />
           <q-select v-model="formData.genres" :options="referencesStore.genreOptions" option-label="label"
             option-value="value" emit-value map-options :label="$t( 'columns.genres' )" outlined dense multiple
-            use-chips>
+            use-chips options-dense popup-content-style="max-height: 240px">
             <template v-slot:selected-item=" scope ">
               <q-chip dense square size="md" removable @remove="scope.removeAtIndex( scope.index )"
                 :tabindex="scope.tabindex">
@@ -22,7 +22,7 @@
           </q-select>
           <q-select v-model="formData.labels" :options="referencesStore.labelOptions" option-label="label"
             option-value="value" emit-value map-options :label="$t( 'columns.labels' )" outlined dense multiple
-            use-chips>
+            use-chips options-dense popup-content-style="max-height: 240px">
             <template v-slot:selected-item=" scope ">
               <q-chip dense square size="md" removable @remove="scope.removeAtIndex( scope.index )"
                 :tabindex="scope.tabindex"
@@ -94,7 +94,8 @@
           <q-input v-model="formData.artist" label="Artist" outlined dense />
           <q-select v-model="formData.type" :options="typeOptions" label="Type" outlined dense />
           <q-select v-model="formData.genres" :options="referencesStore.genreOptions" option-label="label"
-            option-value="value" emit-value map-options label="Genres" outlined dense multiple use-chips>
+            option-value="value" emit-value map-options label="Genres" outlined dense multiple use-chips
+            options-dense popup-content-style="max-height: 240px">
             <template v-slot:selected-item=" scope ">
               <q-chip dense square removable @remove="scope.removeAtIndex( scope.index )" :tabindex="scope.tabindex">
                 {{ scope.opt.label }}
@@ -102,7 +103,8 @@
             </template>
           </q-select>
           <q-select v-model="formData.labels" :options="referencesStore.labelOptions" option-label="label"
-            option-value="value" emit-value map-options label="Labels" outlined dense multiple use-chips>
+            option-value="value" emit-value map-options label="Labels" outlined dense multiple use-chips
+            options-dense popup-content-style="max-height: 240px">
             <template v-slot:selected-item=" scope ">
               <q-chip dense square size="md" removable @remove="scope.removeAtIndex( scope.index )"
                 :tabindex="scope.tabindex"
@@ -178,15 +180,18 @@ import type { SoundFragment } from 'src/types/models'
 import { FragmentType } from 'src/types/models'
 import { useUiStore } from 'src/stores/uiStore'
 import apiClient from 'src/api/apiClient'
+import { useQuasar } from 'quasar'
 
 const route = useRoute()
 const router = useRouter()
+const $q = useQuasar()
 const soundFragmentsStore = useSoundFragmentsStore()
 const referencesStore = useReferencesStore()
 const radioStationsStore = useRadioStationsStore()
 
 const id = computed(() => fragment.value?.id)
 const loading = ref( false )
+const saving = ref( false )
 const ui = useUiStore()
 
 const fragment = computed<SoundFragment | null>(
@@ -228,7 +233,6 @@ watch( fragment, ( newFragment ) => {
     formData.genres = newFragment.genres || []
     formData.labels = newFragment.labels || []
     formData.album = newFragment.album || ''
-    // Optional fields (may be absent in backend response)
     const opt = newFragment as Partial<{ representedInBrands: string[]; description: string }>
     formData.representedInBrands = opt.representedInBrands || []
     formData.description = opt.description || ''
@@ -255,11 +259,13 @@ async function handleSave() {
     newlyUploaded: uploadedFileNames.value.length > 0 ? uploadedFileNames.value : null,
   }
   try {
+    saving.value = true
     if (!id.value) {
       await soundFragmentsStore.createSoundFragment(payload)
     } else {
       await soundFragmentsStore.updateSoundFragment(id.value, payload)
     }
+    $q.notify({ type: 'app-positive', message: 'Sound fragment saved successfully' })
     await router.push('/fragments')
   } catch (err) {
     const e = err as Error & { name?: string; fieldErrors?: Record<string, string[]> }
@@ -268,6 +274,8 @@ async function handleSave() {
       return
     }
     throw err
+  } finally {
+    saving.value = false
   }
 }
 
@@ -293,6 +301,7 @@ onMounted( async () => {
 } )
 
 watch( loading, ( v ) => ui.setGlobalLoading( v ) )
+watch( saving, ( v ) => ui.setGlobalLoading( v ) )
 
 async function handleUploaderAdded(files: readonly File[] | readonly { file?: File }[]) {
   try {
