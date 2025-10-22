@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-px-md q-pb-md q-pt-none">
     <FormHeader :title="formData.title || $t( 'menu.soundFragments' )" :subtitle="formData.artist || ''"
-      :show-save="true" :show-delete="true" :disable-save="saving" :disable-delete="saving" @back="goBack" @save="handleSave" @delete="handleDelete" />
+      :show-save="true" :show-delete="true" :disable-save="saving || downloading" :disable-delete="saving || downloading" @back="goBack" @save="handleSave" @delete="handleDelete" />
 
     <q-card flat class="gt-sm" style="max-width: 50%;">
       <q-card-section v-if=" !loading " class="q-px-none">
@@ -59,20 +59,30 @@
             :max-files="1"
             flat
             bordered
+            dense
+            :no-thumbnails="true"
             style="width: 100%"
             @added="handleUploaderAdded"
             @removed="handleUploaderRemoved"
           />
+          <div v-if="uploadProgress !== null" class="q-mt-sm">
+            <q-linear-progress :value="uploadProgress" color="primary" track-color="grey-4" rounded />
+            <div class="text-caption text-grey-7 q-mt-xs">{{ Math.round(uploadProgress * 100) }}%</div>
+          </div>
+          
           <div v-if="attachedFiles.length" class="text-caption">
             <template v-for="(f, i) in attachedFiles" :key="f.name">
               <template v-if="f.url">
-                <a :href="f.url" target="_blank" rel="noopener">{{ f.name }}</a>
+                <a href="#" @click.prevent="openAttachedFile(f)">{{ f.name }}</a>
               </template>
               <template v-else>
                 {{ f.name }}
               </template>
               <span v-if="i < attachedFiles.length - 1">, </span>
             </template>
+          </div>
+          <div v-if="previewAudioUrl" class="q-mt-sm">
+            <audio :src="previewAudioUrl" controls style="width: 100%"></audio>
           </div>
           <q-input v-model="formData.description" :label="$t('fields.description')" type="textarea" autogrow outlined />
         </q-form>
@@ -141,19 +151,27 @@
             flat
             dense
             bordered
+            :no-thumbnails="true"
             @added="handleUploaderAdded"
             @removed="handleUploaderRemoved"
           />
+          <div v-if="uploadProgress !== null" class="q-mt-sm">
+            <q-linear-progress :value="uploadProgress" color="primary" track-color="grey-4" rounded />
+            <div class="text-caption text-grey-7 q-mt-xs">{{ Math.round(uploadProgress * 100) }}%</div>
+          </div>
           <div v-if="attachedFiles.length" class="text-caption">
             <template v-for="(f, i) in attachedFiles" :key="f.name">
               <template v-if="f.url">
-                <a :href="f.url" target="_blank" rel="noopener">{{ f.name }}</a>
+                <a href="#" @click.prevent="openAttachedFile(f)">{{ f.name }}</a>
               </template>
               <template v-else>
                 {{ f.name }}
               </template>
               <span v-if="i < attachedFiles.length - 1">, </span>
             </template>
+          </div>
+          <div v-if="previewAudioUrl" class="q-mt-sm">
+            <audio :src="previewAudioUrl" controls autoplay style="width: 100%"></audio>
           </div>
           <q-input v-model="formData.description" label="Description" type="textarea" autogrow outlined />
         </q-form>
@@ -181,6 +199,7 @@ import { FragmentType } from 'src/types/models'
 import { useUiStore } from 'src/stores/uiStore'
 import apiClient from 'src/api/apiClient'
 import { useQuasar } from 'quasar'
+import type { AxiosProgressEvent } from 'axios'
 
 const route = useRoute()
 const router = useRouter()
@@ -214,6 +233,11 @@ const formData = reactive<Partial<SoundFragment>>( {
 type QUploadFile = { name: string; __status?: string }
 const fileList = ref<QUploadFile[]>([])
 const uploadedFileNames = ref<string[]>([])
+const previewAudioUrl = ref<string>('')
+const uploadProgress = ref<number | null>(null)
+const downloading = ref<boolean>(false)
+
+let lastObjectUrl: string | null = null
 
 type AttachedFile = { name: string; url?: string }
 const attachedFiles = computed<AttachedFile[]>( () => {
@@ -302,6 +326,56 @@ onMounted( async () => {
 
 watch( loading, ( v ) => ui.setGlobalLoading( v ) )
 watch( saving, ( v ) => ui.setGlobalLoading( v ) )
+watch( downloading, ( v ) => ui.setGlobalLoading( v ) )
+
+async function openAttachedFile(f: { name: string; url?: string }) {
+  try {
+    if (!f?.url) return
+    downloading.value = true
+    const res = await apiClient.get(f.url, { responseType: 'blob' })
+    const contentType = (res?.headers?.['content-type'] as string) || 'application/octet-stream'
+    const blob = new Blob([res.data], { type: contentType })
+    const objectUrl = URL.createObjectURL(blob)
+    if (lastObjectUrl) { URL.revokeObjectURL(lastObjectUrl); lastObjectUrl = null }
+    previewAudioUrl.value = objectUrl
+    lastObjectUrl = objectUrl
+  } catch { /* noop */ }
+  finally {
+    downloading.value = false
+  }
+}
+
+const applyMetadataFromUpload = ( res: { metadata?: { title?: string; artist?: string; album?: string; genre?: string } } ) => {
+  try {
+    const md = res?.metadata || null
+    if (!md) return
+
+    if (!formData.title && md.title) {
+      formData.title = String(md.title)
+    }
+    if (!formData.artist && md.artist) {
+      formData.artist = String(md.artist)
+    }
+    if (!formData.album && md.album) {
+      formData.album = String(md.album)
+    }
+
+    const incomingGenre = md.genre
+    if (Array.isArray(formData.genres) && (!formData.genres.length) && incomingGenre) {
+      const opts = referencesStore.genreOptions || []
+      const match = opts.find((o: { value?: string; label?: string }) => {
+        const val = (o?.value ?? '').toString()
+        const label = (o?.label ?? '').toString()
+        const g = incomingGenre.toString()
+        return val.localeCompare(g, undefined, { sensitivity: 'accent' }) === 0 ||
+          label.localeCompare(g, undefined, { sensitivity: 'accent' }) === 0
+      })
+      if (match && match.value) {
+        formData.genres = [match.value]
+      }
+    }
+  } catch { /* noop */ }
+}
 
 async function handleUploaderAdded(files: readonly File[] | readonly { file?: File }[]) {
   try {
@@ -320,9 +394,26 @@ async function handleUploaderAdded(files: readonly File[] | readonly { file?: Fi
     if (!uploadId) return
     const form = new FormData()
     form.append('file', f)
-    await apiClient.post(`/soundfragments/files/${encodeURIComponent(targetId)}?uploadId=${encodeURIComponent(uploadId)}`, form)
+    uploadProgress.value = 0
+    const res = await apiClient.post(
+      `/soundfragments/files/${encodeURIComponent(targetId)}?uploadId=${encodeURIComponent(uploadId)}`,
+      form,
+      {
+        onUploadProgress: (pe: AxiosProgressEvent) => {
+          try {
+            const total = pe.total ?? 0
+            const loaded = pe.loaded ?? 0
+            const ratio = total > 0 ? (loaded / total) : 0
+            uploadProgress.value = Math.max(0, Math.min(1, ratio))
+          } catch { /* noop */ }
+        }
+      }
+    )
+    const payload = (res?.data || {}) as { metadata?: { title?: string; artist?: string; album?: string; genre?: string } }
+    applyMetadataFromUpload(payload)
     if (!uploadedFileNames.value.includes(f.name)) uploadedFileNames.value.push(f.name)
-  } catch { /* ignore */ }
+    uploadProgress.value = null
+  } catch { uploadProgress.value = null /* ignore */ }
 }
 
 function handleUploaderRemoved() {
