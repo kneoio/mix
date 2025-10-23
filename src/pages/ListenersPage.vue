@@ -11,7 +11,16 @@
       @delete="handleDelete"
     />
 
-    <q-table :rows="filteredListeners" :columns="columns" row-key="id" flat :filter="searchTerm"
+    <div v-if="loading" class="q-pa-md">
+      <q-skeleton type="rect" height="40px" class="q-mb-md" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+    </div>
+
+    <q-table v-else :rows="filteredListeners" :columns="columns" row-key="id" flat :filter="searchTerm"
       :selected="selectedRows" @update:selected="updateSelected" selection="multiple" :visible-columns="visibleColumns"
       v-model:pagination="tablePagination" :rows-per-page-options="[0]"
       class="sticky-header-table" @row-click="(evt, row) => openListener(row.id)">

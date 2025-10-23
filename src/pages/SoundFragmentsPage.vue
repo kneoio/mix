@@ -4,7 +4,16 @@
       :show-new="true" :show-delete="true" :delete-disabled="selectedRows.length === 0" @new="handleNew"
       @delete="handleDelete" />
 
-    <q-table :rows="items" :columns="columns" row-key="id" flat :selected="selectedRows"
+    <div v-if="loading" class="q-pa-md">
+      <q-skeleton type="rect" height="40px" class="q-mb-md" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+      <q-skeleton type="rect" height="50px" class="q-mb-sm" />
+    </div>
+
+    <q-table v-else :rows="items" :columns="columns" row-key="id" flat :selected="selectedRows"
       v-model:pagination="tablePagination" :rows-per-page-options="[0]" @update:selected="updateSelected"
       selection="multiple" :visible-columns="visibleColumns" @row-click="( evt, row ) => openFragment( row.id )"
       class="sticky-header-table">

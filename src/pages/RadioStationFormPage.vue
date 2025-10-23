@@ -86,19 +86,9 @@
             </q-form>
           </q-tab-panel>
           <q-tab-panel name="contribution">
-            <q-form class="column q-col-gutter-md">
-              <div class="row q-col-gutter-md">
-                <div class="col-12">
-                  <q-select v-model="formData.messagingPolicy" :options="referencesStore.messagingPolicyOptions" option-label="label"
-                    option-value="value" emit-value map-options :label="$t( 'fields.messagingAllowed' )" outlined dense />
-                </div>
-              </div>
-              <div class="row q-col-gutter-md">
-                <div class="col-12">
-                  <q-select v-model="formData.submissionPolicy" :options="referencesStore.submissionPolicyOptions" option-label="label"
-                    option-value="value" emit-value map-options :label="$t( 'fields.songSubmissionAllowed' )" outlined dense />
-                </div>
-              </div>
+            <q-form class="column">
+              <q-checkbox v-model="formData.messagingAllowed" :label="$t( 'fields.messagingAllowed' )" class="q-my-sm" />
+              <q-checkbox v-model="formData.songSubmissionAllowed" :label="$t( 'fields.songSubmissionAllowed' )" class="q-my-sm" />
             </q-form>
           </q-tab-panel>
         </q-tab-panels>
@@ -154,18 +144,8 @@
                 option-value="value" emit-value map-options :label="$t( 'fields.profileName' )" outlined dense />
             </div>
           </div>
-          <div class="row q-col-gutter-md">
-            <div class="col-12">
-              <q-select v-model="formData.messagingPolicy" :options="referencesStore.messagingPolicyOptions" option-label="label"
-                option-value="value" emit-value map-options :label="$t( 'fields.messagingAllowed' )" outlined dense />
-            </div>
-          </div>
-          <div class="row q-col-gutter-md">
-            <div class="col-12">
-              <q-select v-model="formData.submissionPolicy" :options="referencesStore.submissionPolicyOptions" option-label="label"
-                option-value="value" emit-value map-options :label="$t( 'fields.songSubmissionAllowed' )" outlined dense />
-            </div>
-          </div>
+          <q-checkbox v-model="formData.messagingAllowed" :label="$t( 'fields.messagingAllowed' )" class="q-my-sm" />
+          <q-checkbox v-model="formData.songSubmissionAllowed" :label="$t( 'fields.songSubmissionAllowed' )" class="q-my-sm" />
           <div class="row q-col-gutter-md">
             <div class="col-12">
               <q-input v-model="formData.description" :label="$t( 'fields.description' )" outlined dense type="textarea"
@@ -226,7 +206,8 @@
                 { label: '192 kbps', value: 192000 },
                 { label: '256 kbps', value: 256000 },
                 { label: '320 kbps', value: 320000 }
-              ]" option-label="label" option-value="value" emit-value map-options :label="$t( 'fields.bitRate' )" outlined dense />
+              ]" option-label="label" option-value="value" emit-value map-options :label="$t( 'fields.bitRate' )"
+                outlined dense />
             </div>
           </div>
           <div class="row q-col-gutter-md">
@@ -241,18 +222,8 @@
                 option-value="value" emit-value map-options :label="$t( 'fields.profileName' )" outlined dense />
             </div>
           </div>
-          <div class="row q-col-gutter-md">
-            <div class="col-12">
-              <q-select v-model="formData.messagingPolicy" :options="referencesStore.messagingPolicyOptions" option-label="label"
-                option-value="value" emit-value map-options :label="$t( 'fields.messagingAllowed' )" outlined dense />
-            </div>
-          </div>
-          <div class="row q-col-gutter-md">
-            <div class="col-12">
-              <q-select v-model="formData.submissionPolicy" :options="referencesStore.submissionPolicyOptions" option-label="label"
-                option-value="value" emit-value map-options :label="$t( 'fields.songSubmissionAllowed' )" outlined dense />
-            </div>
-          </div>
+          <q-checkbox v-model="formData.messagingAllowed" :label="$t( 'fields.messagingAllowed' )" style="margin-bottom: -20px;" />
+          <q-checkbox v-model="formData.songSubmissionAllowed" :label="$t( 'fields.songSubmissionAllowed' )" />
           <div class="row q-col-gutter-md">
             <div class="col-12">
               <q-input v-model="formData.description" :label="$t( 'fields.description' )" outlined dense type="textarea"
@@ -315,8 +286,8 @@ const formData = reactive( {
   bitRate: 192000,
   aiAgentId: '',
   profileId: '',
-  messagingPolicy: '',
-  submissionPolicy: ''
+  messagingAllowed: false,
+  songSubmissionAllowed: false
 } )
 
 const bitrateOptions = [
@@ -337,8 +308,8 @@ watch( station, ( newStation ) => {
     formData.bitRate = newStation.bitRate || 192000
     formData.aiAgentId = newStation.aiAgentId || ''
     formData.profileId = newStation.profileId || ''
-    formData.messagingPolicy = newStation.messagingPolicy || ''
-    formData.submissionPolicy = newStation.submissionPolicy || ''
+    formData.messagingAllowed = ( newStation.messagingPolicy as string ) === 'ALLOWED'
+    formData.songSubmissionAllowed = ( newStation.submissionPolicy as string ) === 'ALLOWED'
   }
 }, { immediate: true } )
 
@@ -411,11 +382,11 @@ async function handleDelete() {
 onMounted( async () => {
   loading.value = true
   try {
-    await Promise.all([
+    await Promise.all( [
       radioStationsStore.fetchRadioStation( stationId.value ),
       referencesStore.fetchAiAgents(),
       referencesStore.fetchProfiles()
-    ])
+    ] )
   } finally {
     loading.value = false
   }

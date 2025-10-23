@@ -3,11 +3,18 @@ import { ref } from 'vue'
 import { apiClient } from 'src/api/apiClient'
 import { keycloak } from 'src/boot/keycloak'
 
+export interface StatusHistoryItem {
+  timestamp: string
+  oldStatus: string | null
+  newStatus: string
+}
+
 export interface StationDashboard {
   brandName: string
   status: string
   currentListeners: number
   heartbeat: boolean
+  statusHistory?: StatusHistoryItem[]
   [key: string]: unknown
 }
 

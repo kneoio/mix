@@ -1,6 +1,11 @@
 <template>
   <q-page class="q-px-md q-pb-md q-pt-md full-height-page">
-    <ListHeader :title="$t( 'menu.dashboard' )" :show-back="false" :show-new="false" :show-delete="false" />
+    <ListHeader 
+      :title="currentStation?.slugName || $t( 'menu.dashboard' )" 
+      :subtitle="currentStation ? getStatusText( currentStation.slugName ) : ''"
+      :show-back="false" 
+      :show-new="false" 
+      :show-delete="false" />
 
     <div v-if=" loading " class="flex justify-center items-center q-mt-xl">
       <q-spinner color="primary" size="3em" />
@@ -27,8 +32,7 @@
         class="column no-wrap flex-center"
       >
         <div class="dashboard-content">
-          <div class="row items-center q-mb-xl">
-            <div class="text-h6">{{ station.slugName }}</div>
+          <div class="row items-center q-mb-md">
             <span
               class="live-status"
               :class="{ 'live-on-air': isHeartbeatActive( station.slugName ) }"
@@ -36,10 +40,12 @@
               On Air
             </span>
             <q-space />
-            <q-badge :color="getStatusColor( station.slugName )" :label="getStatusText( station.slugName )" />
+            <div class="text-caption text-grey-7">
+              {{ $t( 'dashboard.listeners' ) }}: {{ getListeners( station.slugName ) }}
+            </div>
           </div>
 
-          <q-btn-group class="q-mb-xl">
+          <q-btn-group class="q-mb-md">
             <q-btn unelevated color="primary" icon="play_arrow" :label="$t( 'dashboard.start' )"
               :loading="isStarting( station.id )" :disable="isOnline( station.slugName )"
               @click="handleStart( station.slugName )" size="md" />
@@ -47,14 +53,7 @@
               :disable="!canStop( station.slugName )" @click="handleStop( station.slugName )" size="md" />
           </q-btn-group>
 
-          <div class="q-mb-xl">
-            <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.status' ) }}</div>
-            <div class="text-caption text-grey-7">
-              {{ $t( 'dashboard.listeners' ) }}: {{ getListeners( station.slugName ) }}
-            </div>
-          </div>
-
-          <div>
+          <div class="q-mb-md">
             <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.livePlaylist' ) }}</div>
             <div v-if=" getCombinedPlaylist( station.slugName ).length > 0 " class="text-caption">
               <div v-for=" ( item, idx ) in getCombinedPlaylist( station.slugName ).slice( 0, 5 ) " :key="idx" class="q-mb-sm playlist-item">
@@ -88,7 +87,7 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, computed, watch } from 'vue'
-import { useDashboardStore } from 'src/stores/dashboardStore'
+import { useDashboardStore, type StatusHistoryItem } from 'src/stores/dashboardStore'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import { apiClient } from 'src/api/apiClient'
 import ListHeader from 'src/components/ListHeader.vue'
@@ -99,6 +98,7 @@ const loading = ref( false )
 const slide = ref('')
 
 const stations = computed( () => radioStationsStore.getEntries )
+const currentStation = computed( () => stations.value.find( s => s.id === slide.value ) )
 
 const getStatusColor = ( slugName: string ) => {
   const data = dashboardStore.getStationData( slugName )
@@ -134,6 +134,43 @@ const getStatusText = ( slugName: string ) => {
 const getListeners = ( slugName: string ) => {
   const data = dashboardStore.getStationData( slugName )
   return data?.currentListeners || 0
+}
+
+const getStatusHistory = ( slugName: string ): StatusHistoryItem[] => {
+  const data = dashboardStore.getStationData( slugName )
+  return data?.statusHistory || []
+}
+
+const formatStatusByValue = ( status: string ) => {
+  if ( status === 'ON_LINE' ) return 'Online'
+  if ( status === 'WARMING_UP' ) return 'Warming Up'
+  if ( status === 'QUEUE_SATURATED' ) return 'Queue Saturated'
+  if ( status === 'WAITING_FOR_CURATOR' ) return 'Waiting for Curator'
+  if ( status === 'IDLE' ) return 'Idle'
+  if ( status === 'SYSTEM_ERROR' ) return 'System Error'
+  if ( status === 'OFF_LINE' ) return 'Offline'
+  return status || 'Unknown'
+}
+
+const getStatusColorByValue = ( status: string ) => {
+  switch ( status ) {
+    case 'ON_LINE':
+    case 'QUEUE_SATURATED':
+      return 'positive'
+    case 'WARMING_UP':
+    case 'WAITING_FOR_CURATOR':
+      return 'warning'
+    case 'IDLE':
+    case 'SYSTEM_ERROR':
+      return 'negative'
+    default:
+      return 'grey'
+  }
+}
+
+const formatTimestamp = ( timestamp: string ) => {
+  const date = new Date( timestamp )
+  return date.toLocaleString()
 }
 
 const startingStations = ref<Set<string>>( new Set() )
@@ -305,7 +342,6 @@ onBeforeUnmount( () => {
   color: #ef4444 !important;
   text-shadow: 0 0 10px rgba(239, 68, 68, 1), 0 0 18px rgba(239, 68, 68, 0.6);
   font-weight: 600 !important;
-  animation: subtle-pulse 2s ease-in-out infinite;
 }
 
 .playlist-item {
@@ -315,17 +351,6 @@ onBeforeUnmount( () => {
 
 .playlist-item:last-child {
   border-bottom: none;
-}
-
-@keyframes subtle-pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.05);
-  }
 }
 
 @media (max-width: 599px) {
