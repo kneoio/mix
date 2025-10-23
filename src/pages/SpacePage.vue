@@ -160,15 +160,19 @@ function togglePlay() {
 
 .now-playing-info {
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1rem;
   min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active {
   transition: opacity 0.5s ease;
+}
+
+.fade-leave-active {
+  transition: opacity 0.8s ease;
 }
 
 .fade-enter-from, .fade-leave-to {

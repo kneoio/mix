@@ -170,6 +170,7 @@ onUnmounted(() => {
 
 /* Visual styles */
 .at-glow {
+  color: var(--accent-color, currentColor);
   text-shadow:
     0 0 4px var(--accent-color, currentColor),
     0 0 8px var(--accent-color, currentColor),

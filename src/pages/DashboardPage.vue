@@ -1,53 +1,67 @@
 <template>
-  <q-page class="q-px-md q-pb-md q-pt-md">
+  <q-page class="q-px-md q-pb-md q-pt-md full-height-page">
     <ListHeader :title="$t( 'menu.dashboard' )" :show-back="false" :show-new="false" :show-delete="false" />
 
     <div v-if=" loading " class="flex justify-center items-center q-mt-xl">
       <q-spinner color="primary" size="3em" />
     </div>
 
-    <div v-else-if=" stations.length > 0 " class="q-mt-md">
-      <div class="row q-col-gutter-md">
-        <div v-for=" station in stations " :key="station.id" class="col-12 col-md-6 col-lg-4">
-          <q-card flat bordered>
-            <q-card-section>
-              <div class="row items-center q-mb-sm">
-                <div class="text-h6">{{ station.slugName }}</div>
-                <q-space />
-                <q-badge :color="getStatusColor( station.id )" :label="getStatusText( station.id )" />
-              </div>
+    <q-carousel
+      v-else-if=" stations.length > 0 "
+      v-model="slide"
+      transition-prev="slide-right"
+      transition-next="slide-left"
+      swipeable
+      animated
+      control-color="primary"
+      navigation
+      padding
+      arrows
+      infinite
+      class="rounded-borders dashboard-carousel q-mt-md"
+    >
+      <q-carousel-slide
+        v-for="station in stations"
+        :key="station.id"
+        :name="station.id"
+        class="column no-wrap flex-center"
+      >
+        <div class="dashboard-content">
+          <div class="row items-center q-mb-xl">
+            <div class="text-h6">{{ station.slugName }}</div>
+            <q-space />
+            <q-badge :color="getStatusColor( station.id )" :label="getStatusText( station.id )" />
+          </div>
 
-              <q-btn-group class="q-mb-md">
-                <q-btn unelevated color="primary" icon="play_arrow" :label="$t( 'dashboard.start' )"
-                  :loading="isStarting( station.id )" :disable="isOnline( station.id )"
-                  @click="handleStart( station.id )" size="sm" />
-                <q-btn unelevated color="negative" icon="stop" :label="$t( 'dashboard.stop' )" :loading="isStopping( station.id )"
-                  :disable="!isOnline( station.id )" @click="handleStop( station.id )" size="sm" />
-              </q-btn-group>
+          <q-btn-group class="q-mb-xl">
+            <q-btn unelevated color="primary" icon="play_arrow" :label="$t( 'dashboard.start' )"
+              :loading="isStarting( station.id )" :disable="isOnline( station.id )"
+              @click="handleStart( station.id )" size="md" />
+            <q-btn unelevated color="negative" icon="stop" :label="$t( 'dashboard.stop' )" :loading="isStopping( station.id )"
+              :disable="!isOnline( station.id )" @click="handleStop( station.id )" size="md" />
+          </q-btn-group>
 
-              <div class="q-mb-sm">
-                <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.status' ) }}</div>
-                <div class="text-caption text-grey-7">
-                  {{ $t( 'dashboard.listeners' ) }}: {{ getListeners( station.id ) }}
-                </div>
-              </div>
+          <div class="q-mb-xl">
+            <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.status' ) }}</div>
+            <div class="text-caption text-grey-7">
+              {{ $t( 'dashboard.listeners' ) }}: {{ getListeners( station.id ) }}
+            </div>
+          </div>
 
-              <div>
-                <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.livePlaylist' ) }}</div>
-                <div v-if=" getPlaylist( station.id ).length > 0 " class="text-caption">
-                  <div v-for=" ( item, idx ) in getPlaylist( station.id ).slice( 0, 3 ) " :key="idx" class="q-mb-xs">
-                    {{ item }}
-                  </div>
-                </div>
-                <div v-else class="text-caption text-grey-7">
-                  {{ $t( 'dashboard.noPlaylist' ) }}
-                </div>
+          <div>
+            <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.livePlaylist' ) }}</div>
+            <div v-if=" getPlaylist( station.id ).length > 0 " class="text-caption">
+              <div v-for=" ( item, idx ) in getPlaylist( station.id ).slice( 0, 3 ) " :key="idx" class="q-mb-xs">
+                {{ item }}
               </div>
-            </q-card-section>
-          </q-card>
+            </div>
+            <div v-else class="text-caption text-grey-7">
+              {{ $t( 'dashboard.noPlaylist' ) }}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </q-carousel-slide>
+    </q-carousel>
 
     <div v-else class="text-center q-mt-xl text-grey-6">
       {{ $t( 'dashboard.noData' ) }}
@@ -65,6 +79,7 @@ import ListHeader from 'src/components/ListHeader.vue'
 const dashboardStore = useDashboardStore()
 const radioStationsStore = useRadioStationsStore()
 const loading = ref( false )
+const slide = ref('')
 
 const stations = computed( () => radioStationsStore.getEntries )
 
@@ -149,6 +164,7 @@ onMounted( async () => {
   loading.value = true
   try {
     await radioStationsStore.fetchRadioStations( 1, 100 )
+    slide.value = stations.value[0]?.id || ''
     stations.value.forEach( station => {
       dashboardStore.connectStation( station.id )
     } )
@@ -163,3 +179,24 @@ onBeforeUnmount( () => {
   } )
 } )
 </script>
+
+<style scoped>
+.full-height-page {
+  height: 100%;
+}
+
+.dashboard-carousel {
+  height: calc(100vh - 200px);
+}
+
+.dashboard-content {
+  width: 100%;
+  max-width: 600px;
+}
+
+@media (max-width: 599px) {
+  .dashboard-content {
+    max-width: 100%;
+  }
+}
+</style>
