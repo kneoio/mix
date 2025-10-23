@@ -1,6 +1,3 @@
-.player-footer {
-  background-color: #1e3b8a;
-}
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header class="mixpla-header-gradient text-white">
@@ -96,60 +93,19 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
-    <q-footer class="text-white player-footer">
-      <div v-touch-swipe.mouse.up="handleSwipeUp" class="cursor-pointer footer-swipe">
-        <div class="row justify-center q-pt-xs">
-          <div class="bg-white" style="width: 40px; height: 6px; border-radius: 3px;"></div>
-        </div>
-        <q-toolbar>
-          <div class="text-caption footer-text">{{ nowPlayingParts.title }}</div>
-          <q-btn flat round dense :icon="isPlaying ? 'pause' : 'play_arrow'" color="white" @click="togglePlay"
-            class="footer-play-btn" />
-          <div class="text-caption footer-text">{{ nowPlayingParts.artist }}</div>
-          <q-btn flat round dense icon="expand_less" @click="showFullscreen = true" class="gt-xs" />
-        </q-toolbar>
-      </div>
-    </q-footer>
-
-    <audio ref="audioPlayer" style="display: none;"></audio>
-
-    <PlayerPage v-model:showFullscreen="showFullscreen" />
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import { keycloak } from 'src/boot/keycloak'
-import PlayerPage from 'src/pages/PlayerPage.vue'
-import { usePlayerStore } from 'src/stores/playerStore'
 import { useUiStore } from 'src/stores/uiStore'
 
-const playerStore = usePlayerStore()
 const ui = useUiStore()
 const router = useRouter()
 const leftDrawerOpen = ref( false );
 const isAuthenticated = ref( false )
-const showFullscreen = ref( false )
-const audioPlayer = ref<HTMLAudioElement | null>( null )
-
-const { nowPlaying, isPlaying } = storeToRefs( playerStore )
-
-const nowPlayingParts = computed( () => {
-  if ( nowPlaying.value.includes( '|' ) ) {
-    const parts = nowPlaying.value.split( '|' )
-    return {
-      title: ( parts[0] || '' ).trim(),
-      artist: ( parts[1] || '' ).trim()
-    }
-  }
-  return {
-    title: nowPlaying.value,
-    artist: ''
-  }
-} )
 
 onMounted( () => {
   isAuthenticated.value = keycloak.authenticated === true
@@ -158,61 +114,15 @@ onMounted( () => {
   keycloak.onAuthRefreshSuccess = () => { isAuthenticated.value = true }
   keycloak.onTokenExpired = () => { isAuthenticated.value = !!keycloak.authenticated }
 
-  if ( audioPlayer.value ) {
-    playerStore.setAudioElement( audioPlayer.value )
-  }
-
   router.afterEach( () => {
     ui.setGlobalLoading( false )
   } )
 } );
 
-onBeforeUnmount( () => {
-  playerStore.cleanup()
-} );
-
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
-}
-
-function handleSwipeUp() {
-  showFullscreen.value = true
-}
-
-function togglePlay() {
-  playerStore.togglePlay()
 }
 </script>
 
 <style scoped>
-.player-footer {
-  min-height: 72px;
-}
-
-.footer-swipe {
-  padding: 10px 0 12px;
-}
-
-.player-footer :deep(.q-toolbar) {
-  min-height: 56px;
-}
-
-.footer-text {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: calc(50% - 24px);
-}
-
-.footer-text:last-of-type {
-  text-align: right;
-}
-
-.footer-play-btn {
-  flex-shrink: 0;
-  margin: 0 8px;
-}
-
-
 </style>

@@ -1,19 +1,31 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-md-md q-pa-sm-none q-pa-xs-none full-height-page">
     <q-banner v-if="stationsLoadError" dense inline-actions class="bg-negative text-white q-mb-md">
       {{ $t('space.loadFailed') }}
     </q-banner>
 
-    <div class="row q-col-gutter-md">
-      <div
+    <q-carousel
+      v-model="slide"
+      transition-prev="slide-right"
+      transition-next="slide-left"
+      swipeable
+      animated
+      control-color="primary"
+      navigation
+      padding
+      arrows
+      infinite
+      class="rounded-borders full-height-carousel"
+    >
+      <q-carousel-slide
         v-for="station in radioStations"
         :key="station.slugName"
-        class="col-12 col-sm-6 col-md-4 col-lg-3"
+        :name="station.slugName"
+        class="column no-wrap flex-center"
       >
         <q-card
           flat
-          class="station-card cursor-pointer"
-          @click="openStation(station.slugName)"
+          class="station-card full-width-mobile"
         >
           <div class="color-bar" :style="{ backgroundColor: station.color }"></div>
 
@@ -28,20 +40,39 @@
             </div>
           </q-card-section>
 
-          <q-separator />
-
-          <q-card-section>
-            <div class="text-body2 ellipsis-2-lines">{{ station.description }}</div>
+          <q-card-section class="text-center" style="margin-top: 40px; margin-bottom: 40px;">
+            <transition name="fade-slide">
+              <div v-if="isPlayingStation(station.slugName)" class="now-playing-info q-mb-lg">
+                <AnimatedText
+                  :text="playerStore.nowPlaying"
+                  :animation-type="playerStore.titleAnimation.enabled ? playerStore.titleAnimation.type : 'static'"
+                  :animation-speed="playerStore.titleAnimation.speed"
+                  :visual-style="playerStore.titleAnimation.enabled ? 'glow' : 'none'"
+                  :station-color="station.color || ''"
+                />
+              </div>
+            </transition>
+            <q-btn
+              round
+              size="lg"
+              color="grey-5"
+              :icon="isPlayingStation(station.slugName) ? 'pause' : 'play_arrow'"
+              @click="toggleStation(station.slugName)"
+              class="q-mb-md q-mt-md"
+            />
+            <transition name="fade">
+              <div v-if="!isPlayingStation(station.slugName)" class="text-body2">{{ station.description }}</div>
+            </transition>
           </q-card-section>
         </q-card>
-      </div>
-    </div>
+      </q-carousel-slide>
+    </q-carousel>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
+import AnimatedText from 'src/components/AnimatedText.vue'
 import { usePlayerStore } from 'src/stores/playerStore'
 import { useStationStatusStore } from 'src/stores/stationStatusStore'
 import { useUiStore } from 'src/stores/uiStore'
@@ -49,31 +80,49 @@ import { useUiStore } from 'src/stores/uiStore'
 const playerStore = usePlayerStore()
 const stationStatusStore = useStationStatusStore()
 const { formatStatusText } = stationStatusStore
-const router = useRouter()
 const loading = ref(false)
 const ui = useUiStore()
+const audioElement = ref<HTMLAudioElement | null>(null)
 
 const radioStations = computed(() => playerStore.stations)
 const stationsLoadError = computed(() => playerStore.stationsLoadError)
+const slide = ref('')
 
 onMounted(async () => {
   loading.value = true
   try {
     await playerStore.fetchRadioStations()
+    slide.value = radioStations.value[0]?.slugName || ''
+    audioElement.value = new Audio()
+    playerStore.setAudioElement(audioElement.value)
   } finally {
     loading.value = false
   }
 })
 
-watch(loading, (v) => ui.setGlobalLoading(v))
+onUnmounted(() => {
+  playerStore.cleanup()
+})
 
-function openStation(slugName: string) {
-  void router.push(`/station/${slugName}`)
-}
+watch(loading, (v) => ui.setGlobalLoading(v))
 
 function getStatusClass(status?: string): string {
   if (status === 'ON_LINE' || status === 'WARMING_UP') return 'text-positive'
   return 'text-accent'
+}
+
+function isPlayingStation(slugName: string): boolean {
+  return playerStore.isPlaying && playerStore.radioSlug === slugName
+}
+
+function toggleStation(slugName: string) {
+  if (playerStore.radioSlug !== slugName) {
+    if (playerStore.isPlaying) {
+      playerStore.togglePlay()
+    }
+    playerStore.setStation(slugName)
+  }
+  playerStore.togglePlay()
 }
 </script>
 
@@ -93,12 +142,48 @@ function getStatusClass(status?: string): string {
   width: 100%;
 }
 
-.ellipsis-2-lines {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-height: 2.4em;
+.full-width-mobile {
+  width: 100%;
+  max-width: 600px;
+}
+
+@media (max-width: 599px) {
+  .full-width-mobile {
+    max-width: 100%;
+  }
+}
+
+.now-playing-info {
+  text-align: center;
+  font-size: 1.2rem;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+.fade-slide-enter-active {
+  transition: all 0.5s ease;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.full-height-page {
+  height: 100%;
+}
+
+.full-height-carousel {
+  height: calc(100vh - 100px);
 }
 </style>

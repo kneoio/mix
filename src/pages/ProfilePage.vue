@@ -120,6 +120,6 @@ function changeLocale (loc: Locale) {
 }
 
 async function logout () {
-  await keycloak.logout({ redirectUri: window.location.origin + '/' })
+  await keycloak.logout({ redirectUri: window.location.origin + '/space' })
 }
 </script>
