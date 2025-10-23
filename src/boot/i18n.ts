@@ -44,7 +44,9 @@ const messages = {
     },
     tabs: {
       properties: 'Propriedades',
-      aiAgent: 'Agente IA'
+      aiAgent: 'Agente IA',
+      profile: 'Perfil',
+      contribution: 'Contribuição'
     },
     fields: {
       localizedNames: 'Nomes Localizados',
@@ -56,7 +58,12 @@ const messages = {
       managedBy: 'Gerido por',
       bitRate: 'Taxa de bits',
       description: 'Descrição',
-      album: 'Álbum'
+      album: 'Álbum',
+      uploadFile: 'Carregar arquivo',
+      aiAgent: 'Agente IA',
+      profileName: 'Nome do Perfil',
+      messagingAllowed: 'Mensagens Permitidas',
+      songSubmissionAllowed: 'Envio de Músicas Permitido'
     },
     status: {
       online: 'Online',
@@ -138,7 +145,9 @@ const messages = {
     },
     tabs: {
       properties: 'Properties',
-      aiAgent: 'AI Agent'
+      aiAgent: 'AI Agent',
+      profile: 'Profile',
+      contribution: 'Contribution'
     },
     fields: {
       localizedNames: 'Localized Names',
@@ -151,7 +160,11 @@ const messages = {
       bitRate: 'Bit Rate',
       description: 'Description',
       album: 'Album',
-      uploadFile: 'Upload file'
+      uploadFile: 'Upload file',
+      aiAgent: 'AI Agent',
+      profileName: 'Profile Name',
+      messagingAllowed: 'Messaging Allowed',
+      songSubmissionAllowed: 'Song Submission Allowed'
     },
     status: {
       online: 'Online',
@@ -242,11 +255,18 @@ const messages = {
       managedBy: 'Керується',
       bitRate: 'Бітрейт',
       description: 'Опис',
-      album: 'Альбом'
+      album: 'Альбом',
+      uploadFile: 'Завантажити файл',
+      aiAgent: 'AI агент',
+      profileName: 'Назва профілю',
+      messagingAllowed: 'Повідомлення дозволені',
+      songSubmissionAllowed: 'Надсилання пісень дозволено'
     },
     tabs: {
       properties: 'Властивості',
-      aiAgent: 'AI агент'
+      aiAgent: 'AI агент',
+      profile: 'Профіль',
+      contribution: 'Внесок'
     },
     profile: {
       notAuthenticated: 'Не автентифіковано.',
@@ -351,11 +371,18 @@ const messages = {
       managedBy: 'Verantwortlich',
       bitRate: 'Bitrate',
       description: 'Beschreibung',
-      album: 'Album'
+      album: 'Album',
+      uploadFile: 'Datei hochladen',
+      aiAgent: 'AI Agent',
+      profileName: 'Profilname',
+      messagingAllowed: 'Nachrichten erlaubt',
+      songSubmissionAllowed: 'Song-Einreichung erlaubt'
     },
     tabs: {
       properties: 'Eigenschaften',
-      aiAgent: 'AI Agent'
+      aiAgent: 'AI Agent',
+      profile: 'Profil',
+      contribution: 'Beitrag'
     },
     profile: {
       notAuthenticated: 'Nicht authentifiziert.',
@@ -415,11 +442,18 @@ const messages = {
       managedBy: 'Géré par',
       bitRate: 'Débit binaire',
       description: 'Description',
-      album: 'Album'
+      album: 'Album',
+      uploadFile: 'Télécharger un fichier',
+      aiAgent: 'Agent IA',
+      profileName: 'Nom du profil',
+      messagingAllowed: 'Messages autorisés',
+      songSubmissionAllowed: 'Soumission de chansons autorisée'
     },
     tabs: {
       properties: 'Propriétés',
-      aiAgent: 'Agent IA'
+      aiAgent: 'Agent IA',
+      profile: 'Profil',
+      contribution: 'Contribution'
     },
     profile: {
       notAuthenticated: 'Non authentifié.',
@@ -479,11 +513,18 @@ const messages = {
       managedBy: '管理者',
       bitRate: '比特率',
       description: '描述',
-      album: '专辑'
+      album: '专辑',
+      uploadFile: '上传文件',
+      aiAgent: 'AI 代理',
+      profileName: '配置文件名称',
+      messagingAllowed: '允许消息',
+      songSubmissionAllowed: '允许提交歌曲'
     },
     tabs: {
       properties: '属性',
-      aiAgent: 'AI 代理'
+      aiAgent: 'AI 代理',
+      profile: '配置文件',
+      contribution: '贡献'
     },
     profile: {
       notAuthenticated: '未认证。',
@@ -544,11 +585,18 @@ const messages = {
       managedBy: '管理者',
       bitRate: 'ビットレート',
       description: '説明',
-      album: 'アルバム'
+      album: 'アルバム',
+      uploadFile: 'ファイルをアップロード',
+      aiAgent: 'AI エージェント',
+      profileName: 'プロファイル名',
+      messagingAllowed: 'メッセージング許可',
+      songSubmissionAllowed: '曲の投稿許可'
     },
     tabs: {
       properties: 'プロパティ',
-      aiAgent: 'AI エージェント'
+      aiAgent: 'AI エージェント',
+      profile: 'プロファイル',
+      contribution: '貢献'
     },
     profile: {
       notAuthenticated: '認証されていません。',
@@ -606,13 +654,20 @@ const messages = {
       color: 'ფერი',
       timeZone: 'დროის სარტყელი',
       managedBy: 'მართავს',
-      bitRate: 'ბიტრейтო',
+      bitRate: 'ბიტრეიტო',
       description: 'აღწერა',
-      album: 'ალბომი'
+      album: 'ალბომი',
+      uploadFile: 'ფაილის ატვირთვა',
+      aiAgent: 'AI აგენტი',
+      profileName: 'პროფილის სახელი',
+      messagingAllowed: 'შეტყობინებები დაშვებულია',
+      songSubmissionAllowed: 'სიმღერის გაგზავნა დაშვებულია'
     },
     tabs: {
       properties: 'თავისუფლები',
-      aiAgent: 'AI აგენტი'
+      aiAgent: 'AI აგენტი',
+      profile: 'პროფილი',
+      contribution: 'წვლილი'
     },
     profile: {
       notAuthenticated: 'ავტორიზებული არ არის.',
@@ -672,11 +727,18 @@ const messages = {
       managedBy: 'Pārvaldītājs',
       bitRate: 'Bitātrums',
       description: 'Apraksts',
-      album: 'Albūms'
+      album: 'Albūms',
+      uploadFile: 'Augšupielādēt failu',
+      aiAgent: 'AI aģents',
+      profileName: 'Profila nosaukums',
+      messagingAllowed: 'Ziņojumapmaiņa atļauta',
+      songSubmissionAllowed: 'Dziesmu iesniegšana atļauta'
     },
     tabs: {
       properties: 'Īpašības',
-      aiAgent: 'AI aģents'
+      aiAgent: 'AI aģents',
+      profile: 'Profils',
+      contribution: 'Ieguldījums'
     },
     profile: {
       notAuthenticated: 'Nav autentificēts.',
@@ -736,11 +798,18 @@ const messages = {
       managedBy: 'Управляется',
       bitRate: 'Битрейт',
       description: 'Описание',
-      album: 'Альбом'
+      album: 'Альбом',
+      uploadFile: 'Загрузить файл',
+      aiAgent: 'AI агент',
+      profileName: 'Имя профиля',
+      messagingAllowed: 'Сообщения разрешены',
+      songSubmissionAllowed: 'Отправка песен разрешена'
     },
     tabs: {
       properties: 'Свойства',
-      aiAgent: 'AI агент'
+      aiAgent: 'AI агент',
+      profile: 'Профиль',
+      contribution: 'Вклад'
     },
     profile: {
       notAuthenticated: 'Не аутентифицирован.',
@@ -800,11 +869,18 @@ const messages = {
       managedBy: 'Gestito da',
       bitRate: 'Bitrate',
       description: 'Descrizione',
-      album: 'Album'
+      album: 'Album',
+      uploadFile: 'Carica file',
+      aiAgent: 'Agente AI',
+      profileName: 'Nome profilo',
+      messagingAllowed: 'Messaggi consentiti',
+      songSubmissionAllowed: 'Invio canzoni consentito'
     },
     tabs: {
       properties: 'Proprietà',
-      aiAgent: 'Agente AI'
+      aiAgent: 'Agente AI',
+      profile: 'Profilo',
+      contribution: 'Contributo'
     },
     profile: {
       notAuthenticated: 'Non autenticato.',
@@ -864,11 +940,18 @@ const messages = {
       managedBy: 'Yöneten',
       bitRate: 'Bit hızı',
       description: 'Açıklama',
-      album: 'Albüm'
+      album: 'Albüm',
+      uploadFile: 'Dosya yükle',
+      aiAgent: 'Yapay Zeka Aracı',
+      profileName: 'Profil adı',
+      messagingAllowed: 'Mesajlaşma izni',
+      songSubmissionAllowed: 'Şarkı gönderme izni'
     },
     tabs: {
       properties: 'Özellikler',
-      aiAgent: 'Yapay Zeka Aracı'
+      aiAgent: 'Yapay Zeka Aracı',
+      profile: 'Profil',
+      contribution: 'Katkı'
     },
     profile: {
       notAuthenticated: 'Kimlik doğrulanmadı.',
@@ -928,11 +1011,18 @@ const messages = {
       managedBy: 'يُدار بواسطة',
       bitRate: 'معدل البت',
       description: 'الوصف',
-      album: 'الألبوم'
+      album: 'الألبوم',
+      uploadFile: 'تحميل ملف',
+      aiAgent: 'وكيل الذكاء الاصطناعي',
+      profileName: 'اسم الملف الشخصي',
+      messagingAllowed: 'المراسلة مسموحة',
+      songSubmissionAllowed: 'إرسال الأغاني مسموح'
     },
     tabs: {
       properties: 'الخصائص',
-      aiAgent: 'وكيل الذكاء الاصطناعي'
+      aiAgent: 'وكيل الذكاء الاصطناعي',
+      profile: 'الملف الشخصي',
+      contribution: 'المساهمة'
     },
     profile: {
       notAuthenticated: 'غير مسجل الدخول.',
@@ -992,11 +1082,18 @@ const messages = {
       managedBy: 'Zarządzane przez',
       bitRate: 'Bitrate',
       description: 'Opis',
-      album: 'Album'
+      album: 'Album',
+      uploadFile: 'Prześlij plik',
+      aiAgent: 'Agent AI',
+      profileName: 'Nazwa profilu',
+      messagingAllowed: 'Wiadomości dozwolone',
+      songSubmissionAllowed: 'Przesyłanie piosenek dozwolone'
     },
     tabs: {
       properties: 'Właściwości',
-      aiAgent: 'Agent AI'
+      aiAgent: 'Agent AI',
+      profile: 'Profil',
+      contribution: 'Wkład'
     },
     profile: {
       notAuthenticated: 'Nie uwierzytelniono.',
@@ -1056,11 +1153,18 @@ const messages = {
       managedBy: 'द्वारा प्रबंधित',
       bitRate: 'बिटरेट',
       description: 'विवरण',
-      album: 'एल्बम'
+      album: 'एल्बम',
+      uploadFile: 'फ़ाइल अपलोड करें',
+      aiAgent: 'AI एजेंट',
+      profileName: 'प्रोफ़ाइल नाम',
+      messagingAllowed: 'संदेश की अनुमति',
+      songSubmissionAllowed: 'गाना सबमिशन की अनुमति'
     },
     tabs: {
       properties: 'गुण',
-      aiAgent: 'AI एजेंट'
+      aiAgent: 'AI एजेंट',
+      profile: 'प्रोफ़ाइल',
+      contribution: 'योगदान'
     },
     profile: {
       notAuthenticated: 'प्रमाणीकृत नहीं है.',

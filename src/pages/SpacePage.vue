@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed, watch } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import AnimatedText from 'src/components/AnimatedText.vue'
 import { usePlayerStore } from 'src/stores/playerStore'
 import { useStationStatusStore } from 'src/stores/stationStatusStore'
@@ -82,7 +82,6 @@ const stationStatusStore = useStationStatusStore()
 const { formatStatusText } = stationStatusStore
 const loading = ref(false)
 const ui = useUiStore()
-const audioElement = ref<HTMLAudioElement | null>(null)
 
 const radioStations = computed(() => playerStore.stations)
 const stationsLoadError = computed(() => playerStore.stationsLoadError)
@@ -92,17 +91,12 @@ onMounted(async () => {
   loading.value = true
   try {
     await playerStore.fetchRadioStations()
-    slide.value = radioStations.value[0]?.slugName || ''
-    audioElement.value = new Audio()
-    playerStore.setAudioElement(audioElement.value)
+    slide.value = playerStore.radioSlug || radioStations.value[0]?.slugName || ''
   } finally {
     loading.value = false
   }
 })
 
-onUnmounted(() => {
-  playerStore.cleanup()
-})
 
 watch(loading, (v) => ui.setGlobalLoading(v))
 

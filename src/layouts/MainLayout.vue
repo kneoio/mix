@@ -7,6 +7,8 @@
         <q-toolbar-title class="mixpla-title">
           Mixpla
         </q-toolbar-title>
+
+        <q-btn v-if="playerStore.isPlaying" flat dense round :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'" @click="togglePlay" />
       </q-toolbar>
       <q-linear-progress v-if=" ui.globalLoading " indeterminate color="white" class="absolute-bottom" />
     </q-header>
@@ -93,19 +95,38 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer v-if="playerStore.isPlaying" class="bg-primary text-white">
+      <q-toolbar class="q-py-sm">
+        <div class="text-caption">
+          <div class="text-weight-bold">{{ currentStationName }}</div>
+          <div>{{ playerStore.nowPlaying }}</div>
+        </div>
+        <q-space />
+        <q-btn flat dense round :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'" @click="togglePlay" />
+      </q-toolbar>
+    </q-footer>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router'
 import { keycloak } from 'src/boot/keycloak'
 import { useUiStore } from 'src/stores/uiStore'
+import { usePlayerStore } from 'src/stores/playerStore'
 
 const ui = useUiStore()
+const playerStore = usePlayerStore()
 const router = useRouter()
 const leftDrawerOpen = ref( false );
 const isAuthenticated = ref( false )
+const audioElement = ref<HTMLAudioElement | null>( null )
+
+const currentStationName = computed(() => {
+  const station = playerStore.stations.find(s => s.slugName === playerStore.radioSlug)
+  return station?.name || playerStore.radioSlug
+})
 
 onMounted( () => {
   isAuthenticated.value = keycloak.authenticated === true
@@ -114,6 +135,9 @@ onMounted( () => {
   keycloak.onAuthRefreshSuccess = () => { isAuthenticated.value = true }
   keycloak.onTokenExpired = () => { isAuthenticated.value = !!keycloak.authenticated }
 
+  audioElement.value = new Audio()
+  playerStore.setAudioElement( audioElement.value )
+
   router.afterEach( () => {
     ui.setGlobalLoading( false )
   } )
@@ -121,6 +145,10 @@ onMounted( () => {
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+}
+
+function togglePlay() {
+  playerStore.togglePlay()
 }
 </script>
 

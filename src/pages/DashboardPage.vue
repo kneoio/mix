@@ -29,30 +29,47 @@
         <div class="dashboard-content">
           <div class="row items-center q-mb-xl">
             <div class="text-h6">{{ station.slugName }}</div>
+            <span
+              class="live-status"
+              :class="{ 'live-on-air': isHeartbeatActive( station.slugName ) }"
+            >
+              On Air
+            </span>
             <q-space />
-            <q-badge :color="getStatusColor( station.id )" :label="getStatusText( station.id )" />
+            <q-badge :color="getStatusColor( station.slugName )" :label="getStatusText( station.slugName )" />
           </div>
 
           <q-btn-group class="q-mb-xl">
             <q-btn unelevated color="primary" icon="play_arrow" :label="$t( 'dashboard.start' )"
-              :loading="isStarting( station.id )" :disable="isOnline( station.id )"
-              @click="handleStart( station.id )" size="md" />
+              :loading="isStarting( station.id )" :disable="isOnline( station.slugName )"
+              @click="handleStart( station.slugName )" size="md" />
             <q-btn unelevated color="negative" icon="stop" :label="$t( 'dashboard.stop' )" :loading="isStopping( station.id )"
-              :disable="!isOnline( station.id )" @click="handleStop( station.id )" size="md" />
+              :disable="!canStop( station.slugName )" @click="handleStop( station.slugName )" size="md" />
           </q-btn-group>
 
           <div class="q-mb-xl">
             <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.status' ) }}</div>
             <div class="text-caption text-grey-7">
-              {{ $t( 'dashboard.listeners' ) }}: {{ getListeners( station.id ) }}
+              {{ $t( 'dashboard.listeners' ) }}: {{ getListeners( station.slugName ) }}
             </div>
           </div>
 
           <div>
             <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.livePlaylist' ) }}</div>
-            <div v-if=" getPlaylist( station.id ).length > 0 " class="text-caption">
-              <div v-for=" ( item, idx ) in getPlaylist( station.id ).slice( 0, 3 ) " :key="idx" class="q-mb-xs">
-                {{ item }}
+            <div v-if=" getCombinedPlaylist( station.slugName ).length > 0 " class="text-caption">
+              <div v-for=" ( item, idx ) in getCombinedPlaylist( station.slugName ).slice( 0, 5 ) " :key="idx" class="q-mb-sm playlist-item">
+                <div class="row items-center">
+                  <div class="col text-left">
+                    {{ item?.artist || '' }}
+                  </div>
+                  <div class="col text-right">
+                    {{ item?.title ? cleanTitle( item.title ) : 'N/A' }}
+                  </div>
+                  <div class="col-auto q-ml-sm">
+                    <q-badge v-if="item.isPlayingNow" color="negative" label="Playing" size="xs" />
+                    <q-badge v-else-if="item.isQueued" color="info" label="Queued" size="xs" />
+                  </div>
+                </div>
               </div>
             </div>
             <div v-else class="text-caption text-grey-7">
@@ -70,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, computed } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed, watch } from 'vue'
 import { useDashboardStore } from 'src/stores/dashboardStore'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import { apiClient } from 'src/api/apiClient'
@@ -83,8 +100,8 @@ const slide = ref('')
 
 const stations = computed( () => radioStationsStore.getEntries )
 
-const getStatusColor = ( stationId: string ) => {
-  const data = dashboardStore.getStationData( stationId )
+const getStatusColor = ( slugName: string ) => {
+  const data = dashboardStore.getStationData( slugName )
   if ( !data ) return 'grey'
   switch ( data.status ) {
     case 'ON_LINE':
@@ -101,8 +118,8 @@ const getStatusColor = ( stationId: string ) => {
   }
 }
 
-const getStatusText = ( stationId: string ) => {
-  const data = dashboardStore.getStationData( stationId )
+const getStatusText = ( slugName: string ) => {
+  const data = dashboardStore.getStationData( slugName )
   const status = data?.status
   if ( status === 'ON_LINE' ) return 'Online'
   if ( status === 'WARMING_UP' ) return 'Warming Up'
@@ -114,8 +131,8 @@ const getStatusText = ( stationId: string ) => {
   return status || 'Unknown'
 }
 
-const getListeners = ( stationId: string ) => {
-  const data = dashboardStore.getStationData( stationId )
+const getListeners = ( slugName: string ) => {
+  const data = dashboardStore.getStationData( slugName )
   return data?.currentListeners || 0
 }
 
@@ -125,39 +142,107 @@ const stoppingStations = ref<Set<string>>( new Set() )
 const isStarting = ( stationId: string ) => startingStations.value.has( stationId )
 const isStopping = ( stationId: string ) => stoppingStations.value.has( stationId )
 
-const isOnline = ( stationId: string ) => {
-  const data = dashboardStore.getStationData( stationId )
+const isOnline = ( slugName: string ) => {
+  const data = dashboardStore.getStationData( slugName )
   return data?.status === 'ON_LINE' || data?.status === 'WARMING_UP' || data?.status === 'QUEUE_SATURATED' || data?.status === 'WAITING_FOR_CURATOR'
 }
 
-const handleStart = async ( stationId: string ) => {
-  startingStations.value.add( stationId )
+const canStop = ( slugName: string ) => {
+  const data = dashboardStore.getStationData( slugName )
+  return isOnline( slugName ) || data?.status === 'IDLE'
+}
+
+const isHeartbeatActive = ( slugName: string ) => {
+  const data = dashboardStore.getStationData( slugName )
+  return data?.heartbeat === true
+}
+
+const handleStart = async ( slugName: string ) => {
+  const station = stations.value.find( s => s.slugName === slugName )
+  if ( !station ) return
+  startingStations.value.add( station.id )
   try {
-    await apiClient.put( `/${stationId}/queue/action`, { action: 'start' } )
+    await apiClient.put( `/${slugName}/queue/action`, { action: 'start' } )
   } finally {
-    startingStations.value.delete( stationId )
+    startingStations.value.delete( station.id )
   }
 }
 
-const handleStop = async ( stationId: string ) => {
-  stoppingStations.value.add( stationId )
+const handleStop = async ( slugName: string ) => {
+  const station = stations.value.find( s => s.slugName === slugName )
+  if ( !station ) return
+  stoppingStations.value.add( station.id )
   try {
-    await apiClient.put( `/${stationId}/queue/action`, { action: 'stop' } )
+    await apiClient.put( `/${slugName}/queue/action`, { action: 'stop' } )
   } finally {
-    stoppingStations.value.delete( stationId )
+    stoppingStations.value.delete( station.id )
   }
 }
 
-const getPlaylist = ( stationId: string ) => {
-  const data = dashboardStore.getStationData( stationId )
-  const playlistStats = data?.playlistManagerStats as { livePlaylist?: unknown[] } | undefined
+interface PlaylistItem {
+  title?: string
+  artist?: string
+  duration?: number
+  mergingType?: string | null
+  queueType?: string
+  obtained?: boolean
+  source?: string
+  isQueued?: boolean
+  isPlayingNow?: boolean
+}
+
+interface SongStatistics {
+  songMetadata?: {
+    title?: string
+    artist?: string
+    [key: string]: unknown
+  }
+  title?: string
+  artist?: string
+  [key: string]: unknown
+}
+
+interface PlaylistManagerStats {
+  livePlaylist?: PlaylistItem[]
+  queued?: PlaylistItem[]
+  [key: string]: unknown
+}
+
+const cleanTitle = ( title: string | undefined | null ): string => {
+  if ( !title || typeof title !== 'string' ) return 'N/A'
+  return title.replace( /^(#+|--+)\s*/, '' ).replace( /[#-]/g, '|' ).trim()
+}
+
+const getCurrentTrack = ( slugName: string ): string => {
+  const data = dashboardStore.getStationData( slugName )
+  const songStats = data?.songStatistics as SongStatistics | undefined
+  if ( !songStats ) return 'N/A'
+  const title = songStats?.songMetadata?.title ?? songStats?.title
+  if ( !title ) return 'N/A'
+  return cleanTitle( title )
+}
+
+const isCurrentSong = ( slugName: string, fragment: PlaylistItem ): boolean => {
+  const currentTrack = getCurrentTrack( slugName )
+  if ( !currentTrack || currentTrack === 'N/A' ) return false
+  const fragmentTitle = fragment?.title
+  if ( !fragmentTitle ) return false
+  const cleanFragment = cleanTitle( fragmentTitle )
+  return cleanFragment === currentTrack
+}
+
+const getCombinedPlaylist = ( slugName: string ) => {
+  const data = dashboardStore.getStationData( slugName )
+  const playlistStats = data?.playlistManagerStats as PlaylistManagerStats | undefined
   const livePlaylist = playlistStats?.livePlaylist || []
-  return livePlaylist.map( ( item: unknown ) => {
-    const playlistItem = item as { title?: string; artist?: string }
-    const title = playlistItem?.title || 'N/A'
-    const artist = playlistItem?.artist || ''
-    return artist ? `${artist} — ${title}` : title
-  } )
+  const queued = playlistStats?.queued || []
+
+  const combined = [
+    ...livePlaylist.map( ( item: PlaylistItem ) => ( { ...item, isQueued: false, isPlayingNow: isCurrentSong( slugName, item ) } ) ),
+    ...queued.slice().reverse().map( ( item: PlaylistItem ) => ( { ...item, isQueued: true, isPlayingNow: isCurrentSong( slugName, item ) } ) )
+  ]
+
+  return combined
 }
 
 onMounted( async () => {
@@ -165,18 +250,34 @@ onMounted( async () => {
   try {
     await radioStationsStore.fetchRadioStations( 1, 100 )
     slide.value = stations.value[0]?.id || ''
-    stations.value.forEach( station => {
-      dashboardStore.connectStation( station.id )
-    } )
+    const activeStation = stations.value.find( s => s.id === slide.value )
+    if ( activeStation ) {
+      dashboardStore.startStationPolling( activeStation.slugName )
+    }
   } finally {
     loading.value = false
   }
 } )
 
+watch( slide, ( newSlide, oldSlide ) => {
+  if ( newSlide !== oldSlide ) {
+    const oldStation = stations.value.find( s => s.id === oldSlide )
+    const newStation = stations.value.find( s => s.id === newSlide )
+
+    if ( oldStation ) {
+      dashboardStore.stopStationPolling( oldStation.slugName )
+    }
+    if ( newStation ) {
+      dashboardStore.startStationPolling( newStation.slugName )
+    }
+  }
+} )
+
 onBeforeUnmount( () => {
-  stations.value.forEach( station => {
-    dashboardStore.disconnectStation( station.id )
-  } )
+  const activeStation = stations.value.find( s => s.id === slide.value )
+  if ( activeStation ) {
+    dashboardStore.stopStationPolling( activeStation.slugName )
+  }
 } )
 </script>
 
@@ -192,6 +293,39 @@ onBeforeUnmount( () => {
 .dashboard-content {
   width: 100%;
   max-width: 600px;
+}
+
+.live-status {
+  font-weight: 400;
+  font-size: 18px;
+  margin-left: 16px;
+}
+
+.live-on-air {
+  color: #ef4444 !important;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 1), 0 0 18px rgba(239, 68, 68, 0.6);
+  font-weight: 600 !important;
+  animation: subtle-pulse 2s ease-in-out infinite;
+}
+
+.playlist-item {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.playlist-item:last-child {
+  border-bottom: none;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
 }
 
 @media (max-width: 599px) {

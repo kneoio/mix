@@ -15,6 +15,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
   const stationWebsockets = ref<Record<string, WebSocket>>({})
   const stationData = ref<Record<string, StationDashboard>>({})
   const stationLastUpdate = ref<Record<string, Date>>({})
+  const stationPollingIntervals = ref<Record<string, NodeJS.Timeout>>({})
+  const activeStationPolling = ref<Set<string>>(new Set())
+  const POLLING_INTERVAL = 3000
 
   const buildWebSocketUrl = (brandName: string): string => {
     const baseUrl = apiClient.defaults.baseURL || ''
@@ -90,6 +93,28 @@ export const useDashboardStore = defineStore('dashboard', () => {
     return stationLastUpdate.value[brandName] || null
   }
 
+  const startStationPolling = (brandName: string) => {
+    if (stationPollingIntervals.value[brandName]) {
+      clearInterval(stationPollingIntervals.value[brandName])
+    }
+    
+    activeStationPolling.value.add(brandName)
+    connectStation(brandName)
+    
+    stationPollingIntervals.value[brandName] = setInterval(() => {
+      fetchStation(brandName)
+    }, POLLING_INTERVAL)
+  }
+
+  const stopStationPolling = (brandName: string) => {
+    activeStationPolling.value.delete(brandName)
+    if (stationPollingIntervals.value[brandName]) {
+      clearInterval(stationPollingIntervals.value[brandName])
+      delete stationPollingIntervals.value[brandName]
+    }
+    disconnectStation(brandName)
+  }
+
   return {
     stationWebsockets,
     stationData,
@@ -98,6 +123,8 @@ export const useDashboardStore = defineStore('dashboard', () => {
     disconnectStation,
     fetchStation,
     getStationData,
-    getStationLastUpdate
+    getStationLastUpdate,
+    startStationPolling,
+    stopStationPolling
   }
 })

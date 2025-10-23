@@ -13,6 +13,8 @@
           indicator-color="primary" align="left">
           <q-tab name="properties" :label="$t( 'tabs.properties' )" />
           <q-tab name="aiAgent" :label="$t( 'tabs.aiAgent' )" />
+          <q-tab name="profile" :label="$t( 'tabs.profile' )" />
+          <q-tab name="contribution" :label="$t( 'tabs.contribution' )" />
         </q-tabs>
         <q-tab-panels v-if=" $q.screen.gt.sm && ( station.id || stationId === 'new' ) " v-model="activeTab" animated>
           <q-tab-panel name="properties">
@@ -61,16 +63,43 @@
                     option-value="value" emit-value map-options :label="$t( 'fields.bitRate' )" outlined dense />
                 </div>
               </div>
+            </q-form>
+          </q-tab-panel>
+          <q-tab-panel name="aiAgent">
+            <q-form class="column q-col-gutter-md">
               <div class="row q-col-gutter-md">
                 <div class="col-12">
-                  <q-input v-model="formData.description" :label="$t( 'fields.description' )" outlined dense
-                    type="textarea" :rows="3" />
+                  <q-select v-model="formData.aiAgentId" :options="referencesStore.aiAgentOptions" option-label="label"
+                    option-value="value" emit-value map-options :label="$t( 'fields.aiAgent' )" outlined dense />
                 </div>
               </div>
             </q-form>
           </q-tab-panel>
-          <q-tab-panel name="aiAgent">
-            <div class="text-body2">{{ $t( 'tabs.aiAgent' ) }}</div>
+          <q-tab-panel name="profile">
+            <q-form class="column q-col-gutter-md">
+              <div class="row q-col-gutter-md">
+                <div class="col-12">
+                  <q-select v-model="formData.profileId" :options="referencesStore.profileOptions" option-label="label"
+                    option-value="value" emit-value map-options :label="$t( 'fields.profileName' )" outlined dense />
+                </div>
+              </div>
+            </q-form>
+          </q-tab-panel>
+          <q-tab-panel name="contribution">
+            <q-form class="column q-col-gutter-md">
+              <div class="row q-col-gutter-md">
+                <div class="col-12">
+                  <q-select v-model="formData.messagingPolicy" :options="referencesStore.messagingPolicyOptions" option-label="label"
+                    option-value="value" emit-value map-options :label="$t( 'fields.messagingAllowed' )" outlined dense />
+                </div>
+              </div>
+              <div class="row q-col-gutter-md">
+                <div class="col-12">
+                  <q-select v-model="formData.submissionPolicy" :options="referencesStore.submissionPolicyOptions" option-label="label"
+                    option-value="value" emit-value map-options :label="$t( 'fields.songSubmissionAllowed' )" outlined dense />
+                </div>
+              </div>
+            </q-form>
           </q-tab-panel>
         </q-tab-panels>
         <q-form v-else-if=" station.id || stationId === 'new' " class="column q-col-gutter-md">
@@ -115,11 +144,34 @@
           </div>
           <div class="row q-col-gutter-md">
             <div class="col-12">
+              <q-select v-model="formData.aiAgentId" :options="referencesStore.aiAgentOptions" option-label="label"
+                option-value="value" emit-value map-options :label="$t( 'fields.aiAgent' )" outlined dense />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select v-model="formData.profileId" :options="referencesStore.profileOptions" option-label="label"
+                option-value="value" emit-value map-options :label="$t( 'fields.profileName' )" outlined dense />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select v-model="formData.messagingPolicy" :options="referencesStore.messagingPolicyOptions" option-label="label"
+                option-value="value" emit-value map-options :label="$t( 'fields.messagingAllowed' )" outlined dense />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select v-model="formData.submissionPolicy" :options="referencesStore.submissionPolicyOptions" option-label="label"
+                option-value="value" emit-value map-options :label="$t( 'fields.songSubmissionAllowed' )" outlined dense />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
               <q-input v-model="formData.description" :label="$t( 'fields.description' )" outlined dense type="textarea"
                 :rows="3" />
             </div>
           </div>
-          <div class="text-body2 q-mt-lg">{{ $t( 'tabs.aiAgent' ) }}</div>
         </q-form>
       </q-card-section>
       <q-card-section v-else class="q-px-none column q-gutter-sm">
@@ -169,19 +221,36 @@
           </div>
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <q-select v-model="formData.managedBy" :options="referencesStore.managedByOptions" option-label="label"
-                option-value="value" emit-value map-options :label="$t( 'fields.managedBy' )" outlined dense />
+              <q-select v-model="formData.bitRate" :options="[
+                { label: '128 kbps', value: 128000 },
+                { label: '192 kbps', value: 192000 },
+                { label: '256 kbps', value: 256000 },
+                { label: '320 kbps', value: 320000 }
+              ]" option-label="label" option-value="value" emit-value map-options :label="$t( 'fields.bitRate' )" outlined dense />
             </div>
           </div>
           <div class="row q-col-gutter-md">
             <div class="col-12">
-              <div class="text-subtitle2 q-mb-sm">{{ $t( 'fields.bitRate' ) }}</div>
-              <q-slider v-model="formData.bitRate" :min="128000" :max="320000" :step="64000" :marker-labels="{
-                128000: '128 kbps',
-                192000: '192 kbps',
-                256000: '256 kbps',
-                320000: '320 kbps'
-              }" markers label :label-value="( formData.bitRate || 0 ) / 1000 + ' kbps'" />
+              <q-select v-model="formData.aiAgentId" :options="referencesStore.aiAgentOptions" option-label="label"
+                option-value="value" emit-value map-options :label="$t( 'fields.aiAgent' )" outlined dense />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select v-model="formData.profileId" :options="referencesStore.profileOptions" option-label="label"
+                option-value="value" emit-value map-options :label="$t( 'fields.profileName' )" outlined dense />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select v-model="formData.messagingPolicy" :options="referencesStore.messagingPolicyOptions" option-label="label"
+                option-value="value" emit-value map-options :label="$t( 'fields.messagingAllowed' )" outlined dense />
+            </div>
+          </div>
+          <div class="row q-col-gutter-md">
+            <div class="col-12">
+              <q-select v-model="formData.submissionPolicy" :options="referencesStore.submissionPolicyOptions" option-label="label"
+                option-value="value" emit-value map-options :label="$t( 'fields.songSubmissionAllowed' )" outlined dense />
             </div>
           </div>
           <div class="row q-col-gutter-md">
@@ -190,7 +259,6 @@
                 :rows="3" />
             </div>
           </div>
-          <div class="text-body2 q-mt-lg">{{ $t( 'tabs.aiAgent' ) }}</div>
         </q-form>
       </q-card-section>
       <q-card-section v-else class="q-px-none column q-gutter-sm">
@@ -243,8 +311,12 @@ const formData = reactive( {
   description: '',
   color: '',
   timeZone: '',
-  managedBy: '' as ManagedBy | '',
-  bitRate: 192000
+  managedBy: 'MIX' as ManagedBy,
+  bitRate: 192000,
+  aiAgentId: '',
+  profileId: '',
+  messagingPolicy: '',
+  submissionPolicy: ''
 } )
 
 const bitrateOptions = [
@@ -261,8 +333,12 @@ watch( station, ( newStation ) => {
     formData.description = newStation.description || ''
     formData.color = newStation.color || ''
     formData.timeZone = newStation.timeZone || ''
-    formData.managedBy = newStation.managedBy || ''
+    formData.managedBy = newStation.managedBy || 'MIX' as ManagedBy
     formData.bitRate = newStation.bitRate || 192000
+    formData.aiAgentId = newStation.aiAgentId || ''
+    formData.profileId = newStation.profileId || ''
+    formData.messagingPolicy = newStation.messagingPolicy || ''
+    formData.submissionPolicy = newStation.submissionPolicy || ''
   }
 }, { immediate: true } )
 
@@ -335,7 +411,11 @@ async function handleDelete() {
 onMounted( async () => {
   loading.value = true
   try {
-    await radioStationsStore.fetchRadioStation( stationId.value )
+    await Promise.all([
+      radioStationsStore.fetchRadioStation( stationId.value ),
+      referencesStore.fetchAiAgents(),
+      referencesStore.fetchProfiles()
+    ])
   } finally {
     loading.value = false
   }

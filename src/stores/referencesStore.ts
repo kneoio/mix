@@ -60,6 +60,19 @@ export const useReferencesStore = defineStore('references', () => {
     { label: "AI DJ", value: "MIX" }
   ]
 
+  const aiAgentOptions = ref<Array<{label: string, value: string}>>([])
+  const profileOptions = ref<Array<{label: string, value: string}>>([])
+
+  const messagingPolicyOptions = [
+    { label: "Allowed", value: "ALLOWED" },
+    { label: "Not Allowed", value: "NOT_ALLOWED" }
+  ]
+
+  const submissionPolicyOptions = [
+    { label: "Allowed", value: "ALLOWED" },
+    { label: "Not Allowed", value: "NOT_ALLOWED" }
+  ]
+
   const timezones = [
     { label: 'UTC (+0)', value: 'UTC' },
     { label: 'Europe/London (+0/+1)', value: 'Europe/London' },
@@ -170,16 +183,46 @@ export const useReferencesStore = defineStore('references', () => {
       .sort((a: {label: string}, b: {label: string}) => a.label.localeCompare(b.label))
   }
 
+  const fetchAiAgents = async () => {
+    const response = await apiClient.get('/dictionary/agents?page=1&size=100')
+    if (!response?.data?.payload) throw new Error('Invalid API response')
+
+    aiAgentOptions.value = response.data.payload.viewData.entries
+      .map((entry: {id: string, name: string}) => ({
+        label: entry.name,
+        value: entry.id
+      }))
+      .sort((a: {label: string}, b: {label: string}) => a.label.localeCompare(b.label))
+  }
+
+  const fetchProfiles = async () => {
+    const response = await apiClient.get('/dictionary/profiles?page=1&size=100')
+    if (!response?.data?.payload) throw new Error('Invalid API response')
+
+    profileOptions.value = response.data.payload.viewData.entries
+      .map((entry: {id: string, name: string}) => ({
+        label: entry.name,
+        value: entry.id
+      }))
+      .sort((a: {label: string}, b: {label: string}) => a.label.localeCompare(b.label))
+  }
+
   return {
     genreOptions,
     labelOptions,
     countryOptions,
     languageOptions,
     managedByOptions,
+    aiAgentOptions,
+    profileOptions,
+    messagingPolicyOptions,
+    submissionPolicyOptions,
     timezones,
     musicUploadAgreement,
     messagePostingAgreement,
     fetchGenres,
-    fetchLabels
+    fetchLabels,
+    fetchAiAgents,
+    fetchProfiles
   }
 })
