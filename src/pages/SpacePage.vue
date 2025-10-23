@@ -56,8 +56,8 @@
               round
               size="lg"
               color="grey-5"
-              :icon="isPlayingStation(station.slugName) ? 'pause' : 'play_arrow'"
-              @click="toggleStation(station.slugName)"
+              :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'"
+              @click="togglePlay"
               class="q-mb-md q-mt-md"
             />
             <transition name="fade">
@@ -106,6 +106,14 @@ onUnmounted(() => {
 
 watch(loading, (v) => ui.setGlobalLoading(v))
 
+watch(slide, (newSlug) => {
+  if (playerStore.isPlaying && playerStore.radioSlug !== newSlug) {
+    playerStore.togglePlay()
+    playerStore.setStation(newSlug)
+    playerStore.togglePlay()
+  }
+})
+
 function getStatusClass(status?: string): string {
   if (status === 'ON_LINE' || status === 'WARMING_UP') return 'text-positive'
   return 'text-accent'
@@ -115,12 +123,9 @@ function isPlayingStation(slugName: string): boolean {
   return playerStore.isPlaying && playerStore.radioSlug === slugName
 }
 
-function toggleStation(slugName: string) {
-  if (playerStore.radioSlug !== slugName) {
-    if (playerStore.isPlaying) {
-      playerStore.togglePlay()
-    }
-    playerStore.setStation(slugName)
+function togglePlay() {
+  if (playerStore.radioSlug !== slide.value) {
+    playerStore.setStation(slide.value)
   }
   playerStore.togglePlay()
 }
