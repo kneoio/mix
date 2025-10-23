@@ -1,42 +1,21 @@
 <template>
   <q-page class="q-px-md q-pb-md q-pt-md full-height-page">
-    <ListHeader 
-      :title="currentStation?.slugName || $t( 'menu.dashboard' )" 
-      :subtitle="currentStation ? getStatusText( currentStation.slugName ) : ''"
-      :show-back="false" 
-      :show-new="false" 
+    <ListHeader :title="currentStation?.slugName || $t( 'menu.dashboard' )"
+      :subtitle="currentStation ? getStatusText( currentStation.slugName ) : ''" :show-back="false" :show-new="false"
       :show-delete="false" />
 
     <div v-if=" loading " class="flex justify-center items-center q-mt-xl">
       <q-spinner color="primary" size="3em" />
     </div>
 
-    <q-carousel
-      v-else-if=" stations.length > 0 "
-      v-model="slide"
-      transition-prev="slide-right"
-      transition-next="slide-left"
-      swipeable
-      animated
-      control-color="primary"
-      navigation
-      padding
-      arrows
-      infinite
-      class="rounded-borders dashboard-carousel q-mt-md"
-    >
-      <q-carousel-slide
-        v-for="station in stations"
-        :key="station.id"
-        :name="station.id"
-        class="column no-wrap flex-center"
-      >
+    <q-carousel v-else-if=" stations.length > 0 " v-model="slide" transition-prev="slide-right"
+      transition-next="slide-left" swipeable animated control-color="primary" navigation padding arrows infinite
+      class="rounded-borders dashboard-carousel q-mt-md">
+      <q-carousel-slide v-for=" station in stations " :key="station.id" :name="station.id"
+        class="column no-wrap flex-center">
         <div class="dashboard-content">
           <div class="row items-center q-mb-md">
-            <span
-              class="live-status"
-              :class="{ 'live-on-air': isHeartbeatActive( station.slugName ) }"
-            >
+            <span class="live-status" :class="{ 'live-on-air': isHeartbeatActive( station.slugName ) }">
               On Air
             </span>
             <q-space />
@@ -49,28 +28,33 @@
             <q-btn unelevated color="primary" icon="play_arrow" :label="$t( 'dashboard.start' )"
               :loading="isStarting( station.id )" :disable="isOnline( station.slugName )"
               @click="handleStart( station.slugName )" size="md" />
-            <q-btn unelevated color="negative" icon="stop" :label="$t( 'dashboard.stop' )" :loading="isStopping( station.id )"
-              :disable="!canStop( station.slugName )" @click="handleStop( station.slugName )" size="md" />
+            <q-btn unelevated color="negative" icon="stop" :label="$t( 'dashboard.stop' )"
+              :loading="isStopping( station.id )" :disable="!canStop( station.slugName )"
+              @click="handleStop( station.slugName )" size="md" />
           </q-btn-group>
 
           <div class="q-mb-md">
             <div class="text-subtitle2 q-mb-xs">{{ $t( 'dashboard.livePlaylist' ) }}</div>
-            <div v-if=" getCombinedPlaylist( station.slugName ).length > 0 " class="text-caption">
-              <div v-for=" ( item, idx ) in getCombinedPlaylist( station.slugName ).slice( 0, 5 ) " :key="idx" class="q-mb-sm playlist-item">
-                <div class="row items-center">
-                  <div class="col text-left">
-                    {{ item?.artist || '' }}
+            <q-timeline v-if=" getCombinedPlaylist( station.slugName ).length > 0 " color="primary">
+              <q-timeline-entry v-for=" ( item, idx ) in getCombinedPlaylist( station.slugName ).slice( 0, 5 ) "
+                :key="idx" :color="item.isPlayingNow ? 'warning' : item.isQueued ? 'info' : 'primary'"
+                :icon="item.isPlayingNow ? 'play_arrow' : item.isQueued ? 'schedule' : 'music_note'">
+                <template #title>
+                  <div class="row items-center text-caption">
+                    <div class="col">
+                      {{ item?.artist || '' }}
+                    </div>
+                    <q-badge v-if=" item.isPlayingNow " color="warning" label="Playing" size="xs" />
+                    <q-badge v-else-if=" item.isQueued " color="info" label="Queued" size="xs" />
                   </div>
-                  <div class="col text-right">
+                </template>
+                <template #subtitle>
+                  <div class="text-caption">
                     {{ item?.title ? cleanTitle( item.title ) : 'N/A' }}
                   </div>
-                  <div class="col-auto q-ml-sm">
-                    <q-badge v-if="item.isPlayingNow" color="negative" label="Playing" size="xs" />
-                    <q-badge v-else-if="item.isQueued" color="info" label="Queued" size="xs" />
-                  </div>
-                </div>
-              </div>
-            </div>
+                </template>
+              </q-timeline-entry>
+            </q-timeline>
             <div v-else class="text-caption text-grey-7">
               {{ $t( 'dashboard.noPlaylist' ) }}
             </div>
@@ -87,7 +71,7 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, computed, watch } from 'vue'
-import { useDashboardStore, type StatusHistoryItem } from 'src/stores/dashboardStore'
+import { useDashboardStore } from 'src/stores/dashboardStore'
 import { useRadioStationsStore } from 'src/stores/radioStationsStore'
 import { apiClient } from 'src/api/apiClient'
 import ListHeader from 'src/components/ListHeader.vue'
@@ -95,28 +79,11 @@ import ListHeader from 'src/components/ListHeader.vue'
 const dashboardStore = useDashboardStore()
 const radioStationsStore = useRadioStationsStore()
 const loading = ref( false )
-const slide = ref('')
+const slide = ref( '' )
 
 const stations = computed( () => radioStationsStore.getEntries )
 const currentStation = computed( () => stations.value.find( s => s.id === slide.value ) )
 
-const getStatusColor = ( slugName: string ) => {
-  const data = dashboardStore.getStationData( slugName )
-  if ( !data ) return 'grey'
-  switch ( data.status ) {
-    case 'ON_LINE':
-    case 'QUEUE_SATURATED':
-      return 'positive'
-    case 'WARMING_UP':
-    case 'WAITING_FOR_CURATOR':
-      return 'warning'
-    case 'IDLE':
-    case 'SYSTEM_ERROR':
-      return 'negative'
-    default:
-      return 'grey'
-  }
-}
 
 const getStatusText = ( slugName: string ) => {
   const data = dashboardStore.getStationData( slugName )
@@ -136,54 +103,14 @@ const getListeners = ( slugName: string ) => {
   return data?.currentListeners || 0
 }
 
-const getStatusHistory = ( slugName: string ): StatusHistoryItem[] => {
-  const data = dashboardStore.getStationData( slugName )
-  return data?.statusHistory || []
-}
-
-const formatStatusByValue = ( status: string ) => {
-  if ( status === 'ON_LINE' ) return 'Online'
-  if ( status === 'WARMING_UP' ) return 'Warming Up'
-  if ( status === 'QUEUE_SATURATED' ) return 'Queue Saturated'
-  if ( status === 'WAITING_FOR_CURATOR' ) return 'Waiting for Curator'
-  if ( status === 'IDLE' ) return 'Idle'
-  if ( status === 'SYSTEM_ERROR' ) return 'System Error'
-  if ( status === 'OFF_LINE' ) return 'Offline'
-  return status || 'Unknown'
-}
-
-const getStatusColorByValue = ( status: string ) => {
-  switch ( status ) {
-    case 'ON_LINE':
-    case 'QUEUE_SATURATED':
-      return 'positive'
-    case 'WARMING_UP':
-    case 'WAITING_FOR_CURATOR':
-      return 'warning'
-    case 'IDLE':
-    case 'SYSTEM_ERROR':
-      return 'negative'
-    default:
-      return 'grey'
-  }
-}
-
-const formatTimestamp = ( timestamp: string ) => {
-  const date = new Date( timestamp )
-  return date.toLocaleString()
-}
-
 const startingStations = ref<Set<string>>( new Set() )
 const stoppingStations = ref<Set<string>>( new Set() )
-
 const isStarting = ( stationId: string ) => startingStations.value.has( stationId )
 const isStopping = ( stationId: string ) => stoppingStations.value.has( stationId )
-
 const isOnline = ( slugName: string ) => {
   const data = dashboardStore.getStationData( slugName )
   return data?.status === 'ON_LINE' || data?.status === 'WARMING_UP' || data?.status === 'QUEUE_SATURATED' || data?.status === 'WAITING_FOR_CURATOR'
 }
-
 const canStop = ( slugName: string ) => {
   const data = dashboardStore.getStationData( slugName )
   return isOnline( slugName ) || data?.status === 'IDLE'
