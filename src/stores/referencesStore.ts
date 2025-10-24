@@ -122,6 +122,44 @@ export const useReferencesStore = defineStore('references', () => {
     { label: 'Australia/Sydney (+10/+11)', value: 'Australia/Sydney' }
   ]
 
+  const countryFlagColors: Record<string, string[]> = {
+  US: ['#B22234', '#3C3B6E'],
+  GB: ['#00247D', '#CF142B'],
+  DE: ['#000000', '#DD0000', '#FFCE00'],
+  FR: ['#0055A4', '#FFFFFF', '#EF4135'],
+  LV: ['#9E1B34', '#FFFFFF'],
+  ES: ['#AA151B', '#F1BF00'],
+  PT: ['#006600', '#FF0000'],
+  KZ: ['#00AFCA', '#FFD700'],
+  JP: ['#FFFFFF', '#BC002D'],
+  CN: ['#DE2910', '#FFDE00'],
+  KR: ['#FFFFFF', '#C60C30'],
+  IN: ['#FF9933', '#138808'],
+  UA: ['#0057B7', '#FFD700'],
+  FI: ['#FFFFFF', '#003580'],
+  NO: ['#BA0C2F', '#00205B'],
+  SE: ['#006AA7', '#FECC00'],
+  PL: ['#FFFFFF', '#DC143C'],
+  IT: ['#009246', '#CE2B37'],
+  TR: ['#E30A17', '#FFFFFF'],
+  GE: ['#FFFFFF', '#DA121A']
+};
+
+
+  function getCountryGradient(code?: string): string {
+    if (!code) return ''
+    const colors: string[] = countryFlagColors[code] ?? []
+    if (colors.length === 0) return ''
+    if (colors.length === 1) {
+      const first = colors[0]!
+      return first
+    }
+    if (colors.length === 2) return `linear-gradient(90deg, ${colors[0]} 0%, ${colors[1]} 100%)`
+    const step = Math.floor(100 / (colors.length - 1))
+    const stops = colors.map((c, i) => `${c} ${i * step}%`).join(', ')
+    return `linear-gradient(90deg, ${stops})`
+  }
+
   const musicUploadAgreement = ref<{ title: string; clause: string; version: string }>({
     title: 'Music Upload Agreement',
     version: '1.0',
@@ -218,8 +256,10 @@ export const useReferencesStore = defineStore('references', () => {
     messagingPolicyOptions,
     submissionPolicyOptions,
     timezones,
+    countryFlagColors,
     musicUploadAgreement,
     messagePostingAgreement,
+    getCountryGradient,
     fetchGenres,
     fetchLabels,
     fetchAiAgents,

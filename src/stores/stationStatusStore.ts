@@ -21,6 +21,7 @@ export const useStationStatusStore = defineStore('stationStatus', () => {
   })
 
   function formatStatusText(s?: string) {
+    console.log(s)
     if (s === 'ON_LINE') return 'Online'
     if (s === 'WARMING_UP') return 'Online'
     if (s === 'WAITING_FOR_CURATOR') return 'Online'

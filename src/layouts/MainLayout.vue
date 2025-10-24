@@ -96,7 +96,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer v-if="playerStore.isPlaying" class="bg-primary text-white">
+    <!--<q-footer v-if="playerStore.isPlaying" class="bg-primary text-white">
       <q-toolbar class="q-py-sm">
         <div class="text-caption">
           <div class="text-weight-bold">{{ currentStationName }}</div>
@@ -105,12 +105,12 @@
         <q-space />
         <q-btn flat dense round :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'" @click="togglePlay" />
       </q-toolbar>
-    </q-footer>
+    </q-footer>-->
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 import { keycloak } from 'src/boot/keycloak'
 import { useUiStore } from 'src/stores/uiStore'
@@ -123,10 +123,11 @@ const leftDrawerOpen = ref( false );
 const isAuthenticated = ref( false )
 const audioElement = ref<HTMLAudioElement | null>( null )
 
-const currentStationName = computed(() => {
+/*const currentStationName = computed(() => {
   const station = playerStore.stations.find(s => s.slugName === playerStore.radioSlug)
   return station?.name || playerStore.radioSlug
-})
+})*/
+
 
 onMounted( () => {
   isAuthenticated.value = keycloak.authenticated === true
@@ -153,4 +154,7 @@ function togglePlay() {
 </script>
 
 <style scoped>
+.q-header {
+  transition: background 300ms ease;
+}
 </style>

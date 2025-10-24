@@ -1,70 +1,45 @@
 <template>
   <q-page class="q-pa-md-md q-pa-sm-none q-pa-xs-none full-height-page">
-    <q-banner v-if="stationsLoadError" dense inline-actions class="bg-negative text-white q-mb-md">
-      {{ $t('space.loadFailed') }}
+    <q-banner v-if=" stationsLoadError " dense inline-actions class="bg-negative text-white q-mb-md">
+      {{ $t( 'space.loadFailed' ) }}
     </q-banner>
 
-    <q-carousel
-      v-model="slide"
-      transition-prev="slide-right"
-      transition-next="slide-left"
-      swipeable
-      animated
-      control-color="primary"
-      navigation
-      padding
-      arrows
-      infinite
-      class="rounded-borders full-height-carousel"
-    >
-      <q-carousel-slide
-        v-for="station in radioStations"
-        :key="station.slugName"
-        :name="station.slugName"
-        class="column no-wrap flex-center"
-      >
-        <q-card
-          flat
-          class="station-card full-width-mobile"
-        >
-          <div class="color-bar" :style="{ backgroundColor: station.color }"></div>
+    <q-carousel v-model="slide" transition-prev="slide-right" transition-next="slide-left" swipeable animated
+      control-color="gray-14" navigation padding arrows infinite class="rounded-borders full-height-carousel">
+      <q-carousel-slide v-for=" station in radioStations " :key="station.slugName" :name="station.slugName"
+        class="column no-wrap flex-center">
+        <div :class="['station-card', 'full-width-mobile', { playing: isPlayingStation( station.slugName ) }]">
+          <div class="color-bar" :style="{ backgroundColor: station.color }">
+            <div class="color-bar-wave" :style="{ backgroundColor: station.color }"></div>
+          </div>
 
-          <q-card-section>
-            <div class="row items-center q-gutter-sm">
-              <div class="text-h6">{{ station.name }}</div>
-              <div class="text-caption text-accent">{{ station.countryCode }}</div>
-              <q-space />
-              <div class="text-caption" :class="getStatusClass(station.currentStatus)">
-                {{ formatStatusText(station.currentStatus) }}
-              </div>
+          <div class="q-pa-md">
+            <div class="row justify-center">
+              <div class="text-h6 text-center" style="font-family: Roboto">{{ station.name }}</div>
             </div>
-          </q-card-section>
+          </div>
 
-          <q-card-section class="text-center" style="margin-top: 40px; margin-bottom: 40px;">
+          <div class="q-pa-md text-center" style="margin-top: 40px; margin-bottom: 40px;">
             <transition name="fade-slide">
-              <div v-if="isPlayingStation(station.slugName)" class="now-playing-info q-mb-lg">
-                <AnimatedText
-                  :text="playerStore.nowPlaying"
-                  :animation-type="playerStore.titleAnimation.enabled ? playerStore.titleAnimation.type : 'static'"
-                  :animation-speed="playerStore.titleAnimation.speed"
-                  :visual-style="playerStore.titleAnimation.enabled ? 'glow' : 'none'"
-                  :station-color="station.color || ''"
-                />
+              <div v-if=" isPlayingStation( station.slugName ) " class="now-playing-info q-mb-lg">
+                <div class="now-playing-container">
+                  <span class="text-left">{{ nowPlayingParts.left }}</span>
+                  <span class="dot">|</span>
+                  <span class="text-right">{{ nowPlayingParts.right }}</span>
+                </div>
               </div>
             </transition>
-            <q-btn
-              round
-              size="lg"
-              color="grey-5"
-              :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'"
-              @click="togglePlay"
-              class="q-mb-md q-mt-md"
-            />
+            <q-btn round size="lg" color="grey-5" :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'"
+              @click="togglePlay" class="q-mb-md q-mt-md" />
+            <div class="row justify-center items-center q-gutter-md q-mt-lg">
+              <div class="text-caption" style="color: gray-9;">{{ station.countryCode }}</div>
+              <div class="text-caption" style="color: gray-9;">{{ formatStatusText( station.currentStatus ) }}</div>
+            </div>
             <transition name="fade">
-              <div v-if="!isPlayingStation(station.slugName)" class="text-body2">{{ station.description }}</div>
+              <div v-if=" !isPlayingStation( station.slugName ) " class="text-body2" style="margin-top: 10px;">{{ station.description }}</div>
             </transition>
-          </q-card-section>
-        </q-card>
+          </div>
+        </div>
       </q-carousel-slide>
     </q-carousel>
   </q-page>
@@ -72,7 +47,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue'
-import AnimatedText from 'src/components/AnimatedText.vue'
+
 import { usePlayerStore } from 'src/stores/playerStore'
 import { useStationStatusStore } from 'src/stores/stationStatusStore'
 import { useUiStore } from 'src/stores/uiStore'
@@ -80,14 +55,30 @@ import { useUiStore } from 'src/stores/uiStore'
 const playerStore = usePlayerStore()
 const stationStatusStore = useStationStatusStore()
 const { formatStatusText } = stationStatusStore
-const loading = ref(false)
+const loading = ref( false )
 const ui = useUiStore()
 
-const radioStations = computed(() => playerStore.stations)
-const stationsLoadError = computed(() => playerStore.stationsLoadError)
-const slide = ref('')
+const radioStations = computed( () => playerStore.stations )
+const stationsLoadError = computed( () => playerStore.stationsLoadError )
+const slide = ref( '' )
 
-onMounted(async () => {
+
+const nowPlayingParts = computed(() => {
+  const text = playerStore.nowPlaying || '';
+  const parts = text.split(/\s*(?:-|\u2013|\u2014|\|)\s*/);
+  if (parts.length >= 2) {
+    return {
+      left: parts[0],
+      right: parts.slice(1).join(' · ')
+    };
+  }
+  return {
+    left: text,
+    right: ''
+  };
+});
+
+onMounted( async () => {
   loading.value = true
   try {
     await playerStore.fetchRadioStations()
@@ -95,31 +86,30 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
-})
+} )
 
 
-watch(loading, (v) => ui.setGlobalLoading(v))
+watch( loading, ( v ) => ui.setGlobalLoading( v ) )
 
-watch(slide, (newSlug) => {
-  if (playerStore.isPlaying && playerStore.radioSlug !== newSlug) {
-    playerStore.togglePlay()
-    playerStore.setStation(newSlug)
-    playerStore.togglePlay()
+watch( slide, ( newSlug ) => {
+  if ( playerStore.radioSlug !== newSlug ) {
+    if ( playerStore.isPlaying ) {
+      playerStore.togglePlay()
+      playerStore.setStation( newSlug )
+      playerStore.togglePlay()
+    } else {
+      playerStore.setStation( newSlug )
+    }
   }
-})
+} )
 
-function getStatusClass(status?: string): string {
-  if (status === 'ON_LINE' || status === 'WARMING_UP') return 'text-positive'
-  return 'text-accent'
-}
-
-function isPlayingStation(slugName: string): boolean {
+function isPlayingStation( slugName: string ): boolean {
   return playerStore.isPlaying && playerStore.radioSlug === slugName
 }
 
 function togglePlay() {
-  if (playerStore.radioSlug !== slide.value) {
-    playerStore.setStation(slide.value)
+  if ( playerStore.radioSlug !== slide.value ) {
+    playerStore.setStation( slide.value )
   }
   playerStore.togglePlay()
 }
@@ -132,13 +122,41 @@ function togglePlay() {
 }
 
 .station-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: none;
+  box-shadow: none;
+}
+
+.station-card.playing,
+.station-card.playing:hover {
+  transform: none;
+  box-shadow: none;
+  border: none;
 }
 
 .color-bar {
-  height: 4px;
+  height: 2px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.color-bar-wave {
+  position: absolute;
+  top: 0;
+  left: -30%;
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  animation: wave 5s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .full-width-mobile {
@@ -153,12 +171,47 @@ function togglePlay() {
 }
 
 .now-playing-info {
-  text-align: center;
-  font-size: 1rem;
   min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  overflow: hidden;
+  padding: 0 1rem;
+}
+
+.now-playing-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.text-left {
+  text-align: right;
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+  word-wrap: break-word;
+  padding-right: 0.5rem;
+}
+
+.dot {
+  flex-shrink: 0;
+  font-size: 2rem;
+  padding: 0 0.25rem;
+  align-self: flex-start;
+  line-height: 1.5;
+}
+
+.text-right {
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+  word-wrap: break-word;
+  padding-left: 0.5rem;
 }
 
 .fade-enter-active {
@@ -169,7 +222,8 @@ function togglePlay() {
   transition: opacity 0.8s ease;
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 
