@@ -1,4 +1,6 @@
 {
+  "name": "Mixpla",
+  "short_name": "Mixpla",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#027be3",

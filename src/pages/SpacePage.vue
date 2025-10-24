@@ -5,13 +5,11 @@
     </q-banner>
 
     <q-carousel v-model="slide" transition-prev="slide-right" transition-next="slide-left" swipeable animated
-      control-color="gray-14" navigation padding arrows infinite class="rounded-borders full-height-carousel">
+      control-color="gray-14" padding arrows infinite class="rounded-borders full-height-carousel">
       <q-carousel-slide v-for=" station in radioStations " :key="station.slugName" :name="station.slugName"
         class="column no-wrap flex-center">
         <div :class="['station-card', 'full-width-mobile', { playing: isPlayingStation( station.slugName ) }]">
-          <div class="color-bar" :style="{ backgroundColor: station.color }">
-            <div class="color-bar-wave" :style="{ backgroundColor: station.color }"></div>
-          </div>
+
 
           <div class="q-pa-md">
             <div class="row justify-center">
@@ -19,6 +17,10 @@
             </div>
           </div>
 
+           <div class="color-bar" :style="{ backgroundColor: station.color }">
+            <div class="color-bar-wave" :style="{ backgroundColor: station.color }"></div>
+          </div>
+          
           <div class="q-pa-md text-center" style="margin-top: 40px; margin-bottom: 40px;">
             <transition name="fade-slide">
               <div v-if=" isPlayingStation( station.slugName ) " class="now-playing-info q-mb-lg">

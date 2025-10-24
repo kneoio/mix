@@ -8,7 +8,7 @@
           Mixpla
         </q-toolbar-title>
 
-        <q-btn v-if="playerStore.isPlaying" flat dense round :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'" @click="togglePlay" />
+        <q-btn flat dense round :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'" @click="togglePlay" />
       </q-toolbar>
       <q-linear-progress v-if=" ui.globalLoading " indeterminate color="white" class="absolute-bottom" />
     </q-header>
@@ -96,21 +96,15 @@
       <router-view />
     </q-page-container>
 
-    <!--<q-footer v-if="playerStore.isPlaying" class="bg-primary text-white">
-      <q-toolbar class="q-py-sm">
-        <div class="text-caption">
-          <div class="text-weight-bold">{{ currentStationName }}</div>
-          <div>{{ playerStore.nowPlaying }}</div>
-        </div>
-        <q-space />
-        <q-btn flat dense round :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'" @click="togglePlay" />
-      </q-toolbar>
-    </q-footer>-->
+    <q-footer v-if="playerStore.isPlaying" style="background: transparent;">
+      <div :ref="el => { if (el) visualizerContainer = el as HTMLDivElement }" style="width: 100%; height: 60px;"></div>
+    </q-footer>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import AudioMotionAnalyzer from 'audiomotion-analyzer'
 import { useRouter } from 'vue-router'
 import { keycloak } from 'src/boot/keycloak'
 import { useUiStore } from 'src/stores/uiStore'
@@ -122,6 +116,9 @@ const router = useRouter()
 const leftDrawerOpen = ref( false );
 const isAuthenticated = ref( false )
 const audioElement = ref<HTMLAudioElement | null>( null )
+// eslint-disable-next-line prefer-const
+let visualizerContainer: HTMLDivElement | null = null as HTMLDivElement | null
+let audioMotion: AudioMotionAnalyzer | null = null
 
 /*const currentStationName = computed(() => {
   const station = playerStore.stations.find(s => s.slugName === playerStore.radioSlug)
@@ -143,6 +140,51 @@ onMounted( () => {
     ui.setGlobalLoading( false )
   } )
 } );
+
+const initVisualizer = async () => {
+  await nextTick()
+  if (visualizerContainer && !audioMotion && playerStore.audioElement) {
+    audioMotion = new AudioMotionAnalyzer(undefined, {
+      mode: 10,
+      height: 60,
+      showScaleX: false,
+      showScaleY: false,
+      bgAlpha: 0,
+      overlay: true
+    })
+    
+    audioMotion.registerGradient('gray', {
+      colorStops: [
+        { pos: 0, color: '#666666' },
+        { pos: 1, color: '#666666' }
+      ]
+    })
+    audioMotion.gradient = 'gray'
+    
+    visualizerContainer.appendChild(audioMotion.canvas)
+    audioMotion.connectInput(playerStore.audioElement)
+  }
+}
+
+const destroyVisualizer = () => {
+  if (audioMotion) {
+    audioMotion.disconnectInput()
+    audioMotion.destroy()
+    audioMotion = null
+  }
+}
+
+onBeforeUnmount(() => {
+  destroyVisualizer()
+})
+
+playerStore.$subscribe((mutation, state) => {
+  if (state.isPlaying) {
+    void initVisualizer()
+  } else {
+    destroyVisualizer()
+  }
+})
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

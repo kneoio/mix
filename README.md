@@ -1,4 +1,4 @@
-# Quasar App (mix)
+# Mixpla
 
 Quasar v2.18.5
 
