@@ -1,6 +1,6 @@
 {
   "name": "mix",
-  "version": "1.0.6",
+  "version": "1.0.11",
   "description": "Mixpla mobile app project",
   "productName": "Mixpla",
   "author": "aidazi <justaidajam@gmail.com>",
@@ -22,7 +22,6 @@
     "audiomotion-analyzer": "^4.5.1",
     "axios": "^1.12.2",
     "hls.js": "^1.6.13",
-    "keycloak-ionic": "^13.0.1",
     "keycloak-js": "^26.2.0",
     "pinia": "^3.0.3",
     "quasar": "^2.16.0",

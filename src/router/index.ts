@@ -7,7 +7,8 @@ import {
 } from 'vue-router';
 import routes from './routes';
 import { keycloak, keycloakReady } from 'src/boot/keycloak';
-import { getRedirectUri } from 'src/auth/keycloak';
+import { Capacitor } from '@capacitor/core';
+import { nativeAuth } from 'src/auth/nativeAuth';
 
 /*
  * If not building with SSR mode, you can
@@ -35,15 +36,35 @@ export default defineRouter(function (/* { store, ssrContext } */) {
 
   // Global auth guard
   Router.beforeEach(async (to) => {
-    await keycloakReady
+    const isNative = Capacitor.isNativePlatform()
     
-    if (to.path === '/') {
-      return keycloak.authenticated ? '/radiostations' : '/space'
+    if (isNative) {
+      nativeAuth.loadFromStorage()
+      
+      if (to.path === '/') {
+        return nativeAuth.isAuthenticated ? '/radiostations' : '/space'
+      }
+
+      const tail = to.matched[to.matched.length - 1]
+      const isPublic = tail?.meta.public === true
+      const requiresAuth = tail?.meta.requiresAuth === true
+
+      if (isPublic || !requiresAuth) return true
+
+      if (!nativeAuth.isAuthenticated) {
+        return '/login'
+      }
+
+      return true
     }
 
-    if (to.path === '/login') {
-      await keycloak.login({ redirectUri: getRedirectUri('/') })
-      return false
+    await keycloakReady
+    nativeAuth.loadFromStorage()
+
+    const isWebAuthenticated = keycloak.authenticated || nativeAuth.isAuthenticated
+
+    if (to.path === '/') {
+      return isWebAuthenticated ? '/radiostations' : '/space'
     }
 
     const tail = to.matched[to.matched.length - 1]
@@ -52,9 +73,8 @@ export default defineRouter(function (/* { store, ssrContext } */) {
 
     if (isPublic || !requiresAuth) return true
 
-    if (!keycloak.authenticated) {
-      await keycloak.login({ redirectUri: getRedirectUri(to.fullPath) })
-      return false
+    if (!isWebAuthenticated) {
+      return '/login'
     }
 
     return true

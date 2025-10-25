@@ -19,8 +19,8 @@
           {{ $t( 'menu.title' ) }}
         </q-item-label>
 
-        <q-item clickable to="/space" active-class="bg-grey-3 text-warning"
-          exact-active-class="bg-grey-3 text-warning" v-ripple>
+        <q-item clickable to="/space" active-class="bg-grey-3 text-warning" exact-active-class="bg-grey-3 text-warning"
+          v-ripple>
           <q-item-section avatar>
             <q-icon name="favorite" />
           </q-item-section>
@@ -69,7 +69,8 @@
           </q-item-section>
         </q-item>
 
-        <q-item clickable to="/profile" active-class="bg-grey-3 text-warning" exact-active-class="bg-grey-3 text-warning" v-ripple>
+        <q-item clickable to="/profile" active-class="bg-grey-3 text-warning"
+          exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>
             <q-icon name="person" />
           </q-item-section>
@@ -96,22 +97,25 @@
     </q-page-container>
 
     <q-footer v-show="playerStore.isPlaying && ui.visualizerEnabled" style="background: transparent; box-shadow: none;">
-      <div :ref="el => { if (el) visualizerContainer = el as HTMLDivElement }" style="width: 100%; height: 60px;"></div>
+      <div :ref="el => { if ( el ) visualizerContainer = el as HTMLDivElement }" style="width: 100%; height: 60px;"></div>
     </q-footer>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import AudioMotionAnalyzer from 'audiomotion-analyzer'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { keycloak } from 'src/boot/keycloak'
 import { useUiStore } from 'src/stores/uiStore'
 import { usePlayerStore } from 'src/stores/playerStore'
+import { Capacitor } from '@capacitor/core'
+import { nativeAuth } from 'src/auth/nativeAuth'
 
 const ui = useUiStore()
 const playerStore = usePlayerStore()
 const router = useRouter()
+const route = useRoute()
 const leftDrawerOpen = ref( false );
 const isAuthenticated = ref( false )
 const audioElement = ref<HTMLAudioElement | null>( null )
@@ -125,12 +129,32 @@ let audioMotion: AudioMotionAnalyzer | null = null
 })*/
 
 
+function updateAuthState() {
+  const isNative = Capacitor.isNativePlatform()
+  nativeAuth.loadFromStorage()
+  
+  if (isNative) {
+    isAuthenticated.value = nativeAuth.isAuthenticated
+  } else {
+    isAuthenticated.value = keycloak.authenticated === true || nativeAuth.isAuthenticated
+  }
+}
+
+watch(route, () => {
+  updateAuthState()
+})
+
 onMounted( () => {
-  isAuthenticated.value = keycloak.authenticated === true
-  keycloak.onAuthSuccess = () => { isAuthenticated.value = true }
-  keycloak.onAuthLogout = () => { isAuthenticated.value = false }
-  keycloak.onAuthRefreshSuccess = () => { isAuthenticated.value = true }
-  keycloak.onTokenExpired = () => { isAuthenticated.value = !!keycloak.authenticated }
+  const isNative = Capacitor.isNativePlatform()
+  
+  updateAuthState()
+  
+  if (!isNative) {
+    keycloak.onAuthSuccess = () => { isAuthenticated.value = true }
+    keycloak.onAuthLogout = () => { isAuthenticated.value = false }
+    keycloak.onAuthRefreshSuccess = () => { isAuthenticated.value = true }
+    keycloak.onTokenExpired = () => { isAuthenticated.value = !!keycloak.authenticated }
+  }
 
   audioElement.value = new Audio()
   playerStore.setAudioElement( audioElement.value )
@@ -141,15 +165,15 @@ onMounted( () => {
 } );
 
 const initVisualizer = async () => {
-  if (audioMotion) {
+  if ( audioMotion ) {
     return
   }
-  
+
   await nextTick()
   await nextTick()
-  
-  if (visualizerContainer && playerStore.audioElement) {
-    audioMotion = new AudioMotionAnalyzer(visualizerContainer, {
+
+  if ( visualizerContainer && playerStore.audioElement ) {
+    audioMotion = new AudioMotionAnalyzer( visualizerContainer, {
       source: playerStore.audioElement,
       mode: 3,
       height: 60,
@@ -159,9 +183,9 @@ const initVisualizer = async () => {
       showScaleY: false,
       bgAlpha: 0,
       overlay: true
-    })
-    
-    audioMotion.registerGradient('mixpla', {
+    } )
+
+    audioMotion.registerGradient( 'mixpla', {
       colorStops: [
         { pos: 0, color: '#1e3b8a' },
         { pos: 0.25, color: '#3c83f6' },
@@ -169,16 +193,16 @@ const initVisualizer = async () => {
         { pos: 0.75, color: '#1077b7' },
         { pos: 1, color: '#db38d3' }
       ]
-    })
+    } )
     audioMotion.gradient = 'mixpla'
   }
 }
 
 const destroyVisualizer = () => {
-  if (audioMotion) {
+  if ( audioMotion ) {
     try {
       audioMotion.disconnectInput()
-    } catch (e) {
+    } catch ( e ) {
       void e
     }
     audioMotion.destroy()
@@ -186,15 +210,15 @@ const destroyVisualizer = () => {
   }
 }
 
-onBeforeUnmount(() => {
+onBeforeUnmount( () => {
   destroyVisualizer()
-})
+} )
 
-playerStore.$subscribe((mutation, state) => {
-  if (state.isPlaying && ui.visualizerEnabled) {
+playerStore.$subscribe( ( mutation, state ) => {
+  if ( state.isPlaying && ui.visualizerEnabled ) {
     void initVisualizer()
   }
-})
+} )
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

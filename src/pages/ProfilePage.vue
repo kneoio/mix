@@ -87,22 +87,33 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 import { i18n, setLocale } from 'boot/i18n'
 import type { Locale } from 'boot/i18n'
 import { keycloak } from 'src/boot/keycloak'
-import { getRedirectUri } from 'src/auth/keycloak'
 import type { KeycloakTokenParsed } from 'keycloak-js'
 import { useUiStore } from 'src/stores/uiStore'
+import { Capacitor } from '@capacitor/core'
+import { nativeAuth } from 'src/auth/nativeAuth'
 import packageJson from '../../package.json'
 
 const ui = useUiStore()
+const router = useRouter()
 const appVersion = packageJson.version
 
-const isAuthenticated = computed(() => !!keycloak.authenticated)
+const isNative = Capacitor.isNativePlatform()
+
+const isAuthenticated = computed(() => isNative ? nativeAuth.isAuthenticated : (!!keycloak.authenticated || nativeAuth.isAuthenticated))
 const clientId = computed(() => keycloak.clientId)
 const tokenParsed = computed<KeycloakTokenParsed | undefined>(() => keycloak.tokenParsed)
-const email = computed(() => tokenParsed.value?.email ?? '—')
-const preferredUsername = computed(() => tokenParsed.value?.preferred_username ?? '—')
+const email = computed(() => {
+  if (isNative || !keycloak.authenticated) return nativeAuth.user?.email ?? '—'
+  return tokenParsed.value?.email ?? '—'
+})
+const preferredUsername = computed(() => {
+  if (isNative || !keycloak.authenticated) return nativeAuth.user?.preferred_username ?? '—'
+  return tokenParsed.value?.preferred_username ?? '—'
+})
 
 // theme
 const $q = useQuasar()
@@ -116,6 +127,8 @@ function toggleDark () {
   }
 }
 onMounted(() => {
+  nativeAuth.loadFromStorage()
+  
   try {
     const saved = localStorage.getItem(THEME_KEY)
     if (saved !== null) {
@@ -137,6 +150,11 @@ function changeLocale (loc: Locale) {
 }
 
 async function logout () {
-  await keycloak.logout({ redirectUri: getRedirectUri('/space') })
+  if (isNative || !keycloak.authenticated) {
+    await nativeAuth.logout()
+    await router.push('/space')
+  } else {
+    await keycloak.logout({ redirectUri: window.location.origin + '/space' })
+  }
 }
 </script>

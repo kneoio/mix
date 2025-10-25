@@ -11,10 +11,10 @@ const keycloak = new Keycloak({
 })
 
 export const keycloakInitOptions = {
-  onLoad: isNative ? 'login-required' : 'check-sso',
+  onLoad: 'check-sso',
   pkceMethod: 'S256',
-  checkLoginIframe: !isNative,
-  ...(isNative ? { adapter: 'capacitor', responseMode: 'query', redirectUri: 'capacitor://localhost/' } : { silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html` })
+  checkLoginIframe: false,
+  silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`
 } as KeycloakInitOptions
 
 export function getRedirectUri(path = '/') {

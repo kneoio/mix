@@ -16,7 +16,8 @@ const routes: RouteRecordRaw[] = [
       { path: 'listeners', component: () => import('pages/ListenersPage.vue'), meta: { requiresAuth: true } },
       { path: 'listeners/:id', component: () => import('pages/ListenerFormPage.vue'), meta: { requiresAuth: true } },
       { path: 'dashboard', component: () => import('pages/DashboardPage.vue'), meta: { requiresAuth: true } },
-      { path: 'profile', component: () => import('pages/ProfilePage.vue'), meta: { public: true } }
+      { path: 'profile', component: () => import('pages/ProfilePage.vue'), meta: { public: true } },
+      { path: 'login', component: () => import('pages/LoginPage.vue'), meta: { public: true } }
     ],
   },
 

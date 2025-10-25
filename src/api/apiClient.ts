@@ -1,6 +1,8 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 import { keycloak } from 'src/boot/keycloak'
+import { Capacitor } from '@capacitor/core'
+import { nativeAuth } from 'src/auth/nativeAuth'
 
 export const apiServer: string = import.meta.env.VITE_API_SERVER || '/api'
 export const publicApi =  import.meta.env.VITE_PUBLIC_API_SERVER
@@ -22,7 +24,8 @@ export const apiClient: AxiosInstance = axios.create({
   }
 })
 apiClient.interceptors.request.use((config) => {
-  const token = keycloak?.token
+  const isNative = Capacitor.isNativePlatform()
+  const token = isNative ? nativeAuth.token : (keycloak?.token || nativeAuth.token)
   if (token) {
     config.headers = config.headers || {}
     config.headers['Authorization'] = `Bearer ${token}`
