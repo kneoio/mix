@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="mixpla-header-gradient text-white" style="padding-top: env(safe-area-inset-top);">
+    <q-header class="text-white" :style="headerStyle">
       <q-toolbar>
         <q-btn flat dense round icon="menu" :aria-label="$t( 'menu.title' )" @click="toggleLeftDrawer" />
 
@@ -96,14 +96,14 @@
       <router-view />
     </q-page-container>
 
-    <q-footer v-show="playerStore.isPlaying && ui.visualizerEnabled" style="background: transparent; box-shadow: none;" v-touch-swipe.mouse.down="handleSwipeDown">
+    <q-footer v-show="playerStore.isPlaying && ui.visualizerEnabled" style="background: transparent; box-shadow: none;" v-touch-swipe.mouse.down="handleSwipeDown" v-touch-swipe.mouse.left="handleSwipeLeft" v-touch-swipe.mouse.right="handleSwipeRight">
       <div :ref="el => { if ( el ) visualizerContainer = el as HTMLDivElement }" style="width: 100%; height: 60px;"></div>
     </q-footer>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import AudioMotionAnalyzer from 'audiomotion-analyzer'
 import { useRouter, useRoute } from 'vue-router'
 import { keycloak } from 'src/boot/keycloak'
@@ -111,6 +111,7 @@ import { useUiStore } from 'src/stores/uiStore'
 import { usePlayerStore } from 'src/stores/playerStore'
 import { Capacitor } from '@capacitor/core'
 import { nativeAuth } from 'src/auth/nativeAuth'
+import { MIXPLA_GRADIENT, generateRandomGradient } from 'src/constants/theme'
 
 const ui = useUiStore()
 const playerStore = usePlayerStore()
@@ -122,6 +123,15 @@ const audioElement = ref<HTMLAudioElement | null>( null )
 // eslint-disable-next-line prefer-const
 let visualizerContainer: HTMLDivElement | null = null as HTMLDivElement | null
 let audioMotion: AudioMotionAnalyzer | null = null
+const currentGradient = ref(MIXPLA_GRADIENT)
+
+const headerStyle = computed(() => {
+  const colors = currentGradient.value.map(stop => `${stop.color} ${stop.pos * 100}%`).join(', ')
+  return {
+    paddingTop: 'env(safe-area-inset-top)',
+    background: `linear-gradient(90deg, ${colors})`
+  }
+})
 
 /*const currentStationName = computed(() => {
   const station = playerStore.stations.find(s => s.slugName === playerStore.radioSlug)
@@ -185,16 +195,10 @@ const initVisualizer = async () => {
       overlay: true
     } )
 
-    audioMotion.registerGradient( 'mixpla', {
-      colorStops: [
-        { pos: 0, color: '#1e3b8a' },
-        { pos: 0.25, color: '#3c83f6' },
-        { pos: 0.5, color: '#07b6d5' },
-        { pos: 0.75, color: '#1077b7' },
-        { pos: 1, color: '#db38d3' }
-      ]
+    audioMotion.registerGradient( 'mixpla-gradient', {
+      colorStops: currentGradient.value
     } )
-    audioMotion.gradient = 'mixpla'
+    audioMotion.gradient = 'mixpla-gradient'
   }
 }
 
@@ -230,6 +234,26 @@ function togglePlay() {
 
 function handleSwipeDown() {
   ui.visualizerEnabled = false
+}
+
+function handleSwipeLeft() {
+  currentGradient.value = generateRandomGradient()
+  if (audioMotion) {
+    audioMotion.registerGradient('mixpla-gradient', {
+      colorStops: currentGradient.value
+    })
+    audioMotion.gradient = 'mixpla-gradient'
+  }
+}
+
+function handleSwipeRight() {
+  currentGradient.value = MIXPLA_GRADIENT
+  if (audioMotion) {
+    audioMotion.registerGradient('mixpla-gradient', {
+      colorStops: currentGradient.value
+    })
+    audioMotion.gradient = 'mixpla-gradient'
+  }
 }
 </script>
 
