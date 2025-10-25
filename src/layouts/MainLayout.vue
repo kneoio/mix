@@ -96,7 +96,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer v-show="playerStore.isPlaying && ui.visualizerEnabled" style="background: transparent; box-shadow: none;">
+    <q-footer v-show="playerStore.isPlaying && ui.visualizerEnabled" style="background: transparent; box-shadow: none;" v-touch-swipe.mouse.down="handleSwipeDown">
       <div :ref="el => { if ( el ) visualizerContainer = el as HTMLDivElement }" style="width: 100%; height: 60px;"></div>
     </q-footer>
   </q-layout>
@@ -132,7 +132,7 @@ let audioMotion: AudioMotionAnalyzer | null = null
 function updateAuthState() {
   const isNative = Capacitor.isNativePlatform()
   nativeAuth.loadFromStorage()
-  
+
   if (isNative) {
     isAuthenticated.value = nativeAuth.isAuthenticated
   } else {
@@ -146,9 +146,9 @@ watch(route, () => {
 
 onMounted( () => {
   const isNative = Capacitor.isNativePlatform()
-  
+
   updateAuthState()
-  
+
   if (!isNative) {
     keycloak.onAuthSuccess = () => { isAuthenticated.value = true }
     keycloak.onAuthLogout = () => { isAuthenticated.value = false }
@@ -175,9 +175,9 @@ const initVisualizer = async () => {
   if ( visualizerContainer && playerStore.audioElement ) {
     audioMotion = new AudioMotionAnalyzer( visualizerContainer, {
       source: playerStore.audioElement,
-      mode: 3,
+      mode: 6,
       height: 60,
-      barSpace: 0.2,
+      barSpace: 0.1,
       ledBars: true,
       showScaleX: false,
       showScaleY: false,
@@ -226,6 +226,10 @@ function toggleLeftDrawer() {
 
 function togglePlay() {
   playerStore.togglePlay()
+}
+
+function handleSwipeDown() {
+  ui.visualizerEnabled = false
 }
 </script>
 
