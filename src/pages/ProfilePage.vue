@@ -73,6 +73,9 @@
           <q-card-actions align="right" v-if="isAuthenticated">
             <q-btn color="negative" outline :label="$t('profile.logout')" @click="logout" />
           </q-card-actions>
+          <q-card-section>
+            <div class="text-caption text-grey text-center">v{{ appVersion }}</div>
+          </q-card-section>
         </q-card>
       </div>
 
@@ -89,8 +92,10 @@ import type { Locale } from 'boot/i18n'
 import { keycloak } from 'src/boot/keycloak'
 import type { KeycloakTokenParsed } from 'keycloak-js'
 import { useUiStore } from 'src/stores/uiStore'
+import packageJson from '../../package.json'
 
 const ui = useUiStore()
+const appVersion = packageJson.version
 
 const isAuthenticated = computed(() => !!keycloak.authenticated)
 const clientId = computed(() => keycloak.clientId)

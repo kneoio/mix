@@ -1,9 +1,9 @@
 {
   "name": "mix",
-  "version": "0.0.1",
-  "description": "A Quasar Project",
+  "version": "1.0.1",
+  "description": "Mixpla mobile app project",
   "productName": "Mixpla",
-  "author": "kaira <justaidajam@gmail.com>",
+  "author": "aidazi <justaidajam@gmail.com>",
   "type": "module",
   "private": true,
   "scripts": {
