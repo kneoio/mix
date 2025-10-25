@@ -7,6 +7,7 @@ import {
 } from 'vue-router';
 import routes from './routes';
 import { keycloak, keycloakReady } from 'src/boot/keycloak';
+import { getRedirectUri } from 'src/auth/keycloak';
 
 /*
  * If not building with SSR mode, you can
@@ -34,29 +35,25 @@ export default defineRouter(function (/* { store, ssrContext } */) {
 
   // Global auth guard
   Router.beforeEach(async (to) => {
-    // ensure Keycloak init (check-sso) completed so authenticated flag is correct
     await keycloakReady
-    // Handle root entry: if unauthenticated, go straight to hosted Keycloak login
+    
     if (to.path === '/') {
-      if (keycloak.authenticated) return '/radiostations'
-      await keycloak.login({ redirectUri: window.location.origin + '/' })
+      return keycloak.authenticated ? '/radiostations' : '/space'
+    }
+
+    if (to.path === '/login') {
+      await keycloak.login({ redirectUri: getRedirectUri('/') })
       return false
     }
 
-    // If someone navigates to '/login', trigger hosted login instead of rendering a page
-    if (to.path === '/login') {
-      await keycloak.login({ redirectUri: window.location.origin + '/' })
-      return false
-    }
     const tail = to.matched[to.matched.length - 1]
     const isPublic = tail?.meta.public === true
     const requiresAuth = tail?.meta.requiresAuth === true
 
     if (isPublic || !requiresAuth) return true
 
-    // If not authenticated, redirect to hosted Keycloak login
     if (!keycloak.authenticated) {
-      await keycloak.login({ redirectUri: window.location.origin + '/' })
+      await keycloak.login({ redirectUri: getRedirectUri(to.fullPath) })
       return false
     }
 

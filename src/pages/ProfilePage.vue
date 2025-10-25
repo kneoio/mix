@@ -90,6 +90,7 @@ import { useQuasar } from 'quasar'
 import { i18n, setLocale } from 'boot/i18n'
 import type { Locale } from 'boot/i18n'
 import { keycloak } from 'src/boot/keycloak'
+import { getRedirectUri } from 'src/auth/keycloak'
 import type { KeycloakTokenParsed } from 'keycloak-js'
 import { useUiStore } from 'src/stores/uiStore'
 import packageJson from '../../package.json'
@@ -136,6 +137,6 @@ function changeLocale (loc: Locale) {
 }
 
 async function logout () {
-  await keycloak.logout({ redirectUri: window.location.origin + '/space' })
+  await keycloak.logout({ redirectUri: getRedirectUri('/space') })
 }
 </script>

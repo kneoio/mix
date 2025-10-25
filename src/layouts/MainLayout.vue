@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="mixpla-header-gradient text-white">
+    <q-header class="mixpla-header-gradient text-white" style="padding-top: env(safe-area-inset-top);">
       <q-toolbar>
         <q-btn flat dense round icon="menu" :aria-label="$t( 'menu.title' )" @click="toggleLeftDrawer" />
 
@@ -87,7 +87,6 @@
             {{ $t( 'menu.login' ) }}
           </q-item-section>
         </q-item>
-
 
       </q-list>
     </q-drawer>
