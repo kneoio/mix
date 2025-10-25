@@ -150,7 +150,7 @@ const initVisualizer = async () => {
   await nextTick()
   
   if (visualizerContainer && playerStore.audioElement) {
-    audioMotion = new AudioMotionAnalyzer(undefined, {
+    audioMotion = new AudioMotionAnalyzer(visualizerContainer, {
       source: playerStore.audioElement,
       mode: 3,
       height: 60,
@@ -172,8 +172,6 @@ const initVisualizer = async () => {
       ]
     })
     audioMotion.gradient = 'mixpla'
-    
-    visualizerContainer.appendChild(audioMotion.canvas)
   }
 }
 

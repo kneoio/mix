@@ -2,7 +2,7 @@
 .thumbs.db
 node_modules
 
-*.dpk
+*.apk
 
 # Quasar core related directories
 .quasar

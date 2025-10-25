@@ -262,4 +262,8 @@ function isPlayingStation( slugName: string ): boolean {
 .full-height-carousel {
   height: calc(100vh - 100px);
 }
+
+.q-page {
+  background-color: transparent;
+}
 </style>
