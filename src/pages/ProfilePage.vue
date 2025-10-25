@@ -2,7 +2,7 @@
   <q-page class="q-pa-md">
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-6">
-        <q-card>
+        <q-card flat>
           <q-card-section>
             <div class="text-h6">{{ $t('menu.account') }}</div>
             <div v-if="!isAuthenticated" class="text-negative q-mt-sm">
@@ -39,7 +39,7 @@
 
           <q-card-section>
             <div class="text-subtitle2 q-mb-md">{{ $t('profile.preferences') }}</div>
-            <div class="row items-center q-col-gutter-md">
+            <div class="row items-center q-col-gutter-md q-mb-md">
               <div class="col-auto">
                 <q-btn
                   flat
@@ -60,6 +60,14 @@
                 </q-btn-dropdown>
               </div>
             </div>
+            <q-item tag="label" v-ripple>
+              <q-item-section>
+                <q-item-label>Audio Visualizer</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-toggle v-model="ui.visualizerEnabled" />
+              </q-item-section>
+            </q-item>
           </q-card-section>
           <q-separator v-if="isAuthenticated" />
           <q-card-actions align="right" v-if="isAuthenticated">
@@ -80,6 +88,9 @@ import { i18n, setLocale } from 'boot/i18n'
 import type { Locale } from 'boot/i18n'
 import { keycloak } from 'src/boot/keycloak'
 import type { KeycloakTokenParsed } from 'keycloak-js'
+import { useUiStore } from 'src/stores/uiStore'
+
+const ui = useUiStore()
 
 const isAuthenticated = computed(() => !!keycloak.authenticated)
 const clientId = computed(() => keycloak.clientId)

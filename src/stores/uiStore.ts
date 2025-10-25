@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 export const useUiStore = defineStore('ui', () => {
   const globalLoading = ref(false)
+  const visualizerEnabled = ref(true)
   let lastStart = 0
 
   function setGlobalLoading(val: boolean) {
@@ -23,8 +24,14 @@ export const useUiStore = defineStore('ui', () => {
     }
   }
 
+  function setVisualizerEnabled(val: boolean) {
+    visualizerEnabled.value = val
+  }
+
   return {
     globalLoading,
     setGlobalLoading,
+    visualizerEnabled,
+    setVisualizerEnabled,
   }
 })

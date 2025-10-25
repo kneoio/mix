@@ -96,7 +96,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer v-if="playerStore.isPlaying" style="background: transparent;">
+    <q-footer v-show="playerStore.isPlaying && ui.visualizerEnabled" style="background: transparent; box-shadow: none;">
       <div :ref="el => { if (el) visualizerContainer = el as HTMLDivElement }" style="width: 100%; height: 60px;"></div>
     </q-footer>
   </q-layout>
@@ -142,33 +142,48 @@ onMounted( () => {
 } );
 
 const initVisualizer = async () => {
+  if (audioMotion) {
+    return
+  }
+  
   await nextTick()
-  if (visualizerContainer && !audioMotion && playerStore.audioElement) {
+  await nextTick()
+  
+  if (visualizerContainer && playerStore.audioElement) {
     audioMotion = new AudioMotionAnalyzer(undefined, {
-      mode: 10,
+      source: playerStore.audioElement,
+      mode: 3,
       height: 60,
+      barSpace: 0.2,
+      ledBars: true,
       showScaleX: false,
       showScaleY: false,
       bgAlpha: 0,
       overlay: true
     })
     
-    audioMotion.registerGradient('gray', {
+    audioMotion.registerGradient('mixpla', {
       colorStops: [
-        { pos: 0, color: '#666666' },
-        { pos: 1, color: '#666666' }
+        { pos: 0, color: '#1e3b8a' },
+        { pos: 0.25, color: '#3c83f6' },
+        { pos: 0.5, color: '#07b6d5' },
+        { pos: 0.75, color: '#1077b7' },
+        { pos: 1, color: '#db38d3' }
       ]
     })
-    audioMotion.gradient = 'gray'
+    audioMotion.gradient = 'mixpla'
     
     visualizerContainer.appendChild(audioMotion.canvas)
-    audioMotion.connectInput(playerStore.audioElement)
   }
 }
 
 const destroyVisualizer = () => {
   if (audioMotion) {
-    audioMotion.disconnectInput()
+    try {
+      audioMotion.disconnectInput()
+    } catch (e) {
+      void e
+    }
     audioMotion.destroy()
     audioMotion = null
   }
@@ -179,10 +194,8 @@ onBeforeUnmount(() => {
 })
 
 playerStore.$subscribe((mutation, state) => {
-  if (state.isPlaying) {
+  if (state.isPlaying && ui.visualizerEnabled) {
     void initVisualizer()
-  } else {
-    destroyVisualizer()
   }
 })
 

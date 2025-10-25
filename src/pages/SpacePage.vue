@@ -22,24 +22,19 @@
           </div>
           
           <div class="q-pa-md text-center" style="margin-top: 40px; margin-bottom: 40px;">
-            <transition name="fade-slide">
-              <div v-if=" isPlayingStation( station.slugName ) " class="now-playing-info q-mb-lg">
-                <div class="now-playing-container">
-                  <span class="text-left">{{ nowPlayingParts.left }}</span>
-                  <span class="dot">|</span>
-                  <span class="text-right">{{ nowPlayingParts.right }}</span>
-                </div>
+            <div class="now-playing-info q-mb-lg" style="min-height: 60px;">
+              <div v-show=" isPlayingStation( station.slugName ) " class="now-playing-container" :style="{ opacity: nowPlayingOpacity, transition: 'opacity 1s ease-out' }">
+                <span class="text-left">{{ nowPlayingParts.left }}</span>
+                <span class="dot">|</span>
+                <span class="text-right">{{ nowPlayingParts.right }}</span>
               </div>
-            </transition>
+            </div>
             <q-btn round size="lg" color="grey-5" :icon="playerStore.isPlaying ? 'pause' : 'play_arrow'"
               @click="togglePlay" class="q-mb-md q-mt-md" />
             <div class="row justify-center items-center q-gutter-md q-mt-lg">
               <div class="text-caption" style="color: gray-9;">{{ station.countryCode }}</div>
               <div class="text-caption" style="color: gray-9;">{{ formatStatusText( station.currentStatus ) }}</div>
             </div>
-            <transition name="fade">
-              <div v-if=" !isPlayingStation( station.slugName ) " class="text-body2" style="margin-top: 10px;">{{ station.description }}</div>
-            </transition>
           </div>
         </div>
       </q-carousel-slide>
@@ -63,6 +58,8 @@ const ui = useUiStore()
 const radioStations = computed( () => playerStore.stations )
 const stationsLoadError = computed( () => playerStore.stationsLoadError )
 const slide = ref( '' )
+const nowPlayingOpacity = ref( 1 )
+let hideTimer: ReturnType<typeof setTimeout> | null = null
 
 
 const nowPlayingParts = computed(() => {
@@ -105,15 +102,35 @@ watch( slide, ( newSlug ) => {
   }
 } )
 
-function isPlayingStation( slugName: string ): boolean {
-  return playerStore.isPlaying && playerStore.radioSlug === slugName
-}
+watch(() => playerStore.isPlaying, (playing) => {
+  if (hideTimer) {
+    clearTimeout(hideTimer)
+    hideTimer = null
+  }
+  
+  if (playing) {
+    nowPlayingOpacity.value = 1
+    hideTimer = setTimeout(() => {
+      nowPlayingOpacity.value = 0
+    }, 60000)
+  }
+})
 
 function togglePlay() {
+  if (hideTimer) {
+    clearTimeout(hideTimer)
+    hideTimer = null
+  }
+  nowPlayingOpacity.value = 1
+  
   if ( playerStore.radioSlug !== slide.value ) {
     playerStore.setStation( slide.value )
   }
   playerStore.togglePlay()
+}
+
+function isPlayingStation( slugName: string ): boolean {
+  return playerStore.isPlaying && playerStore.radioSlug === slugName
 }
 </script>
 
