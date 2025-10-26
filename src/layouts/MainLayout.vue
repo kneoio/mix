@@ -224,6 +224,14 @@ playerStore.$subscribe( ( mutation, state ) => {
   }
 } )
 
+watch(() => ui.visualizerEnabled, (enabled) => {
+  if (!enabled) {
+    destroyVisualizer()
+  } else if (playerStore.isPlaying) {
+    void initVisualizer()
+  }
+})
+
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
