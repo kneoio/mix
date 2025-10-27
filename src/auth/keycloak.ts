@@ -5,9 +5,9 @@ const isNative = Capacitor.isNativePlatform()
 
 // Keycloak config provided by you
 const keycloak = new Keycloak({
-  url: 'https://auth.kneo.io/',
-  realm: 'semantyca',
-  clientId: 'mixpla'
+  url: 'https://auth.semantyca.com/',
+  realm: 'mixpla',
+  clientId: 'mixpla_mobile'
 })
 
 export const keycloakInitOptions = {

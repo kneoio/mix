@@ -17,12 +17,11 @@ const routes: RouteRecordRaw[] = [
       { path: 'listeners/:id', component: () => import('pages/ListenerFormPage.vue'), meta: { requiresAuth: true } },
       { path: 'dashboard', component: () => import('pages/DashboardPage.vue'), meta: { requiresAuth: true } },
       { path: 'profile', component: () => import('pages/ProfilePage.vue'), meta: { public: true } },
-      { path: 'login', component: () => import('pages/LoginPage.vue'), meta: { public: true } }
+      { path: 'login', component: () => import('pages/LoginPage.vue'), meta: { public: true } },
+      { path: 'register', component: () => import('pages/RegisterPage.vue'), meta: { public: true } }
     ],
   },
 
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),

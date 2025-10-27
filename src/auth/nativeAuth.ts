@@ -18,7 +18,7 @@ class NativeAuth {
   private accessToken: string | null = null
   private refreshToken: string | null = null
   private userInfo: UserInfo | null = null
-  
+
   get isAuthenticated(): boolean {
     return !!this.accessToken
   }
@@ -52,12 +52,12 @@ class NativeAuth {
   async login(username: string, password: string): Promise<void> {
     const params = new URLSearchParams()
     params.append('grant_type', 'password')
-    params.append('client_id', 'mixpla')
+    params.append('client_id', 'mixpla_mobile')
     params.append('username', username)
     params.append('password', password)
 
     const response = await axios.post<TokenResponse>(
-      'https://auth.kneo.io/realms/semantyca/protocol/openid-connect/token',
+      'https://auth.semantyca.com/realms/mixpla/protocol/openid-connect/token',
       params,
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     )
@@ -86,7 +86,7 @@ class NativeAuth {
     this.accessToken = null
     this.refreshToken = null
     this.userInfo = null
-    
+
     if (Capacitor.isNativePlatform()) {
       try {
         localStorage.removeItem('native_access_token')

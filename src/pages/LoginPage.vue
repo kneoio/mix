@@ -27,6 +27,13 @@
 
       <q-card-actions align="right">
         <q-btn
+          flat
+          label="Register"
+          color="primary"
+          :disable="loading"
+          @click="$router.push('/register')"
+        />
+        <q-btn
           label="Login"
           color="primary"
           :loading="loading"
