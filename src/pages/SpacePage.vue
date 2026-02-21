@@ -17,13 +17,14 @@
             </div>
           </div>
 
-           <div class="color-bar" :style="{ backgroundColor: station.color }">
+          <div class="color-bar" :style="{ backgroundColor: station.color }">
             <div class="color-bar-wave" :style="{ backgroundColor: station.color }"></div>
           </div>
-          
+
           <div class="q-pa-md text-center" style="margin-top: 40px; margin-bottom: 40px;">
             <div class="now-playing-info q-mb-lg" style="min-height: 60px;">
-              <div v-show=" isPlayingStation( station.slugName ) " class="now-playing-container" :style="{ opacity: nowPlayingOpacity, transition: 'opacity 1s ease-out' }">
+              <div v-show="isPlayingStation( station.slugName )" class="now-playing-container"
+                :style="{ opacity: nowPlayingOpacity, transition: 'opacity 1s ease-out' }">
                 <span class="text-left">{{ nowPlayingParts.left }}</span>
                 <span class="dot">|</span>
                 <span class="text-right">{{ nowPlayingParts.right }}</span>
@@ -60,22 +61,23 @@ const stationsLoadError = computed( () => playerStore.stationsLoadError )
 const slide = ref( '' )
 const nowPlayingOpacity = ref( 1 )
 let hideTimer: ReturnType<typeof setTimeout> | null = null
+let debounceTimer: ReturnType<typeof setTimeout>
 
 
-const nowPlayingParts = computed(() => {
+const nowPlayingParts = computed( () => {
   const text = playerStore.nowPlaying || '';
-  const parts = text.split(/\s*(?:-|\u2013|\u2014|\|)\s*/);
-  if (parts.length >= 2) {
+  const parts = text.split( /\s*(?:-|\u2013|\u2014|\|)\s*/ );
+  if ( parts.length >= 2 ) {
     return {
       left: parts[0],
-      right: parts.slice(1).join(' · ')
+      right: parts.slice( 1 ).join( ' · ' )
     };
   }
   return {
     left: text,
     right: ''
   };
-});
+} );
 
 onMounted( async () => {
   loading.value = true
@@ -91,38 +93,35 @@ onMounted( async () => {
 watch( loading, ( v ) => ui.setGlobalLoading( v ) )
 
 watch( slide, ( newSlug ) => {
-  if ( playerStore.radioSlug !== newSlug ) {
-    if ( playerStore.isPlaying ) {
-      playerStore.togglePlay()
-      playerStore.setStation( newSlug )
-      playerStore.togglePlay()
-    } else {
+  clearTimeout( debounceTimer )
+  debounceTimer = setTimeout( () => {
+    if ( playerStore.radioSlug !== newSlug ) {
       playerStore.setStation( newSlug )
     }
+  }, 300 )
+} )
+
+watch( () => playerStore.isPlaying, ( playing ) => {
+  if ( hideTimer ) {
+    clearTimeout( hideTimer )
+    hideTimer = null
+  }
+
+  if ( playing ) {
+    nowPlayingOpacity.value = 1
+    hideTimer = setTimeout( () => {
+      nowPlayingOpacity.value = 0
+    }, 60000 )
   }
 } )
 
-watch(() => playerStore.isPlaying, (playing) => {
-  if (hideTimer) {
-    clearTimeout(hideTimer)
-    hideTimer = null
-  }
-  
-  if (playing) {
-    nowPlayingOpacity.value = 1
-    hideTimer = setTimeout(() => {
-      nowPlayingOpacity.value = 0
-    }, 60000)
-  }
-})
-
 function togglePlay() {
-  if (hideTimer) {
-    clearTimeout(hideTimer)
+  if ( hideTimer ) {
+    clearTimeout( hideTimer )
     hideTimer = null
   }
   nowPlayingOpacity.value = 1
-  
+
   if ( playerStore.radioSlug !== slide.value ) {
     playerStore.setStation( slide.value )
   }
@@ -173,6 +172,7 @@ function isPlayingStation( slugName: string ): boolean {
   0% {
     left: -30%;
   }
+
   100% {
     left: 100%;
   }

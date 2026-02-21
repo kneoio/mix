@@ -11,7 +11,6 @@ export const messages = {
       title: 'Menu',
       listeners: 'Ouvintes',
       soundFragments: 'Fragmentos de Som',
-      dashboard: 'Painel'
     },
     theme: {
       switchToLight: 'Mudar para o tema claro',
@@ -90,15 +89,6 @@ export const messages = {
     },
     space: {
       loadFailed: 'Falha ao carregar estações. Tente novamente mais tarde.'
-    },
-    dashboard: {
-      noData: 'Nenhum dado disponível',
-      listeners: 'Ouvintes',
-      start: 'Iniciar',
-      stop: 'Parar',
-      status: 'Status',
-      livePlaylist: 'Playlist ao Vivo',
-      noPlaylist: 'Nenhuma playlist disponível'
     }
   },
   en: {
@@ -111,7 +101,6 @@ export const messages = {
       title: 'Menu',
       listeners: 'Listeners',
       soundFragments: 'Sound Fragments',
-      dashboard: 'Dashboard'
     },
     theme: {
       switchToLight: 'Switch to light theme',
@@ -191,15 +180,6 @@ export const messages = {
     },
     space: {
       loadFailed: 'Failed to load stations. Please try again later.'
-    },
-    dashboard: {
-      noData: 'No data available',
-      listeners: 'Listeners',
-      start: 'Start',
-      stop: 'Stop',
-      status: 'Status',
-      livePlaylist: 'Live Playlist',
-      noPlaylist: 'No playlist available'
     }
   },
   uk: {
@@ -212,7 +192,6 @@ export const messages = {
       title: 'Меню',
       listeners: 'Слухачі',
       soundFragments: 'Звукові фрагменти',
-      dashboard: 'Панель'
     },
     theme: {
       switchToLight: 'Перемкнути на світлу тему',
@@ -292,15 +271,6 @@ export const messages = {
     },
     space: {
       loadFailed: 'Не вдалося завантажити станції. Спробуйте пізніше.'
-    },
-    dashboard: {
-      noData: 'Немає даних',
-      listeners: 'Слухачі',
-      start: 'Запустити',
-      stop: 'Зупинити',
-      status: 'Статус',
-      livePlaylist: 'Живий плейлист',
-      noPlaylist: 'Плейлист недоступний'
     }
   },
   kk: {
@@ -313,7 +283,6 @@ export const messages = {
       title: 'Мәзір',
       listeners: 'Тыңдаушылар',
       soundFragments: 'Дыбыс фрагменттері',
-      dashboard: 'Бақылау тақтасы'
     },
     theme: {
       switchToLight: 'Жарық тақырыпқа ауыстыру',
@@ -367,15 +336,6 @@ export const messages = {
     },
     space: {
       loadFailed: 'Станцияларды жүктеу сәтсіз. Кейінірек қайталап көріңіз.'
-    },
-    dashboard: {
-      noData: 'Деректер жоқ',
-      listeners: 'Тыңдаушылар',
-      start: 'Бастау',
-      stop: 'Тоқтату',
-      status: 'Күйі',
-      livePlaylist: 'Тікелей плейлист',
-      noPlaylist: 'Плейлист жоқ'
     }
   },
   de: {
@@ -388,7 +348,6 @@ export const messages = {
       title: 'Menü',
       listeners: 'Hörer',
       soundFragments: 'Sound‑Fragmente',
-      dashboard: 'Dashboard'
     },
     theme: {
       switchToLight: 'Zum hellen Theme wechseln',
@@ -466,7 +425,6 @@ export const messages = {
       title: 'Menu',
       listeners: 'Auditeurs',
       soundFragments: 'Fragments sonores',
-      dashboard: 'Tableau de bord'
     },
     theme: {
       switchToLight: 'Passer au thème clair',
@@ -542,7 +500,6 @@ export const messages = {
       title: '菜单',
       listeners: '听众',
       soundFragments: '音频片段',
-      dashboard: '仪表板'
     },
     theme: {
       switchToLight: '切换到浅色主题',
@@ -620,7 +577,6 @@ export const messages = {
       title: 'メニュー',
       listeners: 'リスナー',
       soundFragments: 'サウンドフラグメント',
-      dashboard: 'ダッシュボード'
     },
     theme: {
       switchToLight: 'ライトテーマに切り替え',
@@ -698,7 +654,6 @@ export const messages = {
       title: 'მენიუ',
       listeners: 'მსმენელები',
       soundFragments: 'ხმის ფრაგმენტები',
-      dashboard: 'დაფა'
     },
     theme: {
       switchToLight: 'გადართვა ნათელ თემაზე',
@@ -776,7 +731,6 @@ export const messages = {
       title: 'Izvēlne',
       listeners: 'Klausītāji',
       soundFragments: 'Skaņas fragmenti',
-      dashboard: 'Informācijas panelis'
     },
     theme: {
       switchToLight: 'Pārslēgt uz gaišo tēmu',
@@ -854,7 +808,6 @@ export const messages = {
       title: 'Меню',
       listeners: 'Слушатели',
       soundFragments: 'Аудиофрагменты',
-      dashboard: 'Панель управления'
     },
     theme: {
       switchToLight: 'Переключить на светлую тему',
@@ -932,7 +885,6 @@ export const messages = {
       title: 'Menu',
       listeners: 'Ascoltatori',
       soundFragments: 'Frammenti sonori',
-      dashboard: 'Dashboard'
     },
     theme: {
       switchToLight: 'Passa al tema chiaro',
@@ -1010,7 +962,6 @@ export const messages = {
       title: 'Menü',
       listeners: 'Dinleyiciler',
       soundFragments: 'Ses Parçaları',
-      dashboard: 'Kontrol Paneli'
     },
     theme: {
       switchToLight: 'Açık temaya geç',
@@ -1088,7 +1039,6 @@ export const messages = {
       title: 'القائمة',
       listeners: 'المستمعون',
       soundFragments: 'مقاطع الصوت',
-      dashboard: 'لوحة التحكم'
     },
     theme: {
       switchToLight: 'التبديل إلى الوضع الفاتح',
@@ -1166,7 +1116,6 @@ export const messages = {
       title: 'Menu',
       listeners: 'Słuchacze',
       soundFragments: 'Fragmenty dźwiękowe',
-      dashboard: 'Panel'
     },
     theme: {
       switchToLight: 'Przełącz na jasny motyw',
@@ -1244,7 +1193,6 @@ export const messages = {
       title: 'मेनू',
       listeners: 'श्रोता',
       soundFragments: 'ध्वनि खंड',
-      dashboard: 'डैशबोर्ड'
     },
     theme: {
       switchToLight: 'हल्के थीम पर स्विच करें',
@@ -1322,7 +1270,6 @@ export const messages = {
       title: '메뉴',
       listeners: '청취자',
       soundFragments: '사운드 조각',
-      dashboard: '대시보드'
     },
     theme: {
       switchToLight: '라이트 테마로 전환',
@@ -1400,7 +1347,6 @@ export const messages = {
       title: 'Valikko',
       listeners: 'Kuuntelijat',
       soundFragments: 'Äänileikkeet',
-      dashboard: 'Kojelauta'
     },
     theme: {
       switchToLight: 'Vaihda vaaleaan teemaan',
@@ -1478,7 +1424,6 @@ export const messages = {
       title: 'Meny',
       listeners: 'Lyssnare',
       soundFragments: 'Ljudfragment',
-      dashboard: 'Instrumentpanel'
     },
     theme: {
       switchToLight: 'Byt till ljust tema',
@@ -1556,7 +1501,6 @@ export const messages = {
       title: 'Meny',
       listeners: 'Lyttere',
       soundFragments: 'Lydfragmenter',
-      dashboard: 'Dashbord'
     },
     theme: {
       switchToLight: 'Bytt til lyst tema',
@@ -1622,29 +1566,6 @@ export const messages = {
       preferredUsername: 'Foretrukket brukernavn',
       email: 'E‑post',
       logout: 'Logg ut'
-    },
-    radiostations: {
-      confirmDelete: 'Slette {count} stasjon(er)?'
-    },
-    home: {
-      welcome: 'Velkommen',
-      publicHome: 'Dette er den offentlige startsiden.',
-      goToFavorites: 'Gå til Favoritter'
-    },
-    actions: {
-      goHome: 'Gå hjem'
-    },
-    space: {
-      loadFailed: 'Kunne ikke laste stasjoner. Prøv igjen senere.'
-    },
-    dashboard: {
-      noData: 'Ingen data tilgjengelig',
-      listeners: 'Lyttere',
-      start: 'Start',
-      stop: 'Stopp',
-      status: 'Status',
-      livePlaylist: 'Direkte spilleliste',
-      noPlaylist: 'Ingen spilleliste tilgjengelig'
     }
   }
 } as const

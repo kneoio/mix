@@ -59,15 +59,6 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/dashboard" active-class="bg-grey-3 text-warning"
-          exact-active-class="bg-grey-3 text-warning" v-ripple>
-          <q-item-section avatar>
-            <q-icon name="dashboard" />
-          </q-item-section>
-          <q-item-section>
-            {{ $t( 'menu.dashboard' ) }}
-          </q-item-section>
-        </q-item>
 
         <q-item clickable to="/profile" active-class="bg-grey-3 text-warning"
           exact-active-class="bg-grey-3 text-warning" v-ripple>
@@ -96,8 +87,11 @@
       <router-view />
     </q-page-container>
 
-    <q-footer v-show="playerStore.isPlaying && ui.visualizerEnabled" style="background: transparent; box-shadow: none;" v-touch-swipe.mouse.down="handleSwipeDown" v-touch-swipe.mouse.left="handleSwipeLeft" v-touch-swipe.mouse.right="handleSwipeRight">
-      <div :ref="el => { if ( el ) visualizerContainer = el as HTMLDivElement }" style="width: 100%; height: 60px;"></div>
+    <q-footer v-show="playerStore.isPlaying && ui.visualizerEnabled" style="background: transparent; box-shadow: none;"
+      v-touch-swipe.mouse.down="handleSwipeDown" v-touch-swipe.mouse.left="handleSwipeLeft"
+      v-touch-swipe.mouse.right="handleSwipeRight">
+      <div :ref="el => { if ( el ) visualizerContainer = el as HTMLDivElement }" style="width: 100%; height: 60px;">
+      </div>
     </q-footer>
   </q-layout>
 </template>
@@ -123,15 +117,15 @@ const audioElement = ref<HTMLAudioElement | null>( null )
 // eslint-disable-next-line prefer-const
 let visualizerContainer: HTMLDivElement | null = null as HTMLDivElement | null
 let audioMotion: AudioMotionAnalyzer | null = null
-const currentGradient = ref(MIXPLA_GRADIENT)
+const currentGradient = ref( MIXPLA_GRADIENT )
 
-const headerStyle = computed(() => {
-  const colors = currentGradient.value.map(stop => `${stop.color} ${stop.pos * 100}%`).join(', ')
+const headerStyle = computed( () => {
+  const colors = currentGradient.value.map( stop => `${stop.color} ${stop.pos * 100}%` ).join( ', ' )
   return {
     paddingTop: 'env(safe-area-inset-top)',
     background: `linear-gradient(90deg, ${colors})`
   }
-})
+} )
 
 /*const currentStationName = computed(() => {
   const station = playerStore.stations.find(s => s.slugName === playerStore.radioSlug)
@@ -143,23 +137,23 @@ function updateAuthState() {
   const isNative = Capacitor.isNativePlatform()
   nativeAuth.loadFromStorage()
 
-  if (isNative) {
+  if ( isNative ) {
     isAuthenticated.value = nativeAuth.isAuthenticated
   } else {
     isAuthenticated.value = keycloak.authenticated === true || nativeAuth.isAuthenticated
   }
 }
 
-watch(route, () => {
+watch( route, () => {
   updateAuthState()
-})
+} )
 
 onMounted( () => {
   const isNative = Capacitor.isNativePlatform()
 
   updateAuthState()
 
-  if (!isNative) {
+  if ( !isNative ) {
     keycloak.onAuthSuccess = () => { isAuthenticated.value = true }
     keycloak.onAuthLogout = () => { isAuthenticated.value = false }
     keycloak.onAuthRefreshSuccess = () => { isAuthenticated.value = true }
@@ -224,13 +218,13 @@ playerStore.$subscribe( ( mutation, state ) => {
   }
 } )
 
-watch(() => ui.visualizerEnabled, (enabled) => {
-  if (!enabled) {
+watch( () => ui.visualizerEnabled, ( enabled ) => {
+  if ( !enabled ) {
     destroyVisualizer()
-  } else if (playerStore.isPlaying) {
+  } else if ( playerStore.isPlaying ) {
     void initVisualizer()
   }
-})
+} )
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -246,20 +240,20 @@ function handleSwipeDown() {
 
 function handleSwipeLeft() {
   currentGradient.value = generateRandomGradient()
-  if (audioMotion) {
-    audioMotion.registerGradient('mixpla-gradient', {
+  if ( audioMotion ) {
+    audioMotion.registerGradient( 'mixpla-gradient', {
       colorStops: currentGradient.value
-    })
+    } )
     audioMotion.gradient = 'mixpla-gradient'
   }
 }
 
 function handleSwipeRight() {
   currentGradient.value = MIXPLA_GRADIENT
-  if (audioMotion) {
-    audioMotion.registerGradient('mixpla-gradient', {
+  if ( audioMotion ) {
+    audioMotion.registerGradient( 'mixpla-gradient', {
       colorStops: currentGradient.value
-    })
+    } )
     audioMotion.gradient = 'mixpla-gradient'
   }
 }

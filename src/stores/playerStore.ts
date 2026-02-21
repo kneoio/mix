@@ -124,8 +124,6 @@ export const usePlayerStore = defineStore('player', () => {
     djStatus.value = null
     nowPlaying.value = ''
     statusText.value = 'Loading station information...'
-
-    void fetchStationInfo()
   }
 
   const setBufferStatus = (status: string) => {
@@ -136,7 +134,6 @@ export const usePlayerStore = defineStore('player', () => {
 
   const startPolling = () => {
     stopPolling()
-    void fetchStationInfo()
     statusPollingInterval = setInterval(() => {
       void fetchStationInfo()
     }, 15000)
@@ -169,7 +166,7 @@ export const usePlayerStore = defineStore('player', () => {
       return
     }
 
-    const streamUrl = `https://mixpla.online/${slug}/radio/stream.m3u8`
+    const streamUrl = `https://mixpla.online/${slug}/radio/master.m3u8`
 
     hls = new Hls({
       debug: false,
