@@ -4,8 +4,8 @@
       <q-bar class="mixpla-header-gradient text-white">
         <div class="text-h6 mixpla-title">Mixpla</div>
         <q-space />
-        <q-btn flat dense round icon="expand_less" v-close-popup class="lt-sm" />
-        <q-btn flat dense round icon="close" v-close-popup class="gt-xs" />
+        <q-btn flat dense round icon="close" @click="closePlayer" class="lt-sm" />
+        <q-btn flat dense round icon="close" @click="closePlayer" class="gt-xs" />
       </q-bar>
       <q-card-section class="q-pa-md player-content">
         <div class="station-info">
@@ -46,10 +46,13 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import AnimatedText from 'src/components/AnimatedText.vue'
 import { usePlayerStore } from 'src/stores/playerStore'
+import { useRouter } from 'vue-router'
 
-const props = defineProps<{
-  showFullscreen: boolean
-}>()
+const props = withDefaults(defineProps<{
+  showFullscreen?: boolean
+}>(), {
+  showFullscreen: true
+})
 
 const emit = defineEmits<{
   'update:showFullscreen': [value: boolean]
@@ -62,6 +65,13 @@ const dialogModel = computed({
 
 const playerStore = usePlayerStore()
 const { stationName, djName, countryCode, stationColor, nowPlaying, isPlaying, titleAnimation } = storeToRefs(playerStore)
+
+const router = useRouter()
+
+function closePlayer() {
+  dialogModel.value = false
+  void router.push('/space')
+}
 
 function togglePlay() {
   playerStore.togglePlay()

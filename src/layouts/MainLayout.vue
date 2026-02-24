@@ -39,16 +39,6 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-if=" isAuthenticated " clickable to="/listeners" active-class="bg-grey-3 text-warning"
-          exact-active-class="bg-grey-3 text-warning" v-ripple>
-          <q-item-section avatar>
-            <q-icon name="people" />
-          </q-item-section>
-          <q-item-section>
-            {{ $t( 'menu.listeners' ) }}
-          </q-item-section>
-        </q-item>
-
         <q-item v-if=" isAuthenticated " clickable to="/fragments" active-class="bg-grey-3 text-warning"
           exact-active-class="bg-grey-3 text-warning" v-ripple>
           <q-item-section avatar>

@@ -88,7 +88,8 @@ export const messages = {
       goHome: 'Ir para Início'
     },
     space: {
-      loadFailed: 'Falha ao carregar estações. Tente novamente mais tarde.'
+      loadFailed: 'Falha ao carregar estações. Tente novamente mais tarde.',
+      noOnlineStations: 'Nenhuma estação online no momento.'
     }
   },
   en: {
@@ -179,7 +180,8 @@ export const messages = {
       goHome: 'Go Home'
     },
     space: {
-      loadFailed: 'Failed to load stations. Please try again later.'
+      loadFailed: 'Failed to load stations. Please try again later.',
+      noOnlineStations: 'No online stations at the moment.'
     }
   },
   uk: {
@@ -270,7 +272,8 @@ export const messages = {
       goHome: 'На головну'
     },
     space: {
-      loadFailed: 'Не вдалося завантажити станції. Спробуйте пізніше.'
+      loadFailed: 'Не вдалося завантажити станції. Спробуйте пізніше.',
+      noOnlineStations: 'Немає онлайн станцій на даний момент.'
     }
   },
   kk: {
@@ -335,7 +338,8 @@ export const messages = {
       goHome: 'Басты бетке'
     },
     space: {
-      loadFailed: 'Станцияларды жүктеу сәтсіз. Кейінірек қайталап көріңіз.'
+      loadFailed: 'Станцияларды жүктеу сәтсіз. Кейінірек қайталап көріңіз.',
+      noOnlineStations: 'Қазіргі уақытта онлайн станциялар жоқ.'
     }
   },
   de: {
@@ -413,6 +417,10 @@ export const messages = {
       preferredUsername: 'Bevorzugter Benutzername',
       email: 'E‑Mail',
       logout: 'Abmelden'
+    },
+    space: {
+      loadFailed: 'Fehler beim Laden der Stationen. Bitte versuchen Sie es später erneut.',
+      noOnlineStations: 'Keine Online-Stationen im Moment.'
     }
   },
   fr: {
@@ -488,6 +496,10 @@ export const messages = {
       preferredUsername: 'Nom d’utilisateur préféré',
       email: 'E-mail',
       logout: 'Se déconnecter'
+    },
+    space: {
+      loadFailed: 'Erreur lors du chargement des stations. Veuillez réessayer plus tard.',
+      noOnlineStations: 'Aucune station en ligne pour le moment.'
     }
   },
   zh: {
@@ -565,6 +577,10 @@ export const messages = {
       preferredUsername: '首选用户名',
       email: '电子邮件',
       logout: '退出登录'
+    },
+    space: {
+      loadFailed: '加载电台失败。请稍后再试。',
+      noOnlineStations: '当前没有在线电台。'
     }
   },
   ja: {
@@ -642,6 +658,10 @@ export const messages = {
       preferredUsername: '優先ユーザー名',
       email: 'メール',
       logout: 'ログアウト'
+    },
+    space: {
+      loadFailed: '局の読み込みに失敗しました。後でもう一度お試しください。',
+      noOnlineStations: '現在オンラインの局はありません。'
     }
   },
   ka: {
@@ -719,6 +739,10 @@ export const messages = {
       preferredUsername: 'სასურველი მომხმარებლის სახელი',
       email: 'ელ. ფოსტა',
       logout: 'გამოსვლა'
+    },
+    space: {
+      loadFailed: 'სადგურების ჩატვირთვა ვერ მოხერხდა. გთხოვთ, სცადოთ მოგვიანებით.',
+      noOnlineStations: 'ამჟამად ონლაინ სადგურები არ არის.'
     }
   },
   lv: {
@@ -796,6 +820,10 @@ export const messages = {
       preferredUsername: 'Vēlamais lietotājvārds',
       email: 'E-pasts',
       logout: 'Izrakstīties'
+    },
+    space: {
+      loadFailed: 'Neizdevās ielādēt stacijas. Lūdzu, mēģiniet vēlāk.',
+      noOnlineStations: 'Šobrīd nav tiešsaistes staciju.'
     }
   },
   ru: {
@@ -873,6 +901,10 @@ export const messages = {
       preferredUsername: 'Предпочитаемое имя пользователя',
       email: 'Эл. почта',
       logout: 'Выйти'
+    },
+    space: {
+      loadFailed: 'Не удалось загрузить станции. Пожалуйста, попробуйте позже.',
+      noOnlineStations: 'В данный момент нет онлайн станций.'
     }
   },
   it: {
@@ -950,6 +982,10 @@ export const messages = {
       preferredUsername: 'Nome utente preferito',
       email: 'E‑mail',
       logout: 'Esci'
+    },
+    space: {
+      loadFailed: 'Errore durante il caricamento delle stazioni. Riprova più tardi.',
+      noOnlineStations: 'Nessuna stazione online al momento.'
     }
   },
   tr: {
@@ -1027,6 +1063,10 @@ export const messages = {
       preferredUsername: 'Tercih edilen kullanıcı adı',
       email: 'E‑posta',
       logout: 'Çıkış yap'
+    },
+    space: {
+      loadFailed: 'İstasyonlar yüklenirken hata oluştu. Lütfen daha sonra tekrar deneyin.',
+      noOnlineStations: 'Şu anda çevrimiçi istasyon yok.'
     }
   },
   ar: {
@@ -1104,6 +1144,10 @@ export const messages = {
       preferredUsername: 'اسم المستخدم المفضّل',
       email: 'البريد الإلكتروني',
       logout: 'تسجيل الخروج'
+    },
+    space: {
+      loadFailed: 'فشل تحميل المحطات. يرجى المحاولة مرة أخرى لاحقًا.',
+      noOnlineStations: 'لا توجد محطات متصلة بالإنترنت في الوقت الحالي.'
     }
   },
   pl: {
